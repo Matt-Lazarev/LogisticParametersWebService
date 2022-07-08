@@ -21,7 +21,7 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = { "com.intertrastcargo.stationlogisticparamservice.repository.sqlserver" }
+        basePackages = { "com.uraltrans.logisticparamservice.repository.sqlserver" }
 )
 public class SqlServerDataSourceConfig {
 
@@ -42,7 +42,7 @@ public class SqlServerDataSourceConfig {
         properties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
         return builder
                 .dataSource(dataSource)
-                .packages("com.intertrastcargo.stationlogisticparamservice.entity.sqlserver")
+                .packages("com.uraltrans.logisticparamservice.entity.sqlserver")
                 .properties(properties)
                 .build();
     }

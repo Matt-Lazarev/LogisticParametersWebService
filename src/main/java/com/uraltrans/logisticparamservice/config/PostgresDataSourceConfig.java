@@ -22,7 +22,7 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = { "com.intertrastcargo.stationlogisticparamservice.repository.postgres" }
+        basePackages = { "com.uraltrans.logisticparamservice.repository.postgres" }
 )
 public class PostgresDataSourceConfig {
 
@@ -42,7 +42,7 @@ public class PostgresDataSourceConfig {
         return builder
                 .dataSource(dataSource)
                 .properties(properties)
-                .packages("com.intertrastcargo.stationlogisticparamservice.entity.postgres")
+                .packages("com.uraltrans.logisticparamservice.entity.postgres")
                 .build();
     }
 
