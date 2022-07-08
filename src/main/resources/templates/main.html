@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+          crossorigin="anonymous">
+    <title>Сегментация перевозок</title>
+</head>
+
+<style>
+    div.container {
+        margin-top: 20px;
+    }
+
+    h3 {
+        margin-top: 15px;
+        text-align: center
+    }
+
+    .table-container {
+        margin-bottom: 15px;
+    }
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <div class="navbar-brand">Система сегментации перевозок</div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<body>
+<div class="error_block" th:if="${message == 'error'}">
+    <div class="alert alert-danger" role="alert">
+        Произошла ошибка. Повторите позже
+    </div>
+</div>
+
+<div class="error_block" th:if="${message == 'success'}">
+    <div class="alert alert-success" role="alert">
+        Данные успешно сохранены
+    </div>
+</div>
+
+
+<h3>Базовые настройки</h3>
+<form th:action="@{/flights}" method="post" th:object="${dto}">
+    <div class="container border border-3 border-secondary rounded">
+        <div class="row">
+            <div class="col-md-6 mb-1 mt-3">
+                <label> Введите глубину поиска: </label>
+                <input type="text" class="form-control" th:field="*{daysToRetrieveData}">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col align-self-center">
+                <label> Введите максимальное количество дней простоя при погрузке: </label>
+                <input type="text" class="form-control" th:field="*{maxLoadIdleDays}">
+            </div>
+
+            <div class="col align-self-center">
+                <label> Введите максимальное количество дней простоя при выгрузке: </label>
+                <input type="text" class="form-control" th:field="*{maxUnloadIdleDays}">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col align-self-center">
+                <label> Введите минимальное количество дней простоя при погрузке: </label>
+                <input type="text" class="form-control" th:field="*{minLoadIdleDays}">
+            </div>
+
+            <div class="col align-self-center">
+                <label> Введите минимальное количество дней простоя при выгрузке: </label>
+                <input type="text" class="form-control" th:field="*{minUnloadIdleDays}">
+            </div>
+        </div>
+
+        <div class="box-footer mb-1 mt-3">
+            <button type="submit" class="btn btn-primary">Загрузить данные</button>
+        </div>
+    </div>
+    </div>
+</form>
+
+
+<h3>Управление</h3>
+<div class="container border border-3 border-secondary rounded">
+    <form th:action="@{/api/flights/raw}" method="get">
+        <div class="row">
+
+            <div class="box-footer mb-1 mt-3">
+                <label style="text-align: center"> Просмотреть извлеченные сырые данные </label>
+                <br>
+                <button type="submit" class="btn btn-primary">Показать</button>
+            </div>
+        </div>
+    </form>
+    <form th:action="@{/result/load_days}" method="get">
+        <div class="row">
+            <div class="box-footer mb-1 mt-3">
+                <label style="text-align: center"> Просмотреть данные о погрузках и выгрузках</label>
+                <br>
+                <button type="submit" class="btn btn-primary">Показать</button>
+            </div>
+        </div>
+    </form>
+    <form th:action="@{/flights/discarded}" method="get">
+        <div class="row">
+            <div class="box-footer mb-1 mt-3">
+                <label style="text-align: center"> Просмотреть отброшенные рейсы</label>
+                <br>
+                <button type="submit" class="btn btn-primary">Показать</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+
+
+<h3>История работы с рейсами</h3>
+<div class="container border border-3 border-secondary rounded table-container">
+    <table class="table table-striped">
+        <col style="width:40%">
+        <col style="width:30%">
+        <col style="width:30%">
+        <thead>
+        <tr>
+            <th scope="col">Действие</th>
+            <th scope="col">Дата</th>
+            <th scope="col">Успешность</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="log: ${logs}">
+            <td th:text="${log.action}">Action</td>
+            <td th:text="${log.date}">Date</td>
+            <td th:text="${log.success}">Success</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

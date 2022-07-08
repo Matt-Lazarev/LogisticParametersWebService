@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    ms-sql-server:
+      jdbc-url:
+      username:
+      password:
+      driverClassname: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    postgres:
+      jdbc-url: jdbc:postgresql://localhost:5432/log_param
+      username: postgres
+      password: root
+      driverClassname: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+    show-sql: true
+
+  profiles:
+    active: "dev"
