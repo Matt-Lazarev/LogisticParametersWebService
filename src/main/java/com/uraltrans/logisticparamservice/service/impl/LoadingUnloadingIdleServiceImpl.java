@@ -1,6 +1,8 @@
 package com.uraltrans.logisticparamservice.service.impl;
 
+import com.uraltrans.logisticparamservice.dto.LoadingUnloadingDto;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadingUnloadingIdle;
+import com.uraltrans.logisticparamservice.mapper.LoadingUnloadingIdleMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.LoadingUnloadingIdleRepository;
 import com.uraltrans.logisticparamservice.service.abstr.LoadingUnloadingIdleService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LoadingUnloadingIdleServiceImpl implements LoadingUnloadingIdleService {
 
+    private final LoadingUnloadingIdleMapper loadingUnloadingIdleMapper;
     private final LoadingUnloadingIdleRepository loadingUnloadingIdleRepository;
 
     @Override
@@ -20,8 +23,8 @@ public class LoadingUnloadingIdleServiceImpl implements LoadingUnloadingIdleServ
     }
 
     @Override
-    public List<LoadingUnloadingIdle> getAllLoadingUnloadingIdles() {
-        return loadingUnloadingIdleRepository.findAll();
+    public List<LoadingUnloadingDto> getAllLoadingUnloadingIdles() {
+        return loadingUnloadingIdleMapper.mapToListDto(loadingUnloadingIdleRepository.findAll());
     }
 
     @Override

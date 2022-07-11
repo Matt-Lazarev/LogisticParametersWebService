@@ -8,7 +8,4 @@ import java.util.List;
 public interface FlightService {
     List<Flight> getAllFlights();
     void saveAllFlights(LoadDataRequestDto loadDataRequestDto);
-    void saveLoadingUnloadingIdles();
-
-    void prepareNextSave();
 }

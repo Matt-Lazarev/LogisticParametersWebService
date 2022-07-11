@@ -4,11 +4,11 @@ spring:
       jdbc-url:
       username:
       password:
-      driverClassname: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     postgres:
       jdbc-url: jdbc:postgresql://localhost:5432/log_param
-      username: postgres
-      password: root
+      username:
+      password:
       driverClassname: org.postgresql.Driver
   jpa:
     hibernate:
@@ -19,3 +19,5 @@ spring:
 
   profiles:
     active: "dev"
+
+

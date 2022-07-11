@@ -46,14 +46,9 @@ public class FileUtils {
         return logs.size() <= MAX_LOGS_AMOUNT ? logs : logs.subList(0, MAX_LOGS_AMOUNT);
     }
 
-    public static void writeDiscardedFlights(List<Flight> discardedFlights) {
-        List<String> result = discardedFlights
-                .stream()
-                .map(Flight::toString)
-                .collect(Collectors.toList());
-
+    public static void writeDiscardedFlights(List<String> discardedFlights) {
         try {
-            Files.write(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH, result);
+            Files.write(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH, discardedFlights);
         } catch (IOException e) {
             log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());
         }

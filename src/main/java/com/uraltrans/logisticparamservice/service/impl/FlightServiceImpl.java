@@ -41,6 +41,8 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     public void saveAllFlights(LoadDataRequestDto dto) {
+        prepareNextSave();
+
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusDays(dto.getDaysToRetrieveData());
         List<Map<String, Object>> rawData = rawFlightService.getAllFlightsBetween(from, to);
@@ -54,18 +56,17 @@ public class FlightServiceImpl implements FlightService {
                 dto.getMinLoadIdleDays(), dto.getMinUnloadIdleDays());
 
         flightRepository.saveAll(allFlights);
+        saveLoadingUnloadingIdles();
     }
 
-    @Override
-    public void saveLoadingUnloadingIdles() {
+    private void saveLoadingUnloadingIdles() {
         List<LoadIdleDto> loadIdleDtos = flightRepository.groupCarLoadIdle();
         List<UnloadIdleDto> unloadIdleDtos = flightRepository.groupCarUnloadIdle();
-        List<LoadingUnloadingIdle> data = flightMapper.mapToLoadingUnloadingDtoList(loadIdleDtos, unloadIdleDtos);
+        List<LoadingUnloadingIdle> data = flightMapper.mapToLoadingUnloadingList(loadIdleDtos, unloadIdleDtos);
         loadingUnloadingIdleService.saveAll(data);
     }
 
-    @Override
-    public void prepareNextSave() {
+    private void prepareNextSave() {
         flightRepository.deleteAll();
         loadingUnloadingIdleService.deleteAll();
     }
@@ -163,13 +164,13 @@ public class FlightServiceImpl implements FlightService {
 
     private void filterFlights(List<Flight> allFlights,
                                Integer maxLoadIdle, Integer maxUnloadIdle, Integer minLoadIdle, Integer minUnloadIdle) {
-         List<Flight> discardedFlights = new ArrayList<>();
+         List<String> discardedFlights = new ArrayList<>();
          allFlights
                 .stream()
                 .filter(flight -> flight.getCarLoadIdleDays() != null &&
                         (flight.getCarLoadIdleDays() <= minLoadIdle || flight.getCarLoadIdleDays() > maxLoadIdle))
                  .forEach(flight -> {
-                     discardedFlights.add(flight);
+                     discardedFlights.add(flight.toString());
                      flight.setCarLoadIdleDays(null);
                  });
         allFlights
@@ -177,7 +178,7 @@ public class FlightServiceImpl implements FlightService {
                 .filter(flight -> flight.getCarUnloadIdleDays() != null &&
                         (flight.getCarUnloadIdleDays() <= minUnloadIdle || flight.getCarUnloadIdleDays() > maxUnloadIdle))
                 .forEach(flight -> {
-                    discardedFlights.add(flight);
+                    discardedFlights.add(flight.toString());
                     flight.setCarUnloadIdleDays(null);
                 });
 

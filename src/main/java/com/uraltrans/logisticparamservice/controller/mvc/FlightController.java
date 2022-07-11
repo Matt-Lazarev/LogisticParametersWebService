@@ -19,9 +19,7 @@ public class FlightController {
 
     @PostMapping
     public String saveLoadedData(@ModelAttribute("dto") LoadDataRequestDto dto){
-        flightService.prepareNextSave();
         flightService.saveAllFlights(dto);
-        flightService.saveLoadingUnloadingIdles();
         return "redirect:/home?message=success";
     }
 

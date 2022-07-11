@@ -50,7 +50,7 @@ public class FlightMapper {
                 .setNextFlightStartDate((Timestamp) flightData.get("Дата нач. след. Рейса (дата оформления вагона порожним)"));
     }
 
-    public List<LoadingUnloadingIdle> mapToLoadingUnloadingDtoList(
+    public List<LoadingUnloadingIdle> mapToLoadingUnloadingList(
             List<LoadIdleDto> loadIdleDtos, List<UnloadIdleDto> unloadIdleDtos) {
         List<LoadingUnloadingIdle> result = new ArrayList<>();
         for (int i = 0; i < loadIdleDtos.size(); i++) {
@@ -61,7 +61,7 @@ public class FlightMapper {
                         && Objects.equals(load.getVolume(), unload.getVolume())
                         && Objects.equals(load.getCargoCode6(), unload.getCargoCode6())
                         && Objects.equals(load.getCarType(), unload.getCarType())) {
-                    LoadingUnloadingIdle dto = mapToLoadingUnloadingDto(load, unload);
+                    LoadingUnloadingIdle dto = mapToLoadingUnloading(load, unload);
                     result.add(dto);
 
                     loadIdleDtos.remove(i);
@@ -71,13 +71,13 @@ public class FlightMapper {
                 }
             }
         }
-        loadIdleDtos.forEach(load -> result.add(mapToLoadingUnloadingDto(load, null)));
-        unloadIdleDtos.forEach(unload -> result.add(mapToLoadingUnloadingDto(null, unload)));
+        loadIdleDtos.forEach(load -> result.add(mapToLoadingUnloading(load, null)));
+        unloadIdleDtos.forEach(unload -> result.add(mapToLoadingUnloading(null, unload)));
 
         return result;
     }
 
-    private LoadingUnloadingIdle mapToLoadingUnloadingDto(LoadIdleDto load, UnloadIdleDto unload) {
+    private LoadingUnloadingIdle mapToLoadingUnloading(LoadIdleDto load, UnloadIdleDto unload) {
         if (load == null) {
             return new LoadingUnloadingIdle(
                     unload.getDestStation(), unload.getDestStationCode(),

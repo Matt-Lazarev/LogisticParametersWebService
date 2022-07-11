@@ -1,9 +1,9 @@
 package com.uraltrans.logisticparamservice;
 
 import com.uraltrans.logisticparamservice.utils.mapper.SimpleExcelRowMapper;
-import com.uraltrans.logisticparamservice.utils.model.Flight;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
 import com.uraltrans.logisticparamservice.utils.excel.ExcelReaderWriterService;
+import com.uraltrans.logisticparamservice.utils.model.Flight;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +25,7 @@ public class LoadIdleTest {
     void compareLoadIdleInDays() {
         ExcelReaderWriterService<Flight> service = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
 
-        List<Flight> apiData = repository.findAll();
+        List<com.uraltrans.logisticparamservice.entity.postgres.Flight> apiData = repository.findAll();
         apiData = apiData.stream()
                 .filter(flight -> flight.getLoaded().equalsIgnoreCase("груж"))
                 .collect(Collectors.toList());
@@ -39,7 +39,7 @@ public class LoadIdleTest {
         int threshold = 30;
         int count = 0;
         for (Flight excelFlight : excelData) {
-            for (Flight apiFlight : apiData) {
+            for (com.uraltrans.logisticparamservice.entity.postgres.Flight apiFlight : apiData) {
                 if (Objects.equals(excelFlight.getCarNumber(), apiFlight.getCarNumber())
                         && Objects.equals(excelFlight.getInvNumber(), apiFlight.getInvNumber())) {
 
@@ -61,7 +61,7 @@ public class LoadIdleTest {
     @Test
     public void countDualAndAbnormalFlights() {
         int threshold = 30;
-        List<Flight> apiData = repository.findAll();
+        List<com.uraltrans.logisticparamservice.entity.postgres.Flight> apiData = repository.findAll();
 
         long c1 = apiData
                 .stream()
@@ -82,7 +82,7 @@ public class LoadIdleTest {
     public void test() {
         ExcelReaderWriterService<Flight> service = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
 
-        List<Flight> apiData = repository.findAll();
+        List<com.uraltrans.logisticparamservice.entity.postgres.Flight> apiData = repository.findAll();
         List<Flight> excelData = service.readAsList("load_idle.xlsx", Flight.class, null);
         excelData = excelData
                 .stream()
@@ -92,7 +92,7 @@ public class LoadIdleTest {
 
         int count = 0;
         for (Flight excelFlight : excelData) {
-            for (Flight apiFlight : apiData) {
+            for (com.uraltrans.logisticparamservice.entity.postgres.Flight apiFlight : apiData) {
                 if (Objects.equals(excelFlight.getCarNumber(), apiFlight.getCarNumber())
                         && Objects.equals(excelFlight.getInvNumber(), apiFlight.getInvNumber())) {
 

@@ -23,7 +23,7 @@ public class UnloadIdleTest {
     void compareUnloadIdleInDays(){
         ExcelReaderWriterService<Flight> service = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
 
-        List<Flight> apiData = repository.findAll();
+        List<com.uraltrans.logisticparamservice.entity.postgres.Flight> apiData = repository.findAll();
         apiData = apiData.stream()
                 .filter(flight -> flight.getLoaded().equalsIgnoreCase("груж"))
                 .collect(Collectors.toList());
@@ -37,7 +37,7 @@ public class UnloadIdleTest {
         int threshold = 30;
         int count = 0;
         for(Flight excelFlight : excelData){
-            for(Flight apiFlight : apiData){
+            for(com.uraltrans.logisticparamservice.entity.postgres.Flight apiFlight : apiData){
                 if(Objects.equals(excelFlight.getCarNumber(), apiFlight.getCarNumber())
                         && Objects.equals(excelFlight.getInvNumber(), apiFlight.getInvNumber())){
 
