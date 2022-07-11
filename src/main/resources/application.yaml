@@ -1,14 +1,14 @@
 spring:
   datasource:
     ms-sql-server:
-      jdbc-url:
-      username:
-      password:
+      jdbc-url: jdbc:sqlserver://dbsrv:1433;database=ITR;trustServerCertificate=true
+      username: Obmen
+      password: 321654987
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     postgres:
-      jdbc-url: jdbc:postgresql://localhost:5432/log_param
-      username:
-      password:
+      jdbc-url: jdbc:postgresql://localhost:5432/flight_db
+      username: postgres
+      password: root
       driverClassname: org.postgresql.Driver
   jpa:
     hibernate:

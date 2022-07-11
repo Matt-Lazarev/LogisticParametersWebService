@@ -1,6 +1,6 @@
 package com.uraltrans.logisticparamservice.service.impl;
 
-import com.uraltrans.logisticparamservice.dto.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.mapper.FlightMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
@@ -24,10 +24,10 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-class FlightServiceImplTest {
+class FlightIdleServiceImplTest {
 
     @Autowired
-    FlightServiceImpl underTest;
+    FlightIdleServiceImpl underTest;
 
     @MockBean
     FlightRepository flightRepository;

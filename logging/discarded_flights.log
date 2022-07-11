@@ -1,0 +1,25 @@
+Flight{carNumber=28086270, invNumber='30430187', sourceStation='Достык', destStation='Анисовка', carLoadIdleDays=0, carUnloadIdleDays=2}
+Flight{carNumber=28078160, invNumber='ЭР755124', sourceStation='Низовка', destStation='Ростов-Западный', carLoadIdleDays=34, carUnloadIdleDays=20}
+Flight{carNumber=52013232, invNumber='32513357', sourceStation='Татьянка', destStation='Каратау', carLoadIdleDays=0, carUnloadIdleDays=4}
+Flight{carNumber=28084176, invNumber='32510525', sourceStation='Низовка', destStation='Алматы 2', carLoadIdleDays=33, carUnloadIdleDays=3}
+Flight{carNumber=28071645, invNumber='32511792', sourceStation='Новотроицк', destStation='Жилаево', carLoadIdleDays=0, carUnloadIdleDays=3}
+Flight{carNumber=52628856, invNumber='ЭЛ965420', sourceStation='Жеты-Су', destStation='Кызылсай', carLoadIdleDays=0, carUnloadIdleDays=2}
+Flight{carNumber=52469509, invNumber='32514411', sourceStation='Татьянка', destStation='Каратау', carLoadIdleDays=0, carUnloadIdleDays=2}
+Flight{carNumber=52641917, invNumber='null', sourceStation='Орехово-Зуево', destStation='УЛААНБААТАР', carLoadIdleDays=104, carUnloadIdleDays=null}
+Flight{carNumber=52641917, invNumber='32491405', sourceStation='Орехово-Зуево', destStation='Наушки (эксп. АО "УБЖД": участок Улаанбаатар (вкл.) и далее)', carLoadIdleDays=104, carUnloadIdleDays=12}
+Flight{carNumber=28832525, invNumber='08078415', sourceStation='Лида', destStation='Татьянка', carLoadIdleDays=0, carUnloadIdleDays=4}
+Flight{carNumber=28842433, invNumber='30462656', sourceStation='Достык (эксп.)', destStation='Анисовка', carLoadIdleDays=0, carUnloadIdleDays=null}
+Flight{carNumber=52631108, invNumber='30411596', sourceStation='Достык (эксп.)', destStation='Анисовка', carLoadIdleDays=0, carUnloadIdleDays=null}
+Flight{carNumber=55706873, invNumber='30411683', sourceStation='Достык (эксп.)', destStation='Анисовка', carLoadIdleDays=0, carUnloadIdleDays=null}
+Flight{carNumber=28842433, invNumber='30462656', sourceStation='Достык', destStation='Анисовка', carLoadIdleDays=0, carUnloadIdleDays=2}
+Flight{carNumber=52631108, invNumber='30411596', sourceStation='Достык', destStation='Анисовка', carLoadIdleDays=0, carUnloadIdleDays=1}
+Flight{carNumber=55706873, invNumber='30411683', sourceStation='Достык', destStation='Анисовка', carLoadIdleDays=0, carUnloadIdleDays=1}
+Flight{carNumber=52034394, invNumber='ЭР788770 ', sourceStation='Речная', destStation='Рубцовск', carLoadIdleDays=530, carUnloadIdleDays=3}
+Flight{carNumber=29278199, invNumber='ЭР792180', sourceStation='Никель', destStation='Марк', carLoadIdleDays=0, carUnloadIdleDays=4}
+Flight{carNumber=28832749, invNumber='null', sourceStation='Барнаул', destStation='Барнаул', carLoadIdleDays=0, carUnloadIdleDays=null}
+Flight{carNumber=52135688, invNumber='32512451', sourceStation='Магнитогорск-Грузовой', destStation='Караганда-Сортировочная', carLoadIdleDays=0, carUnloadIdleDays=10}
+Flight{carNumber=28832582, invNumber='30462353', sourceStation='Достык (эксп.)', destStation='Тихоново', carLoadIdleDays=0, carUnloadIdleDays=null}
+Flight{carNumber=52639481, invNumber='30466387', sourceStation='Достык (эксп.)', destStation='Тихоново', carLoadIdleDays=0, carUnloadIdleDays=null}
+Flight{carNumber=52634250, invNumber='30472162', sourceStation='Достык (эксп.)', destStation='Челябинск-Главный', carLoadIdleDays=0, carUnloadIdleDays=7}
+Flight{carNumber=52114980, invNumber='30466386', sourceStation='Достык (эксп.)', destStation='Тихоново', carLoadIdleDays=0, carUnloadIdleDays=null}
+Flight{carNumber=28833226, invNumber='32484472', sourceStation='Лесосибирск', destStation='Брест-Центральный (эксп.)', carLoadIdleDays=9, carUnloadIdleDays=42}

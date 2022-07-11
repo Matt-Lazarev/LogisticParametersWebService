@@ -1,6 +1,8 @@
 package com.uraltrans.logisticparamservice.service.impl;
 
-import com.uraltrans.logisticparamservice.dto.LoadingUnloadingDto;
+import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
+import com.uraltrans.logisticparamservice.dto.idle.LoadingUnloadingDto;
+import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadingUnloadingIdle;
 import com.uraltrans.logisticparamservice.mapper.LoadingUnloadingIdleMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.LoadingUnloadingIdleRepository;
@@ -16,21 +18,22 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LoadingUnloadingIdleServiceImpl implements LoadingUnloadingIdleService {
 
-    private final LoadingUnloadingIdleMapper loadingUnloadingIdleMapper;
+    private final LoadingUnloadingIdleMapper mapper;
     private final LoadingUnloadingIdleRepository loadingUnloadingIdleRepository;
 
     @Override
-    public void saveAll(List<LoadingUnloadingIdle> data) {
-        loadingUnloadingIdleRepository.saveAll(data);
-    }
-
-    @Override
     public List<LoadingUnloadingDto> getAllLoadingUnloadingIdles() {
-        return loadingUnloadingIdleMapper.mapToListDto(loadingUnloadingIdleRepository.findAll());
+        return mapper.mapToListDto(loadingUnloadingIdleRepository.findAll());
     }
 
     @Override
     public void deleteAll() {
         loadingUnloadingIdleRepository.deleteAll();
+    }
+
+    @Override
+    public void saveAll(List<LoadIdleDto> loadIdleDtos, List<UnloadIdleDto> unloadIdleDtos) {
+        List<LoadingUnloadingIdle> data = mapper.mapToLoadingUnloadingList(loadIdleDtos, unloadIdleDtos);
+        loadingUnloadingIdleRepository.saveAll(data);
     }
 }

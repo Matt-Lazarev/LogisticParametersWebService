@@ -37,3 +37,4 @@ file.*
 mvnw
 mvnw.*
 .mvn
+src/main/resources/application.yaml

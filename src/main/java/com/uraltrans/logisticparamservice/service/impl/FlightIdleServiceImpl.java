@@ -1,13 +1,13 @@
 package com.uraltrans.logisticparamservice.service.impl;
 
-import com.uraltrans.logisticparamservice.dto.LoadDataRequestDto;
-import com.uraltrans.logisticparamservice.dto.LoadIdleDto;
+import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadingUnloadingIdle;
-import com.uraltrans.logisticparamservice.dto.UnloadIdleDto;
+import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.mapper.FlightMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
-import com.uraltrans.logisticparamservice.service.abstr.FlightService;
+import com.uraltrans.logisticparamservice.service.abstr.FlightIdleService;
 import com.uraltrans.logisticparamservice.service.abstr.LoadingUnloadingIdleService;
 import com.uraltrans.logisticparamservice.service.abstr.RawFlightService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
@@ -23,11 +23,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class FlightServiceImpl implements FlightService {
+public class FlightIdleServiceImpl implements FlightIdleService {
 
     private final FlightRepository flightRepository;
     private final RawFlightService rawFlightService;
@@ -43,27 +44,32 @@ public class FlightServiceImpl implements FlightService {
     public void saveAllFlights(LoadDataRequestDto dto) {
         prepareNextSave();
 
+        List<Flight> allFlights = getAllFlights(dto);
+        List<Flight> loadedFlights = getAllFlightsByLoaded(allFlights, "груж");
+        List<Flight> unloadedFlights = getAllFlightsByLoaded(allFlights, "пор");
+
+        loadedFlights = filterDuplicateFlights(loadedFlights);
+        calculateLoadAndUnloadTime(loadedFlights);
+
+        filterFlights(loadedFlights, dto);
+
+        allFlights = Stream.concat(loadedFlights.stream(), unloadedFlights.stream()).collect(Collectors.toList());
+        flightRepository.saveAll(allFlights);
+        loadingUnloadingIdleService.saveAll(flightRepository.groupCarLoadIdle(), flightRepository.groupCarUnloadIdle());
+    }
+
+    private List<Flight> getAllFlights(LoadDataRequestDto dto) {
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusDays(dto.getDaysToRetrieveData());
         List<Map<String, Object>> rawData = rawFlightService.getAllFlightsBetween(from, to);
-        List<Flight> allFlights = flightMapper.mapRawFlightsDataToFlightsList(rawData);
-
-        allFlights = filterDuplicateFlights(allFlights);
-        allFlights = calculateLoadAndUnloadTime(allFlights);
-
-        filterFlights(allFlights,
-                dto.getMaxLoadIdleDays(), dto.getMaxUnloadIdleDays(),
-                dto.getMinLoadIdleDays(), dto.getMinUnloadIdleDays());
-
-        flightRepository.saveAll(allFlights);
-        saveLoadingUnloadingIdles();
+        return flightMapper.mapRawFlightsDataToFlightsList(rawData);
     }
 
-    private void saveLoadingUnloadingIdles() {
-        List<LoadIdleDto> loadIdleDtos = flightRepository.groupCarLoadIdle();
-        List<UnloadIdleDto> unloadIdleDtos = flightRepository.groupCarUnloadIdle();
-        List<LoadingUnloadingIdle> data = flightMapper.mapToLoadingUnloadingList(loadIdleDtos, unloadIdleDtos);
-        loadingUnloadingIdleService.saveAll(data);
+    private List<Flight> getAllFlightsByLoaded(List<Flight> flights, String loaded) {
+        return flights
+                .stream()
+                .filter(flight -> flight.getLoaded().equalsIgnoreCase(loaded))
+                .collect(Collectors.toList());
     }
 
     private void prepareNextSave() {
@@ -71,7 +77,7 @@ public class FlightServiceImpl implements FlightService {
         loadingUnloadingIdleService.deleteAll();
     }
 
-    private List<Flight> calculateLoadAndUnloadTime(List<Flight> flights) {
+    private void calculateLoadAndUnloadTime(List<Flight> flights) {
         List<Flight> loadedSortedFlights = flights
                 .stream()
                 .filter(flight -> flight.getLoaded().equalsIgnoreCase("груж"))
@@ -89,15 +95,13 @@ public class FlightServiceImpl implements FlightService {
             calculateLoadIdleDays(prevFlight, currFlight);
             calculateUnloadIdleDays(prevFlight, currFlight, nextFlight);
         }
-
-        return loadedSortedFlights;
     }
 
     private void calculateLoadIdleDays(Flight prevFlight, Flight currFlight) {
         Timestamp sendDate = currFlight.getSendDate();
         Timestamp arriveToSourceStation = currFlight.getArriveToSourceStationDate();
 
-        if (isBorderCrossingFlights(prevFlight, currFlight) ) {
+        if (isBorderCrossingFlights(prevFlight, currFlight)) {
             currFlight.setCarLoadIdleDays(null);
             return;
         }
@@ -122,7 +126,7 @@ public class FlightServiceImpl implements FlightService {
             nextFlightStart = nextFlight.getNextFlightStartDate();
         }
 
-        if (isBorderCrossingFlights(prevFlight, currFlight) ) {
+        if (isBorderCrossingFlights(prevFlight, currFlight)) {
             currFlight.setCarUnloadIdleDays(null);
             return;
         }
@@ -158,25 +162,26 @@ public class FlightServiceImpl implements FlightService {
                 && second.getInvNumber() == null;
     }
 
-    private boolean isDualFlights(Flight first, Flight second){
+    private boolean isDualFlights(Flight first, Flight second) {
         return first != null && second != null && first.getDestStation().equalsIgnoreCase(second.getSourceStation());
     }
 
-    private void filterFlights(List<Flight> allFlights,
-                               Integer maxLoadIdle, Integer maxUnloadIdle, Integer minLoadIdle, Integer minUnloadIdle) {
-         List<String> discardedFlights = new ArrayList<>();
-         allFlights
+    private void filterFlights(List<Flight> allFlights, LoadDataRequestDto dto) {
+        List<String> discardedFlights = new ArrayList<>();
+        allFlights
                 .stream()
                 .filter(flight -> flight.getCarLoadIdleDays() != null &&
-                        (flight.getCarLoadIdleDays() <= minLoadIdle || flight.getCarLoadIdleDays() > maxLoadIdle))
-                 .forEach(flight -> {
-                     discardedFlights.add(flight.toString());
-                     flight.setCarLoadIdleDays(null);
-                 });
+                        (flight.getCarLoadIdleDays() <=  dto.getMinLoadIdleDays() ||
+                         flight.getCarLoadIdleDays() > dto.getMaxLoadIdleDays()))
+                .forEach(flight -> {
+                    discardedFlights.add(flight.toString());
+                    flight.setCarLoadIdleDays(null);
+                });
         allFlights
                 .stream()
                 .filter(flight -> flight.getCarUnloadIdleDays() != null &&
-                        (flight.getCarUnloadIdleDays() <= minUnloadIdle || flight.getCarUnloadIdleDays() > maxUnloadIdle))
+                        (flight.getCarUnloadIdleDays() <= dto.getMinUnloadIdleDays() ||
+                         flight.getCarUnloadIdleDays() > dto.getMaxUnloadIdleDays()))
                 .forEach(flight -> {
                     discardedFlights.add(flight.toString());
                     flight.setCarUnloadIdleDays(null);
@@ -185,24 +190,24 @@ public class FlightServiceImpl implements FlightService {
         FileUtils.writeDiscardedFlights(discardedFlights);
     }
 
-    public List<Flight> filterDuplicateFlights(List<Flight> flights){
+    public List<Flight> filterDuplicateFlights(List<Flight> flights) {
         List<Flight> sortedFlights = flights
                 .stream()
                 .sorted(this::compareBySendDateAndInvNumberAndCarNumber)
                 .collect(Collectors.toList());
 
-        for(int i=0; i<sortedFlights.size()-1; i++){
+        for (int i = 0; i < sortedFlights.size() - 1; i++) {
             Flight current = sortedFlights.get(i);
             Flight lastDuplicate = null;
-            while(i < sortedFlights.size()-1 && compareInvNumberAndCarNumber(current, sortedFlights.get(i+1))){
-                lastDuplicate = sortedFlights.get(i+1);
-                sortedFlights.remove(i+1);
+            while (i < sortedFlights.size() - 1 && compareInvNumberAndCarNumber(current, sortedFlights.get(i + 1))) {
+                lastDuplicate = sortedFlights.get(i + 1);
+                sortedFlights.remove(i + 1);
             }
 
-            if(lastDuplicate != null && lastDuplicate.getArriveToDestStationDate() != null){
+            if (lastDuplicate != null && lastDuplicate.getArriveToDestStationDate() != null) {
                 current.setArriveToDestStationDate(lastDuplicate.getArriveToDestStationDate());
             }
-            if(lastDuplicate != null && lastDuplicate.getNextFlightStartDate() != null){
+            if (lastDuplicate != null && lastDuplicate.getNextFlightStartDate() != null) {
                 current.setNextFlightStartDate(lastDuplicate.getNextFlightStartDate());
             }
         }
@@ -217,7 +222,7 @@ public class FlightServiceImpl implements FlightService {
         String invNumberAndCarNumber1 = o1.getInvNumber() + o1.getCarNumber();
         String invNumberAndCarNumber2 = o2.getInvNumber() + o2.getCarNumber();
 
-        if(o1.getSendDate().equals(o2.getSendDate())){
+        if (o1.getSendDate().equals(o2.getSendDate())) {
             return invNumberAndCarNumber1.compareTo(invNumberAndCarNumber2);
         }
         return o1.getSendDate().compareTo(o2.getSendDate());

@@ -1,8 +1,8 @@
 package com.uraltrans.logisticparamservice.mapper;
 
-import com.uraltrans.logisticparamservice.dto.LoadIdleDto;
+import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadingUnloadingIdle;
-import com.uraltrans.logisticparamservice.dto.UnloadIdleDto;
+import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +43,7 @@ public class FlightMapper {
                 .setArriveToSourceStationDate((Timestamp) flightData.get("DateIn"))
                 .setDepartureDate((Timestamp) flightData.get("DateOut"))
                 .setVolume((BigDecimal) flightData.get("Volume"))
+                .setDistance(mapToBigDecimal(flightData.get("Distance")))
                 .setLoaded((String) flightData.get("Loaded"))
                 .setDepartureFromDestStationDate((Timestamp) flightData.get("Отправление со ст. назн."))
                 .setUnloadOnDestStationDate((Timestamp) flightData.get("Выгрузка на ст. назн."))
@@ -50,49 +51,8 @@ public class FlightMapper {
                 .setNextFlightStartDate((Timestamp) flightData.get("Дата нач. след. Рейса (дата оформления вагона порожним)"));
     }
 
-    public List<LoadingUnloadingIdle> mapToLoadingUnloadingList(
-            List<LoadIdleDto> loadIdleDtos, List<UnloadIdleDto> unloadIdleDtos) {
-        List<LoadingUnloadingIdle> result = new ArrayList<>();
-        for (int i = 0; i < loadIdleDtos.size(); i++) {
-            LoadIdleDto load = loadIdleDtos.get(i);
-            for (int j = 0; j < unloadIdleDtos.size(); j++) {
-                UnloadIdleDto unload = unloadIdleDtos.get(j);
-                if (Objects.equals(load.getSourceStationCode(), unload.getDestStationCode())
-                        && Objects.equals(load.getVolume(), unload.getVolume())
-                        && Objects.equals(load.getCargoCode6(), unload.getCargoCode6())
-                        && Objects.equals(load.getCarType(), unload.getCarType())) {
-                    LoadingUnloadingIdle dto = mapToLoadingUnloading(load, unload);
-                    result.add(dto);
-
-                    loadIdleDtos.remove(i);
-                    unloadIdleDtos.remove(j);
-                    i--;
-                    j--;
-                }
-            }
-        }
-        loadIdleDtos.forEach(load -> result.add(mapToLoadingUnloading(load, null)));
-        unloadIdleDtos.forEach(unload -> result.add(mapToLoadingUnloading(null, unload)));
-
-        return result;
-    }
-
-    private LoadingUnloadingIdle mapToLoadingUnloading(LoadIdleDto load, UnloadIdleDto unload) {
-        if (load == null) {
-            return new LoadingUnloadingIdle(
-                    unload.getDestStation(), unload.getDestStationCode(),
-                    unload.getCargoCode6(), unload.getCarType(), unload.getVolume(),
-                    null, unload.getCarUnloadIdleDays());
-        } else if (unload == null) {
-            return new LoadingUnloadingIdle(
-                    load.getSourceStation(), load.getSourceStationCode(),
-                    load.getCargoCode6(), load.getCarType(), load.getVolume(),
-                    load.getCarLoadIdleDays(), null);
-        }
-
-        return new LoadingUnloadingIdle(
-                load.getSourceStation(), load.getSourceStationCode(),
-                load.getCargoCode6(), load.getCarType(), load.getVolume(),
-                load.getCarLoadIdleDays(), unload.getCarUnloadIdleDays());
+    private BigDecimal mapToBigDecimal(Object distance) {
+        Double dist = (Double) distance;
+        return dist != null ? BigDecimal.valueOf(dist) : null;
     }
 }

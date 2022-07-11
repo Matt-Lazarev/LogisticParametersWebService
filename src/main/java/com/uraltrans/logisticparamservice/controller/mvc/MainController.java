@@ -1,6 +1,6 @@
 package com.uraltrans.logisticparamservice.controller.mvc;
 
-import com.uraltrans.logisticparamservice.dto.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

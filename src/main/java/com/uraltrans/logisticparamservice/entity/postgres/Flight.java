@@ -69,6 +69,8 @@ public class Flight {
 
     private BigDecimal volume;
 
+    private BigDecimal distance;
+
     private String loaded;
 
     @Column(name = "departure_from_dest_station_date")

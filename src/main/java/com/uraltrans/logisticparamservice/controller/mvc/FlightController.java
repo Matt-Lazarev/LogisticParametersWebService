@@ -1,7 +1,7 @@
 package com.uraltrans.logisticparamservice.controller.mvc;
 
-import com.uraltrans.logisticparamservice.dto.LoadDataRequestDto;
-import com.uraltrans.logisticparamservice.service.abstr.FlightService;
+import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.service.abstr.FlightIdleService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/flights")
 @RequiredArgsConstructor
 public class FlightController {
-    private final FlightService flightService;
+    private final FlightIdleService flightIdleService;
 
     @PostMapping
     public String saveLoadedData(@ModelAttribute("dto") LoadDataRequestDto dto){
-        flightService.saveAllFlights(dto);
+        flightIdleService.saveAllFlights(dto);
         return "redirect:/home?message=success";
     }
 

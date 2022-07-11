@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.dto;
+package com.uraltrans.logisticparamservice.dto.logs;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

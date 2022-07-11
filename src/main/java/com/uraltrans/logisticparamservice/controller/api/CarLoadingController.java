@@ -1,7 +1,6 @@
 package com.uraltrans.logisticparamservice.controller.api;
 
-import com.uraltrans.logisticparamservice.dto.LoadingUnloadingDto;
-import com.uraltrans.logisticparamservice.entity.postgres.LoadingUnloadingIdle;
+import com.uraltrans.logisticparamservice.dto.idle.LoadingUnloadingDto;
 import com.uraltrans.logisticparamservice.service.abstr.LoadingUnloadingIdleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

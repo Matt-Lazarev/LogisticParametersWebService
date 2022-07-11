@@ -1,7 +1,7 @@
 package com.uraltrans.logisticparamservice.repository.postgres;
 
-import com.uraltrans.logisticparamservice.dto.LoadIdleDto;
-import com.uraltrans.logisticparamservice.dto.UnloadIdleDto;
+import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
+import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

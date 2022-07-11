@@ -29,8 +29,10 @@ public class RawFlightRepositoryImpl implements RawFlightRepository {
         try {
             Connection connection = sqlServerDataSource.getConnection();
             try(PreparedStatement preparedStatement = connection.prepareStatement("EXEC Dashboard.Flight_ ?, ?")){
-                preparedStatement.setString(1, from);
-                preparedStatement.setString(2, to);
+              //  preparedStatement.setString(1, from);
+              //  preparedStatement.setString(2, to);
+                  preparedStatement.setString(1, "2022-05-01");
+                  preparedStatement.setString(2, "2022-05-02");
                 try(ResultSet rs = preparedStatement.executeQuery()){
                     while (rs.next()) {
                         Map<String, Object> resMap = new LinkedHashMap<>();
