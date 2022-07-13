@@ -4,8 +4,10 @@ import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
@@ -24,5 +26,8 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             "group by f.volume, f.cargoCode6, f.destStation, f.destStationCode, f.carType")
     List<UnloadIdleDto> groupCarUnloadIdle();
 
-
+    @Modifying
+    @Transactional
+    @Query(value = "truncate table flights restart identity", nativeQuery = true)
+    void truncate();
 }

@@ -22,9 +22,16 @@
     .table-container {
         margin-bottom: 15px;
     }
+
+    hr {
+        height: 2px;
+        border-width: 0;
+        color: gray;
+        background-color: gray;
+    }
 </style>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav id="nav_bar" class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <div class="navbar-brand">Система сегментации перевозок</div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -56,21 +63,27 @@
 
 
 <h3>Базовые настройки</h3>
-<form th:action="@{/flights}" method="post" th:object="${dto}">
-    <div class="container border border-3 border-secondary rounded">
+
+<div class="container border border-3 border-secondary rounded">
+    <form id="params_form" th:action="@{/flights/save_data}" method="post" th:object="${dto}">
         <div class="row">
             <div class="col-md-6 mb-1 mt-3">
                 <label> Введите глубину поиска: </label>
                 <input type="text" class="form-control" th:field="*{daysToRetrieveData}">
             </div>
+            <div class="col-md-6 mb-1 mt-3">
+                <label> Введите время следующей выгрузки: </label>
+                <input type="text" class="form-control"
+                       th:field="*{nextDataLoadTime}" placeholder="Время в формате HH:mm:ss (15:00:00)">
+            </div>
         </div>
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
 
         <div class="row">
             <div class="col align-self-center">
                 <label> Введите максимальное количество дней простоя при погрузке: </label>
                 <input type="text" class="form-control" th:field="*{maxLoadIdleDays}">
             </div>
-
             <div class="col align-self-center">
                 <label> Введите максимальное количество дней простоя при выгрузке: </label>
                 <input type="text" class="form-control" th:field="*{maxUnloadIdleDays}">
@@ -88,55 +101,85 @@
                 <input type="text" class="form-control" th:field="*{minUnloadIdleDays}">
             </div>
         </div>
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
 
-        <div class="box-footer mb-1 mt-3">
-            <button type="submit" class="btn btn-primary">Загрузить данные</button>
-        </div>
-    </div>
-    </div>
-</form>
-
-
-<h3>Управление</h3>
-<div class="container border border-3 border-secondary rounded">
-    <form th:action="@{/api/flights/raw}" method="get">
         <div class="row">
-
-            <div class="box-footer mb-1 mt-3">
-                <label style="text-align: center"> Просмотреть извлеченные сырые данные </label>
-                <br>
-                <button type="submit" class="btn btn-primary">Показать</button>
+            <div class="col align-self-center">
+                <label> Введите максимальное время перевозки: </label>
+                <input type="text" class="form-control" th:field="*{maxTravelTime}">
+            </div>
+            <div class="col align-self-center">
+                <label> Введите минимальное время перевозки: </label>
+                <input type="text" class="form-control" th:field="*{minTravelTime}">
             </div>
         </div>
-    </form>
-    <form th:action="@{/result/load_days}" method="get">
+
         <div class="row">
-            <div class="box-footer mb-1 mt-3">
-                <label style="text-align: center"> Просмотреть данные о погрузках и выгрузках</label>
-                <br>
-                <button type="submit" class="btn btn-primary">Показать</button>
+            <div class="col box-footer mb-1 mt-3">
+                <button id="load_button" onclick="alerts()"
+                        type="submit" class="btn btn-primary" name="action" value="save">Загрузить данные </button>
             </div>
-        </div>
-    </form>
-    <form th:action="@{/flights/discarded}" method="get">
-        <div class="row">
-            <div class="box-footer mb-1 mt-3">
-                <label style="text-align: center"> Просмотреть отброшенные рейсы</label>
-                <br>
-                <button type="submit" class="btn btn-primary">Показать</button>
+            <div class="col box-footer mb-1 mt-3">
+                <button type="submit" class="btn btn-primary" name="action" value="update"> Обновить параметры </button>
             </div>
         </div>
     </form>
 </div>
+
+
+<h3>Управление</h3>
+<div class="container border border-3 border-secondary rounded">
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/api/flights/raw}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть извлеченные сырые данные </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm">
+            <form th:action="@{/result/load_days}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть данные о простоях</label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/result/flight_days}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть данные о времени и дистанции перевозки </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm">
+            <form th:action="@{/flights/discarded}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть отброшенные рейсы</label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 
 <h3>История работы с рейсами</h3>
 <div class="container border border-3 border-secondary rounded table-container">
     <table class="table table-striped">
-        <col style="width:40%">
-        <col style="width:30%">
-        <col style="width:30%">
+        <col style="width:60%">
+        <col style="width:20%">
+        <col style="width:20%">
         <thead>
         <tr>
             <th scope="col">Действие</th>
@@ -154,4 +197,20 @@
     </table>
 </div>
 </body>
+
+<script type=text/javascript>
+    function alerts() {
+        let elements = document.getElementsByClassName("error_block");
+        while (elements.length > 0) {
+            elements[0].parentNode.removeChild(elements[0]);
+        }
+
+        let div = document.createElement("div");
+        div.textContent = "Загрузка данных началась. Дождитесь завершения";
+        div.classList.add("alert", "alert-primary", "loading_block");
+
+        let element = document.getElementById('nav_bar');
+        element.after(div);
+    }
+</script>
 </html>

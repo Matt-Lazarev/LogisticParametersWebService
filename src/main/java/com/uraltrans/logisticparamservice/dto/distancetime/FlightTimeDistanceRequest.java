@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.dto.time;
+package com.uraltrans.logisticparamservice.dto.distancetime;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

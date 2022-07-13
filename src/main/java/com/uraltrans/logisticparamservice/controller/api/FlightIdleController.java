@@ -1,7 +1,7 @@
 package com.uraltrans.logisticparamservice.controller.api;
 
-import com.uraltrans.logisticparamservice.dto.idle.LoadingUnloadingDto;
-import com.uraltrans.logisticparamservice.service.abstr.LoadingUnloadingIdleService;
+import com.uraltrans.logisticparamservice.dto.idle.FlightIdleDto;
+import com.uraltrans.logisticparamservice.service.abstr.FlightIdleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +13,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/result/load_days")
 @RequiredArgsConstructor
-public class CarLoadingController {
+public class FlightIdleController {
 
-    private final LoadingUnloadingIdleService loadingUnloadingIdleService;
+    private final FlightIdleService flightIdleService;
 
     @GetMapping
-    public List<LoadingUnloadingDto> getAllCarLoadUnloadIdles(){
-        return loadingUnloadingIdleService.getAllLoadingUnloadingIdles();
+    public List<FlightIdleDto> getAllCarLoadUnloadIdles(){
+        return flightIdleService.getAllLoadingUnloadingIdles();
     }
 }

@@ -1,9 +1,9 @@
 package com.uraltrans.logisticparamservice.mapper;
 
 import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
-import com.uraltrans.logisticparamservice.dto.idle.LoadingUnloadingDto;
+import com.uraltrans.logisticparamservice.dto.idle.FlightIdleDto;
 import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
-import com.uraltrans.logisticparamservice.entity.postgres.LoadingUnloadingIdle;
+import com.uraltrans.logisticparamservice.entity.postgres.FlightIdle;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-public class LoadingUnloadingIdleMapper {
+public class FlightIdleMapper {
 
-    public List<LoadingUnloadingDto> mapToListDto(List<LoadingUnloadingIdle> idles){
-        List<LoadingUnloadingDto> dtos = idles
+    public List<FlightIdleDto> mapToListDto(List<FlightIdle> idles){
+        List<FlightIdleDto> dtos = idles
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -28,8 +28,8 @@ public class LoadingUnloadingIdleMapper {
         return dtos;
     }
 
-    private LoadingUnloadingDto mapToDto(LoadingUnloadingIdle idle) {
-        LoadingUnloadingDto dto = new LoadingUnloadingDto();
+    private FlightIdleDto mapToDto(FlightIdle idle) {
+        FlightIdleDto dto = new FlightIdleDto();
         dto.setDepartureStation(idle.getDepartureStation());
         dto.setCargo(idle.getCargo());
         dto.setWagonType(idle.getWagonType());
@@ -39,9 +39,9 @@ public class LoadingUnloadingIdleMapper {
         return dto;
     }
 
-    public List<LoadingUnloadingIdle> mapToLoadingUnloadingList(
+    public List<FlightIdle> mapToLoadingUnloadingList(
             List<LoadIdleDto> loadIdleDtos, List<UnloadIdleDto> unloadIdleDtos) {
-        List<LoadingUnloadingIdle> result = new ArrayList<>();
+        List<FlightIdle> result = new ArrayList<>();
         for (int i = 0; i < loadIdleDtos.size(); i++) {
             LoadIdleDto load = loadIdleDtos.get(i);
             for (int j = 0; j < unloadIdleDtos.size(); j++) {
@@ -50,7 +50,7 @@ public class LoadingUnloadingIdleMapper {
                         && Objects.equals(load.getVolume(), unload.getVolume())
                         && Objects.equals(load.getCargoCode6(), unload.getCargoCode6())
                         && Objects.equals(load.getCarType(), unload.getCarType())) {
-                    LoadingUnloadingIdle dto = mapToLoadingUnloading(load, unload);
+                    FlightIdle dto = mapToLoadingUnloading(load, unload);
                     result.add(dto);
 
                     loadIdleDtos.remove(i);
@@ -66,20 +66,20 @@ public class LoadingUnloadingIdleMapper {
         return result;
     }
 
-    private LoadingUnloadingIdle mapToLoadingUnloading(LoadIdleDto load, UnloadIdleDto unload) {
+    private FlightIdle mapToLoadingUnloading(LoadIdleDto load, UnloadIdleDto unload) {
         if (load == null) {
-            return new LoadingUnloadingIdle(
+            return new FlightIdle(
                     unload.getDestStation(), unload.getDestStationCode(),
                     unload.getCargoCode6(), unload.getCarType(), unload.getVolume(),
                     null, unload.getCarUnloadIdleDays());
         } else if (unload == null) {
-            return new LoadingUnloadingIdle(
+            return new FlightIdle(
                     load.getSourceStation(), load.getSourceStationCode(),
                     load.getCargoCode6(), load.getCarType(), load.getVolume(),
                     load.getCarLoadIdleDays(), null);
         }
 
-        return new LoadingUnloadingIdle(
+        return new FlightIdle(
                 load.getSourceStation(), load.getSourceStationCode(),
                 load.getCargoCode6(), load.getCarType(), load.getVolume(),
                 load.getCarLoadIdleDays(), unload.getCarUnloadIdleDays());

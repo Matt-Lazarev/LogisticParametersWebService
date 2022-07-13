@@ -1,17 +1,12 @@
 package com.uraltrans.logisticparamservice.mapper;
 
-import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
-import com.uraltrans.logisticparamservice.entity.postgres.LoadingUnloadingIdle;
-import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +36,7 @@ public class FlightMapper {
                 .setCarType((String) flightData.get("CarType"))
                 .setArriveToDestStationDate((Timestamp) flightData.get("DateInDate"))
                 .setArriveToSourceStationDate((Timestamp) flightData.get("DateIn"))
-                .setDepartureDate((Timestamp) flightData.get("DateOut"))
+                .setDepartureFromSourceStationDateDate((Timestamp) flightData.get("DateOut"))
                 .setVolume((BigDecimal) flightData.get("Volume"))
                 .setDistance(mapToBigDecimal(flightData.get("Distance")))
                 .setLoaded((String) flightData.get("Loaded"))

@@ -9,12 +9,12 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "car_load_unload_idle")
+@Table(name = "flight_idles")
 @Getter
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
-public class LoadingUnloadingIdle {
+public class FlightIdle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,9 +34,9 @@ public class LoadingUnloadingIdle {
 
     private Integer unloading;
 
-    public LoadingUnloadingIdle(String departureStation, String code, String cargo,
-                                String wagonType, BigDecimal volume,
-                                Integer loading, Integer unloading) {
+    public FlightIdle(String departureStation, String code, String cargo,
+                      String wagonType, BigDecimal volume,
+                      Integer loading, Integer unloading) {
         this.departureStation = departureStation + " (" + code + ")";
         this.cargo = cargo;
         this.wagonType = wagonType;

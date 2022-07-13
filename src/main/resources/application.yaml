@@ -1,14 +1,14 @@
 spring:
   datasource:
     ms-sql-server:
-      jdbc-url: jdbc:sqlserver://dbsrv:1433;database=ITR;trustServerCertificate=true
-      username: Obmen
-      password: 321654987
+      jdbc-url: jdbc:sqlserver://dbsrv:1433;database= ;trustServerCertificate=true
+      username:
+      password:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     postgres:
-      jdbc-url: jdbc:postgresql://localhost:5432/flight_db
-      username: postgres
-      password: root
+      jdbc-url: jdbc:postgresql://10.168.1.6:5432/flight_db
+      username:
+      password:
       driverClassname: org.postgresql.Driver
   jpa:
     hibernate:
@@ -20,4 +20,12 @@ spring:
   profiles:
     active: "dev"
 
-
+params:
+  daysToRetrieveData: 90
+  nextDataLoadTime: '05:00:00'
+  maxLoadIdleDays: 50
+  maxUnloadIdleDays: 50
+  minLoadIdleDays: 0
+  minUnloadIdleDays: 0
+  maxTravelTime: 50
+  minTravelTime: 5

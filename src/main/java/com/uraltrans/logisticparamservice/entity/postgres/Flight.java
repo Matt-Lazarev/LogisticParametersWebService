@@ -64,12 +64,14 @@ public class Flight {
     @Column(name = "arrive_to_source_station_date")
     private Timestamp arriveToSourceStationDate;
 
-    @Column(name = "departure_date")
-    private Timestamp departureDate;
+    @Column(name = "departure_from_source_station_date")
+    private Timestamp departureFromSourceStationDateDate;
 
     private BigDecimal volume;
 
     private BigDecimal distance;
+
+    private BigDecimal travelTime;
 
     private String loaded;
 
@@ -102,6 +104,8 @@ public class Flight {
                 ", destStation='" + destStation + '\'' +
                 ", carLoadIdleDays=" + carLoadIdleDays +
                 ", carUnloadIdleDays=" + carUnloadIdleDays +
+                ", distance =" + (distance != null ? String.format("%.2f", distance.doubleValue()) : null) +
+                ", travelTime =" + (travelTime != null ? String.format("%.2f", travelTime.doubleValue()) : null) +
                 '}';
     }
 }

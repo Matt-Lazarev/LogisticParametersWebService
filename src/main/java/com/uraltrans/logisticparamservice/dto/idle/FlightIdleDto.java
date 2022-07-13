@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoadingUnloadingDto {
+public class FlightIdleDto {
     private String id;
     private String departureStation;
     private String cargo;
