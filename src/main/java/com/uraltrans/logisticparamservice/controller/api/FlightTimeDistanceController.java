@@ -5,6 +5,7 @@ import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceRes
 import com.uraltrans.logisticparamservice.entity.postgres.FlightTimeDistance;
 import com.uraltrans.logisticparamservice.service.abstr.FlightTimeDistanceService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class FlightTimeDistanceController {
     private final FlightTimeDistanceService flightTimeDistanceService;
 
-    @PostMapping("/result/flight_days")
+    @PostMapping(value = "/result/flight_days", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FlightTimeDistanceResponse> getAllTimeDistancesByRequests(@RequestBody List<FlightTimeDistanceRequest> requests){
         return flightTimeDistanceService.getTimeDistanceResponses(requests);
     }

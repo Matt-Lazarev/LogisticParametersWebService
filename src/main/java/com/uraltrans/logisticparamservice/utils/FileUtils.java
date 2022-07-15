@@ -22,6 +22,20 @@ public class FileUtils {
 
     private static final Path DEFAULT_DISCARDED_FLIGHTS_FILE_PATH = Paths.get("logging/discarded_flights.log");
 
+    static{
+        try{
+            if(!Files.exists(DEFAULT_LOG_FILE_PATH)){
+                Files.createFile(DEFAULT_LOG_FILE_PATH);
+            }
+            if(!Files.exists(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH)){
+                Files.createFile(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH);
+            }
+        }
+        catch (IOException ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
     public static void writeActionLog(String message) {
         try {
             synchronized (FileUtils.class) {

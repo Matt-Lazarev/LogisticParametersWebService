@@ -23,6 +23,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,8 +43,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
     @Transactional(readOnly = true)
     public List<FlightTimeDistanceResponse> getTimeDistanceResponses(List<FlightTimeDistanceRequest> requests) {
         List<FlightTimeDistanceResponse> responses = new ArrayList<>();
-        requests
-                .forEach(req -> {
+        requests.forEach(req -> {
                     FlightTimeDistance timeDistance = flightTimeDistanceRepository.findByStationCodesAndFlightType(
                             req.getDepartureStation(), req.getDestinationStation(), req.getFlightType());
                     FlightTimeDistanceResponse resp = new FlightTimeDistanceResponse();
@@ -98,6 +98,8 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
         List<Flight> allFlights =  flights
                 .stream()
                 .filter(f -> f.getTravelTime() != null)
+                .filter(f -> f.getSourceStationCode() != null && f.getDestStationCode() != null)
+                .filter(f -> !Objects.equals(f.getSourceStationCode(), f.getDestStationCode()))
                 .filter(f -> f.getTravelTime().doubleValue() >= dto.getMinTravelTime())
                 .filter(f -> f.getTravelTime().doubleValue() <= dto.getMaxTravelTime())
                 .collect(Collectors.toList());

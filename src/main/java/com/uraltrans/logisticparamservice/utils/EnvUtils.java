@@ -14,17 +14,17 @@ import java.util.Objects;
 
 public class EnvUtils {
     public static LoadDataRequestDto getRequestParams(Environment env) {
-        Integer daysToRetrieveData = Integer.parseInt(Objects.requireNonNull(env.getProperty("params.daysToRetrieveData")));
-        String getNextDataLoadTime = Objects.requireNonNull(env.getProperty("params.nextDataLoadTime"));
-        Integer maxLoadIdleDays = Integer.parseInt(Objects.requireNonNull(env.getProperty("params.maxLoadIdleDays")));
-        Integer maxUnloadIdleDays = Integer.parseInt(Objects.requireNonNull(env.getProperty("params.maxUnloadIdleDays")));
-        Integer minLoadIdleDays = Integer.parseInt(Objects.requireNonNull(env.getProperty("params.minLoadIdleDays")));
-        Integer minUnloadIdleDays = Integer.parseInt(Objects.requireNonNull(env.getProperty("params.minUnloadIdleDays")));
-        Double maxTravelTime = Double.parseDouble(Objects.requireNonNull(env.getProperty("params.maxTravelTime")));
-        Double minTravelTime = Double.parseDouble(Objects.requireNonNull(env.getProperty("params.minTravelTime")));
+        Integer daysToRetrieveData = env.getProperty("params.daysToRetrieveData", Integer.class);
+        String getNextDataLoadTime = env.getProperty("params.nextDataLoadTime");
+        Integer maxLoadIdleDays = env.getProperty("params.maxLoadIdleDays", Integer.class);
+        Integer maxUnloadIdleDays = env.getProperty("params.maxUnloadIdleDays", Integer.class);
+        Integer minLoadIdleDays = env.getProperty("params.minLoadIdleDays", Integer.class);
+        Integer minUnloadIdleDays = env.getProperty("params.minUnloadIdleDays", Integer.class);
+        Double maxTravelTime = env.getProperty("params.maxTravelTime", Double.class);
+        Double minTravelTime = env.getProperty("params.minTravelTime", Double.class);
 
         return new LoadDataRequestDto(daysToRetrieveData, getNextDataLoadTime, maxLoadIdleDays, maxUnloadIdleDays,
-                minLoadIdleDays, minUnloadIdleDays, maxTravelTime, minTravelTime); //FIXME accessors chain
+                minLoadIdleDays, minUnloadIdleDays, maxTravelTime, minTravelTime);
     }
 
     public static void updateEnvironment(ConfigurableEnvironment env, LoadDataRequestDto dto) {
@@ -38,7 +38,7 @@ public class EnvUtils {
         map.put("params.minLoadIdleDays", dto.getMinLoadIdleDays());
         map.put("params.minUnloadIdleDays",dto.getMinLoadIdleDays());
         map.put("params.maxTravelTime", dto.getMaxTravelTime());
-        map.put("params.minTravelTime", dto.getMaxTravelTime());
+        map.put("params.minTravelTime", dto.getMinTravelTime());
 
         propertySources.addFirst(new MapPropertySource("newmap", map));
     }

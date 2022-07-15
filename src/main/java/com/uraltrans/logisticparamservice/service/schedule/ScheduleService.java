@@ -43,8 +43,6 @@ public class ScheduleService {
         else {
             nextExecution = LocalDateTime.of(LocalDate.now().plusDays(1), nextExecutionTime);
         }
-
-        System.err.println("next execution: " + nextExecution);
         return java.sql.Timestamp.valueOf(nextExecution);
     }
 }

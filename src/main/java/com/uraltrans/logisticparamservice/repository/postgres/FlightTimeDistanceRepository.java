@@ -11,7 +11,7 @@ public interface FlightTimeDistanceRepository extends JpaRepository<FlightTimeDi
 
     @Query("select f from FlightTimeDistance f " +
            "where f.departureStationCode = :departureStation " +
-           "and f.destinationStationCode = :destinationStationCode " +
+           "and f.destinationStationCode = :destinationStation " +
            "and f.flightType = :flightType")
     FlightTimeDistance findByStationCodesAndFlightType(String departureStation, String destinationStation, String flightType);
 

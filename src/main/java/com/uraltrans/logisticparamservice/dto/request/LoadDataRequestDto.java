@@ -1,11 +1,13 @@
 package com.uraltrans.logisticparamservice.dto.request;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
 @ToString
 public class LoadDataRequestDto {
     private Integer daysToRetrieveData;
