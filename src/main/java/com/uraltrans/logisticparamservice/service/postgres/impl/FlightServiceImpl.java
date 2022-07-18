@@ -57,9 +57,7 @@ public class FlightServiceImpl implements FlightService {
     }
 
     private List<Flight> getAllFlights(LoadDataRequestDto dto) {
-        LocalDate to = LocalDate.now();
-        LocalDate from = to.minusDays(dto.getDaysToRetrieveData());
-        List<Map<String, Object>> rawData = rawFlightService.getAllFlightsBetween(from, to);
+        List<Map<String, Object>> rawData = rawFlightService.getAllFlightsBetween(dto.getDaysToRetrieveData());
         return flightMapper.mapRawFlightsDataToFlightsList(rawData);
     }
 

@@ -26,18 +26,22 @@ public class RawFlightRepositoryImpl implements RawFlightRepository {
     }
 
     @Override
-    public List<Map<String, Object>> getAllFlightsBetween(String from, String to) {
+    public List<Map<String, Object>> getAllFlightsBetween(String[][] fromToDatePairs) {
+        List<Map<String, Object>> result = new ArrayList<>();
         try {
             Connection connection = itrDataSource.getConnection();
-            try(PreparedStatement preparedStatement = connection.prepareStatement("EXEC Dashboard.Flight_ ?, ?")){
-                preparedStatement.setString(1, from);
-                preparedStatement.setString(2, to);
-                try(ResultSet rs = preparedStatement.executeQuery()){
-                    return ResultSetUtils.getAllData(rs);
+            for(String[] fromTo : fromToDatePairs){
+                try(PreparedStatement preparedStatement = connection.prepareStatement("EXEC Dashboard.Flight_ ?, ?")){
+                    preparedStatement.setString(1, fromTo[0]);
+                    preparedStatement.setString(2, fromTo[1]);
+                    try(ResultSet rs = preparedStatement.executeQuery()){
+                        result.addAll(ResultSetUtils.getAllData(rs));
+                    }
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return result;
     }
 }
