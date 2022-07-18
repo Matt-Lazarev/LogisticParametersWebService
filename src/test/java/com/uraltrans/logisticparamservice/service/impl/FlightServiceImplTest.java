@@ -2,9 +2,10 @@ package com.uraltrans.logisticparamservice.service.impl;
 
 import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
-import com.uraltrans.logisticparamservice.mapper.FlightMapper;
+import com.uraltrans.logisticparamservice.service.mapper.FlightMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
-import com.uraltrans.logisticparamservice.service.abstr.RawFlightService;
+import com.uraltrans.logisticparamservice.service.itr.RawFlightService;
+import com.uraltrans.logisticparamservice.service.postgres.impl.FlightServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

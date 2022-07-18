@@ -1,9 +1,9 @@
 package com.uraltrans.logisticparamservice.service.schedule;
 
 import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
-import com.uraltrans.logisticparamservice.service.abstr.FlightIdleService;
-import com.uraltrans.logisticparamservice.service.abstr.FlightService;
-import com.uraltrans.logisticparamservice.service.abstr.FlightTimeDistanceService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
 import com.uraltrans.logisticparamservice.utils.EnvUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
@@ -12,12 +12,11 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-public class ScheduleService {
+public class ScheduleFlightsService {
     private final FlightService flightService;
     private final FlightIdleService flightIdleService;
     private final FlightTimeDistanceService flightTimeDistanceService;

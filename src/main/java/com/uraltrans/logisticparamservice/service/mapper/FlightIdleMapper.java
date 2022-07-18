@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.mapper;
+package com.uraltrans.logisticparamservice.service.mapper;
 
 import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
 import com.uraltrans.logisticparamservice.dto.idle.FlightIdleDto;

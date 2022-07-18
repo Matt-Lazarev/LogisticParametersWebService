@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.service.abstr;
+package com.uraltrans.logisticparamservice.service.postgres.abstr;
 
 import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
 import com.uraltrans.logisticparamservice.dto.idle.FlightIdleDto;

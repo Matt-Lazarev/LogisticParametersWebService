@@ -1,9 +1,9 @@
 package com.uraltrans.logisticparamservice.controller.mvc;
 
 import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
-import com.uraltrans.logisticparamservice.service.abstr.FlightIdleService;
-import com.uraltrans.logisticparamservice.service.abstr.FlightService;
-import com.uraltrans.logisticparamservice.service.abstr.FlightTimeDistanceService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

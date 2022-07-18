@@ -1,7 +1,7 @@
 package com.uraltrans.logisticparamservice.controller.api;
 
 import com.uraltrans.logisticparamservice.dto.idle.FlightIdleDto;
-import com.uraltrans.logisticparamservice.service.abstr.FlightIdleService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

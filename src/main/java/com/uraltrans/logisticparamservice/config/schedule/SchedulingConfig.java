@@ -1,10 +1,9 @@
-package com.uraltrans.logisticparamservice.config;
+package com.uraltrans.logisticparamservice.config.schedule;
 
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
@@ -20,8 +19,7 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class SchedulingConfig implements SchedulingConfigurer {
 
-    private final Environment env;
-    private final ScheduleService scheduleService;
+    private final ScheduleFlightsService scheduleFlightsService;
 
     @Bean(destroyMethod = "shutdown")
     public Executor taskExecutor() {
@@ -32,10 +30,10 @@ public class SchedulingConfig implements SchedulingConfigurer {
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         taskRegistrar.setScheduler(taskExecutor());
         taskRegistrar.addTriggerTask(
-                scheduleService::saveDataWithDelay,
+                scheduleFlightsService::saveDataWithDelay,
                 triggerContext -> {
                     Calendar nextExecutionTime = new GregorianCalendar();
-                    Date nextExecution = scheduleService.getNextExecution();
+                    Date nextExecution = scheduleFlightsService.getNextExecution();
                     nextExecutionTime.setTime(nextExecution);
                     return nextExecutionTime.getTime();
                 }

@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.config;
+package com.uraltrans.logisticparamservice.config.datasource;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,36 +21,33 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = { "com.uraltrans.logisticparamservice.repository.sqlserver" }
+        basePackages = {"com.uraltrans.logisticparamservice.repository.itr"}
 )
-public class SqlServerDataSourceConfig {
+public class ItrDataSourceConfig {
 
-    @Primary
-    @Bean(name = "sqlServerDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.ms-sql-server")
+    @Bean(name = "itrDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.itr")
     public DataSource dataSource() {
         return DataSourceBuilder
                 .create()
                 .build();
     }
 
-    @Primary
-    @Bean(name = "sqlServerEntityManagerFactory")
+    @Bean(name = "itrEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("sqlServerDataSource") DataSource dataSource) {
+            EntityManagerFactoryBuilder builder, @Qualifier("itrDataSource") DataSource dataSource) {
         Map<String, String> properties = new HashMap<>();
         properties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
         return builder
                 .dataSource(dataSource)
-                .packages("com.uraltrans.logisticparamservice.entity.sqlserver")
+                .packages("com.uraltrans.logisticparamservice.entity.itr")
                 .properties(properties)
                 .build();
     }
 
-    @Primary
-    @Bean(name = "sqlServerTransactionManager")
+    @Bean(name = "itrTransactionManager")
     public PlatformTransactionManager transactionManager(
-            @Qualifier("sqlServerEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+            @Qualifier("itrEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 }

@@ -1,7 +1,7 @@
-package com.uraltrans.logisticparamservice.service.impl;
+package com.uraltrans.logisticparamservice.service.itr;
 
-import com.uraltrans.logisticparamservice.repository.sqlserver.RawFlightRepository;
-import com.uraltrans.logisticparamservice.service.abstr.RawFlightService;
+import com.uraltrans.logisticparamservice.repository.itr.RawFlightRepository;
+import com.uraltrans.logisticparamservice.service.itr.RawFlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

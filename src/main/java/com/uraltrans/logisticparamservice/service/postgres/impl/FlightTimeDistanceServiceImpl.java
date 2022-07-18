@@ -1,14 +1,14 @@
-package com.uraltrans.logisticparamservice.service.impl;
+package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceRequest;
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceResponse;
 import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightTimeDistance;
-import com.uraltrans.logisticparamservice.mapper.FlightTimeDistanceMapper;
+import com.uraltrans.logisticparamservice.service.mapper.FlightTimeDistanceMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightTimeDistanceRepository;
-import com.uraltrans.logisticparamservice.service.abstr.FlightTimeDistanceService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

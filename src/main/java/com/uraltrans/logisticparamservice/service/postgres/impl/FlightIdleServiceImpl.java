@@ -1,13 +1,13 @@
-package com.uraltrans.logisticparamservice.service.impl;
+package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.idle.FlightIdleDto;
 import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightIdle;
-import com.uraltrans.logisticparamservice.mapper.FlightIdleMapper;
+import com.uraltrans.logisticparamservice.service.mapper.FlightIdleMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightIdleRepository;
-import com.uraltrans.logisticparamservice.service.abstr.FlightIdleService;
-import com.uraltrans.logisticparamservice.service.abstr.FlightService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

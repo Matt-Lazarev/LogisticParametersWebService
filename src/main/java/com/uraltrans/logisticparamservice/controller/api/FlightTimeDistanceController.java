@@ -3,7 +3,7 @@ package com.uraltrans.logisticparamservice.controller.api;
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceRequest;
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightTimeDistance;
-import com.uraltrans.logisticparamservice.service.abstr.FlightTimeDistanceService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

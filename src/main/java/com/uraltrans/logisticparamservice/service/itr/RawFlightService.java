@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.service.abstr;
+package com.uraltrans.logisticparamservice.service.itr;
 
 import java.time.LocalDate;
 import java.util.List;

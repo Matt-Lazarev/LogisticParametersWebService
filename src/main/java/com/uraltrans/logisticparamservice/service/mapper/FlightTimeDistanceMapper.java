@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.mapper;
+package com.uraltrans.logisticparamservice.service.mapper;
 
 import com.uraltrans.logisticparamservice.entity.postgres.FlightTimeDistance;
 import org.springframework.stereotype.Service;

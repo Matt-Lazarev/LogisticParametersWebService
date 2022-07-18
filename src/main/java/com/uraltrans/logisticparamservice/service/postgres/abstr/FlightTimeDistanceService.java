@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.service.abstr;
+package com.uraltrans.logisticparamservice.service.postgres.abstr;
 
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceRequest;
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceResponse;

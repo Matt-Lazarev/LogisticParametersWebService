@@ -18,42 +18,42 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class FlightControllerLogging {
 
-    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.impl.FlightServiceImpl.saveAllFlights(..))")
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightServiceImpl.saveAllFlights(..))")
     public void successfulInvokeSaveLoadedDataMethod(JoinPoint joinPoint) {
         String message = getSaveDataLogMessage(joinPoint, true);
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.impl.FlightServiceImpl.saveAllFlights(..))")
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightServiceImpl.saveAllFlights(..))")
     public void failureInvokeSaveLoadedDataMethod(JoinPoint joinPoint) {
         String message = getSaveDataLogMessage(joinPoint, false);
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.impl.FlightIdleServiceImpl.saveAll(..))")
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightIdleServiceImpl.saveAll(..))")
     public void successfulInvokeSaveFlightsIdleMethod(JoinPoint joinPoint) {
         String message = getSaveIdleFlightsMessage(joinPoint, true);
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.impl.FlightIdleServiceImpl.saveAll(..))")
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightIdleServiceImpl.saveAll(..))")
     public void failureInvokeSaveFlightsIdleMethod(JoinPoint joinPoint) {
         String message = getSaveIdleFlightsMessage(joinPoint, false);
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.impl.FlightTimeDistanceServiceImpl.saveAll(..))")
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightTimeDistanceServiceImpl.saveAll(..))")
     public void successfulInvokeSaveFlightsTimeDistanceMethod(JoinPoint joinPoint) {
         String message = getSaveTimeDistanceFlightsMessage(joinPoint, true);
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.impl.FlightTimeDistanceServiceImpl.saveAll(..))")
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightTimeDistanceServiceImpl.saveAll(..))")
     public void failureInvokeSaveFlightsTimeDistanceMethod(JoinPoint joinPoint) {
         String message = getSaveTimeDistanceFlightsMessage(joinPoint, false);
         log.info("{}", message);

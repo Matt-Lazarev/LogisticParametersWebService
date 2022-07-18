@@ -1,6 +1,5 @@
-package com.uraltrans.logisticparamservice.config;
+package com.uraltrans.logisticparamservice.config.datasource;
 
-import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -22,33 +21,36 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = { "com.uraltrans.logisticparamservice.repository.postgres" }
+        basePackages = {"com.uraltrans.logisticparamservice.repository.utcsrs"}
 )
-public class PostgresDataSourceConfig {
+public class UtcsrsDataSourceConfig {
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.postgres")
-    public DataSource postgresDataSource() {
-        return DataSourceBuilder.create().build();
-    }
-
-    @Bean(name = "entityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("postgresDataSource") DataSource dataSource) {
-
-        Map<String, String> properties = new HashMap<>();
-        properties.put(Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect");
-        properties.put(Environment.HBM2DDL_AUTO, "update");
-        return builder
-                .dataSource(dataSource)
-                .properties(properties)
-                .packages("com.uraltrans.logisticparamservice.entity.postgres")
+    @Primary
+    @Bean(name = "utcsrsDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.utcsrs")
+    public DataSource dataSource() {
+        return DataSourceBuilder
+                .create()
                 .build();
     }
 
-    @Bean(name = "transactionManager")
+    @Primary
+    @Bean(name = "utcsrsEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+            EntityManagerFactoryBuilder builder, @Qualifier("utcsrsDataSource") DataSource dataSource) {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
+        return builder
+                .dataSource(dataSource)
+                .packages("com.uraltrans.logisticparamservice.entity.utcsrs")
+                .properties(properties)
+                .build();
+    }
+
+    @Primary
+    @Bean(name = "utcsrsTransactionManager")
     public PlatformTransactionManager transactionManager(
-            @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
+            @Qualifier("utcsrsEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 }
