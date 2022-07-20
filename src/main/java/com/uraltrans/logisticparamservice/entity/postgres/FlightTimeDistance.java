@@ -22,8 +22,8 @@ public class FlightTimeDistance {
     @Column(name = "destination_station_code")
     private String destinationStationCode;
 
-    @Column(name = "flight_type")
-    private String flightType;
+    @Column(name = "type_flight")
+    private String typeFlight;
 
     private String distance;
 

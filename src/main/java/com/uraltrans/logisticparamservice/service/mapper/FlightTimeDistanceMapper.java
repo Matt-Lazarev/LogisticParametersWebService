@@ -14,8 +14,8 @@ public class FlightTimeDistanceMapper {
 
     public List<FlightTimeDistance> mapToList(Map<String, String> distLoaded, Map<String, String> distUnloaded,
                                         Map<String, String> timeLoaded, Map<String, String> timeUnloaded) {
-        List<FlightTimeDistance> loaded = mapFlightType(distLoaded, timeLoaded, "ГРУЖ");
-        List<FlightTimeDistance> unloaded = mapFlightType(distUnloaded, timeUnloaded, "ПОР");
+        List<FlightTimeDistance> loaded = mapFlightType(distLoaded, timeLoaded, "Груженый");
+        List<FlightTimeDistance> unloaded = mapFlightType(distUnloaded, timeUnloaded, "Порожний");
         return Stream.concat(loaded.stream(), unloaded.stream()).collect(Collectors.toList());
     }
 
@@ -25,7 +25,7 @@ public class FlightTimeDistanceMapper {
             String[] stationCodes = entry.getKey().split(" ");
             FlightTimeDistance timeDistance = new FlightTimeDistance();
 
-            timeDistance.setFlightType(type);
+            timeDistance.setTypeFlight(type);
             timeDistance.setDepartureStationCode(stationCodes[0]);
             timeDistance.setDestinationStationCode(stationCodes[1]);
             timeDistance.setDistance(entry.getValue());

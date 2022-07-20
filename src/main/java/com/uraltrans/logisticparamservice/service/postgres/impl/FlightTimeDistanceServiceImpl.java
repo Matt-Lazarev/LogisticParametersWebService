@@ -20,10 +20,7 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,13 +41,13 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
     public List<FlightTimeDistanceResponse> getTimeDistanceResponses(List<FlightTimeDistanceRequest> requests) {
         List<FlightTimeDistanceResponse> responses = new ArrayList<>();
         requests.forEach(req -> {
-                    FlightTimeDistance timeDistance = flightTimeDistanceRepository.findByStationCodesAndFlightType(
+                    Optional<FlightTimeDistance> timeDistance = flightTimeDistanceRepository.findByStationCodesAndFlightType(
                             req.getDepartureStation(), req.getDestinationStation(), req.getFlightType());
                     FlightTimeDistanceResponse resp = new FlightTimeDistanceResponse();
                     resp.setId(req.getId());
-                    if(timeDistance != null){
-                        resp.setDistance(timeDistance.getDistance());
-                        resp.setTravelTime(timeDistance.getTravelTime());
+                    if(timeDistance.isPresent()){
+                        resp.setDistance(timeDistance.get().getDistance());
+                        resp.setTravelTime(timeDistance.get().getTravelTime());
                         resp.setErrorText("");
                         resp.setSuccess("true");
                     }
@@ -72,13 +69,18 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
         calculateFlightDistance(allFlights);
         allFlights = filterFlights(allFlights, dto);
 
-        Map<String, String> distancesLoaded = groupFlightsDistances(allFlights, "груж");
-        Map<String, String> distancesUnloaded = groupFlightsDistances(allFlights, "пор");
-        Map<String, String> travelTimesLoaded = groupFlightsTravelTimes(allFlights, "груж");
-        Map<String, String> travelTimesUnloaded = groupFlightsTravelTimes(allFlights, "пор");
+        Map<String, String> distancesLoaded = groupFlightsDistances(allFlights, "Груженый");
+        Map<String, String> distancesUnloaded = groupFlightsDistances(allFlights, "Порожний");
+        Map<String, String> travelTimesLoaded = groupFlightsTravelTimes(allFlights, "Груженый");
+        Map<String, String> travelTimesUnloaded = groupFlightsTravelTimes(allFlights, "Порожний");
         List<FlightTimeDistance> result = mapper.mapToList(
                 distancesLoaded, distancesUnloaded, travelTimesLoaded, travelTimesUnloaded);
         flightTimeDistanceRepository.saveAll(result);
+    }
+
+    @Override
+    public Optional<FlightTimeDistance> findByStationCodesAndFlightType(String departStation, String destStation, String flightType) {
+        return flightTimeDistanceRepository.findByStationCodesAndFlightType(departStation, destStation, flightType);
     }
 
     private void prepareNextSave(){
@@ -102,6 +104,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                 .filter(f -> !Objects.equals(f.getSourceStationCode(), f.getDestStationCode()))
                 .filter(f -> f.getTravelTime().doubleValue() >= dto.getMinTravelTime())
                 .filter(f -> f.getTravelTime().doubleValue() <= dto.getMaxTravelTime())
+                .peek(f -> f.setLoaded(f.getLoaded().equalsIgnoreCase("груж") ? "Груженый" : "Порожний"))
                 .collect(Collectors.toList());
 
         flights.removeAll(allFlights);

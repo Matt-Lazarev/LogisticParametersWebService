@@ -24,7 +24,7 @@ public class StationHandbookMapper {
                 .setStation((String) stationData.get("_Description"))
                 .setRegion((String) stationData.get("_Region"))
                 .setRoad((String) stationData.get("_Road"))
-                .setLatitude(null)
-                .setLongitude(null);
+                .setLatitude((String) stationData.get("_Latitude"))
+                .setLongitude((String) stationData.get("_Longitude"));
     }
 }

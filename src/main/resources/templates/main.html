@@ -113,6 +113,13 @@
                 <input type="text" class="form-control" th:field="*{minTravelTime}">
             </div>
         </div>
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+        <div class="row">
+            <div class="col-md-6 ">
+                <label> Введите глубину поиска для расчета доходности: </label>
+                <input type="text" class="form-control" th:field="*{flightProfitDaysToRetrieveData}">
+            </div>
+        </div>
 
         <div class="row">
             <div class="col box-footer mb-1 mt-3">
@@ -123,6 +130,7 @@
                 <button type="submit" class="btn btn-primary" name="action" value="update"> Обновить параметры </button>
             </div>
         </div>
+
     </form>
 </div>
 

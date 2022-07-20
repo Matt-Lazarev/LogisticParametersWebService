@@ -23,9 +23,9 @@ public class StationHandbook {
 
     private String station;
 
-    private String region; //ЖелезнодорожныеСтанции    ОтделениеДороги (Fld3371) -> ОтделенияЖелезныхДорог (Description)
+    private String region;
 
-    private String road; //ОтделенияЖелезныхДорог   Дорога (Fld3355) -> ЖелезныеДороги (Description)
+    private String road;
 
     private String latitude;
 

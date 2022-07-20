@@ -18,4 +18,5 @@ public class LoadDataRequestDto {
     private Integer minUnloadIdleDays;
     private Double maxTravelTime;
     private Double minTravelTime;
+    private  Integer flightProfitDaysToRetrieveData;
 }

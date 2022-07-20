@@ -3,15 +3,14 @@ package com.uraltrans.logisticparamservice.service.itr;
 import com.uraltrans.logisticparamservice.repository.itr.RawFlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class RawFlightServiceImpl implements RawFlightService {
     private static final int PARTS_TO_DIVIDE_LONG_PERIOD = 3;
@@ -20,6 +19,7 @@ public class RawFlightServiceImpl implements RawFlightService {
     private final RawFlightRepository rawFlightRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getAllFlightsBetween(int days) {
         String[][] fromToDatePairs = divideDate(days);
         return rawFlightRepository.getAllFlightsBetween(fromToDatePairs);

@@ -8,6 +8,7 @@ import com.uraltrans.logisticparamservice.utils.EnvUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class ScheduleFlightsService {
 
     private final Environment env;
 
+    @Transactional
     public void saveDataWithDelay(){
         LoadDataRequestDto params = EnvUtils.getRequestParams(env);
         flightService.saveAllFlights(params);

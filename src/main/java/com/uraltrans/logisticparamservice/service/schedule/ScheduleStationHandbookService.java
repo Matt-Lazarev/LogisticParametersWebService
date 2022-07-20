@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ScheduleStationHandbook {
+public class ScheduleStationHandbookService {
     private final StationHandbookService stationHandbookService;
 
     @Scheduled(cron = "${params.nextDataLoadTimeCron}")

@@ -22,9 +22,10 @@ public class EnvUtils {
         Integer minUnloadIdleDays = env.getProperty("params.minUnloadIdleDays", Integer.class);
         Double maxTravelTime = env.getProperty("params.maxTravelTime", Double.class);
         Double minTravelTime = env.getProperty("params.minTravelTime", Double.class);
+        Integer flightProfitDaysToRetrieveData = env.getProperty("params.flightProfitDaysToRetrieveData", Integer.class);
 
         return new LoadDataRequestDto(daysToRetrieveData, getNextDataLoadTime, maxLoadIdleDays, maxUnloadIdleDays,
-                minLoadIdleDays, minUnloadIdleDays, maxTravelTime, minTravelTime);
+                minLoadIdleDays, minUnloadIdleDays, maxTravelTime, minTravelTime, flightProfitDaysToRetrieveData);
     }
 
     public static void updateEnvironment(ConfigurableEnvironment env, LoadDataRequestDto dto) {
@@ -39,6 +40,7 @@ public class EnvUtils {
         map.put("params.minUnloadIdleDays",dto.getMinLoadIdleDays());
         map.put("params.maxTravelTime", dto.getMaxTravelTime());
         map.put("params.minTravelTime", dto.getMinTravelTime());
+        map.put("params.flightProfitDaysToRetrieveData", dto.getFlightProfitDaysToRetrieveData());
 
         propertySources.addFirst(new MapPropertySource("newmap", map));
     }

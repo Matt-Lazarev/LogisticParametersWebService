@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 @Aspect
 @Slf4j
 @Component
-public class FlightControllerLogging {
+public class FlightSavingLogging {
 
     @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightServiceImpl.saveAllFlights(..))")
     public void successfulInvokeSaveLoadedDataMethod(JoinPoint joinPoint) {
