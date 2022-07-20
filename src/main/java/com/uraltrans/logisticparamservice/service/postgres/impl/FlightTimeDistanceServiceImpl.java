@@ -42,7 +42,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
         List<FlightTimeDistanceResponse> responses = new ArrayList<>();
         requests.forEach(req -> {
                     Optional<FlightTimeDistance> timeDistance = flightTimeDistanceRepository.findByStationCodesAndFlightType(
-                            req.getDepartureStation(), req.getDestinationStation(), req.getFlightType());
+                            req.getDepartureStation(), req.getDestinationStation(), req.getTypeFlight());
                     FlightTimeDistanceResponse resp = new FlightTimeDistanceResponse();
                     resp.setId(req.getId());
                     if(timeDistance.isPresent()){

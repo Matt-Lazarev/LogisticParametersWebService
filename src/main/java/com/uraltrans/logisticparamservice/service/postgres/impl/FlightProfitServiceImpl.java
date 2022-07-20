@@ -71,7 +71,7 @@ public class FlightProfitServiceImpl implements FlightProfitService {
         for(FlightProfit flightProfit : flightProfits){
             String sourceStationCode = flightProfit.getSourceStationCode();
             String destStationCode= flightProfit.getDestStationCode();
-            flightTimeDistanceService.findByStationCodesAndFlightType(sourceStationCode, destStationCode, "ГРУЖ")
+            flightTimeDistanceService.findByStationCodesAndFlightType(sourceStationCode, destStationCode, "Груженый")
                     .ifPresent(f -> flightProfit.setAverageTravelTime(new BigDecimal(f.getTravelTime())));
         }
     }

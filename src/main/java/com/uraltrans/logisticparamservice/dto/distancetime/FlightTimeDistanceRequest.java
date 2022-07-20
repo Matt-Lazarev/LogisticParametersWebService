@@ -11,5 +11,5 @@ public class FlightTimeDistanceRequest {
     private String id;
     private String departureStation;
     private String destinationStation;
-    private String flightType;
+    private String typeFlight;
 }
