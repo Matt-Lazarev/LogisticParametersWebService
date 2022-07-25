@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.station.StationResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.mapper.StationHandbookMapper;
@@ -31,6 +32,12 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     @Transactional(readOnly = true)
     public List<StationHandbook> getAll() {
         return stationHandbookRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StationResponse> getAllResponses() {
+        return stationHandbookMapper.mapToListResponses(stationHandbookRepository.findAll());
     }
 
     private void prepareNextSave() {

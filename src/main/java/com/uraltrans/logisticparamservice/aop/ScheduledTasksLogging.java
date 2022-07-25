@@ -30,15 +30,29 @@ public class ScheduledTasksLogging {
     }
 
     @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightProfitService.loadFlightProfits())")
-    public void successfulInvokeSaveDataWithDelayMethod() {
+    public void successfulInvokeLoadFlightsProfitsMethod() {
         String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение доходности рейсов");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
     @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightProfitService.loadFlightProfits())")
-    public void failureInvokeSaveDataWithDelayMethod() {
+    public void failureInvokeLoadFlightsProfitsMethod() {
         String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение доходности рейсов");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleCargoService.loadCargos())")
+    public void successfulInvokeLoadCargosMethod() {
+        String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение грузов");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleCargoService.loadCargos())")
+    public void failureInvokeLoadCargosMethod() {
+        String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение грузов");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }

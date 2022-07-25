@@ -14,15 +14,17 @@ import java.math.BigDecimal;
 public class UnloadIdleDto {
 
     private BigDecimal volume;
+    private String cargo;
     private String cargoCode6;
     private String destStation;
     private String destStationCode;
     private Integer carUnloadIdleDays;
     private String carType;
 
-    public UnloadIdleDto(BigDecimal volume, String cargoCode6, String destStation,
+    public UnloadIdleDto(BigDecimal volume, String cargo, String cargoCode6, String destStation,
                          String destStationCode, String carType, Double carUnloadIdleDays) {
         this.volume = volume;
+        this.cargo = cargo;
         this.cargoCode6 = cargoCode6;
         this.destStation = destStation;
         this.destStationCode = destStationCode;

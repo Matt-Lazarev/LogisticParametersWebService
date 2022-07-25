@@ -12,7 +12,9 @@ import lombok.Setter;
 public class FlightIdleDto {
     private String id;
     private String departureStation;
+    private String departureStationCode;
     private String cargo;
+    private String cargoCode;
     private String wagonType;
     private String volume;
     private Integer loading;

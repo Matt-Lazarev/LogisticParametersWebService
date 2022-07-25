@@ -13,17 +13,17 @@ import java.util.List;
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
     @Query("select new com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto " +
-           "(f.volume, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType, AVG(f.carLoadIdleDays)) " +
+           "(f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType, AVG(f.carLoadIdleDays)) " +
            "from Flight f " +
            "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
-           "group by f.volume, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType")
+           "group by f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType")
     List<LoadIdleDto> groupCarLoadIdle();
 
     @Query("select new com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto " +
-            "(f.volume, f.cargoCode6, f.destStation, f.destStationCode, f.carType, AVG(f.carUnloadIdleDays)) " +
+            "(f.volume, f.cargo, f.cargoCode6, f.destStation, f.destStationCode, f.carType, AVG(f.carUnloadIdleDays)) " +
             "from Flight f " +
             "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
-            "group by f.volume, f.cargoCode6, f.destStation, f.destStationCode, f.carType")
+            "group by f.volume, f.cargo, f.cargoCode6, f.destStation, f.destStationCode, f.carType")
     List<UnloadIdleDto> groupCarUnloadIdle();
 
     @Modifying

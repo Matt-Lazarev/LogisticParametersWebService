@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
+import com.uraltrans.logisticparamservice.dto.station.StationResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +27,25 @@ public class StationHandbookMapper {
                 .setRoad((String) stationData.get("_Road"))
                 .setLatitude((String) stationData.get("_Latitude"))
                 .setLongitude((String) stationData.get("_Longitude"));
+    }
+
+    public List<StationResponse> mapToListResponses(List<StationHandbook> stationHandbooks) {
+        return stationHandbooks
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private StationResponse mapToResponse(StationHandbook stationHandbook) {
+        return StationResponse.builder()
+                .success("true")
+                .errorText("")
+                .idStation(stationHandbook.getCode6())
+                .nameStation(stationHandbook.getStation())
+                .region(stationHandbook.getRegion())
+                .way(stationHandbook.getRoad())
+                .latitude(stationHandbook.getLatitude())
+                .longitude(stationHandbook.getLongitude())
+                .build();
     }
 }

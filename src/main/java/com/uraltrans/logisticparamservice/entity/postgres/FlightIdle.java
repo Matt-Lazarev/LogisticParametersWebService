@@ -1,8 +1,6 @@
 package com.uraltrans.logisticparamservice.entity.postgres;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
@@ -13,7 +11,8 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @NoArgsConstructor
-@Accessors(chain = true)
+@AllArgsConstructor
+@Builder
 public class FlightIdle {
 
     @Id
@@ -23,7 +22,12 @@ public class FlightIdle {
     @Column(name="departure_station")
     private String departureStation;
 
+    @Column(name="departure_station_code")
+    private String departureStationCode;
+
     private String cargo;
+
+    private String cargoCode;
 
     @Column(name = "wagon_type")
     private String wagonType;
@@ -34,11 +38,14 @@ public class FlightIdle {
 
     private Integer unloading;
 
-    public FlightIdle(String departureStation, String code, String cargo,
+    public FlightIdle(String departureStation, String departureStationCode,
+                      String cargoCode, String cargo,
                       String wagonType, BigDecimal volume,
                       Integer loading, Integer unloading) {
-        this.departureStation = departureStation + " (" + code + ")";
+        this.departureStation = departureStation;
+        this.departureStationCode = departureStationCode;
         this.cargo = cargo;
+        this.cargoCode = cargoCode;
         this.wagonType = wagonType;
         this.volume = volume != null ? volume.toString() : null;
         this.loading = loading;

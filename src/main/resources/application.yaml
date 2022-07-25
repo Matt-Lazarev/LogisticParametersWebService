@@ -2,18 +2,18 @@ spring:
   datasource:
     itr:
       jdbc-url: jdbc:sqlserver://dbsrv:1433;database=ITR;trustServerCertificate=true
-      username: Obmen
-      password: 321654987
+      username:
+      password:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     utcsrs:
       jdbc-url: jdbc:sqlserver://dbsrv:1433;database=Utc_srs;trustServerCertificate=true
-      username: Obmen
-      password: 321654987
+      username:
+      password:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     postgres:
-      jdbc-url: jdbc:postgresql://localhost:5432/flight_db
-      username: postgres
-      password: root
+      jdbc-url: jdbc:postgresql://10.168.1.6:5432/log_param
+      username:
+      password: 
       driverClassname: org.postgresql.Driver
   jpa:
     hibernate:
@@ -34,5 +34,5 @@ params:
   minUnloadIdleDays: 0
   maxTravelTime: 60
   minTravelTime: 1
-  nextDataLoadTimeCron: '0 0 5 * * *'
+  nextDataLoadTimeCron: '0 0 4 * * *'
   flightProfitDaysToRetrieveData: 45

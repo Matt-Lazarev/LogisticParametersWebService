@@ -37,9 +37,9 @@ public class FlightProfitServiceImpl implements FlightProfitService {
     public void saveAll() {
         prepareNextSave();
         List<FlightProfit> flightProfits = flightProfitMapper.mapToList(rawFlightProfitService.getAll());
-        flightProfits = filterFlights(flightProfits);
 
         calculateProfit(flightProfits);
+        flightProfits = filterFlights(flightProfits);
         calculateAverageTravelTime(flightProfits);
 
         flightProfitRepository.saveAll(flightProfits);
@@ -63,8 +63,17 @@ public class FlightProfitServiceImpl implements FlightProfitService {
         Map<String, CurrencyDto> currencies = cbrCurrencyReader.getAllCbrCurrencies();
         flightProfits
                 .stream()
+                .filter(f -> f.getCurrencyProfit() != null && f.getCurrencyProfit().doubleValue() > 0)
                 .filter(f -> f.getCurrency() != null)
-                .forEach(f -> f.setProfit(convert(f.getProfit(), f.getCurrency(), currencies)));
+                .forEach(f -> f.setProfit(convert(f.getCurrencyProfit(), f.getCurrency(), currencies)));
+    }
+
+    private BigDecimal convert(BigDecimal profit, String currencyNumCode, Map<String, CurrencyDto> currencies) {
+        CurrencyDto currency = currencies.get(currencyNumCode);
+        if(currency == null){
+            return profit;
+        }
+        return profit.multiply(currency.getValue());
     }
 
     private void calculateAverageTravelTime(List<FlightProfit> flightProfits) {
@@ -74,13 +83,5 @@ public class FlightProfitServiceImpl implements FlightProfitService {
             flightTimeDistanceService.findByStationCodesAndFlightType(sourceStationCode, destStationCode, "Груженый")
                     .ifPresent(f -> flightProfit.setAverageTravelTime(new BigDecimal(f.getTravelTime())));
         }
-    }
-
-    private BigDecimal convert(BigDecimal profit, String currencyNumCode, Map<String, CurrencyDto> currencies) {
-        CurrencyDto currency = currencies.get(currencyNumCode);
-        if(currency == null){
-            return profit;
-        }
-        return profit.multiply(currency.getValue());
     }
 }

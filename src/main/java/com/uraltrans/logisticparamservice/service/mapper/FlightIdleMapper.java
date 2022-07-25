@@ -16,22 +16,19 @@ import java.util.stream.Stream;
 public class FlightIdleMapper {
 
     public List<FlightIdleDto> mapToListDto(List<FlightIdle> idles){
-        List<FlightIdleDto> dtos = idles
+        return idles
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
-
-        Stream.iterate(1, i -> i + 1)
-                .limit(dtos.size())
-                .forEach(i -> dtos.get(i-1).setId(Integer.toString(i)));
-
-        return dtos;
     }
 
     private FlightIdleDto mapToDto(FlightIdle idle) {
         FlightIdleDto dto = new FlightIdleDto();
+        dto.setId(idle.getCargo());
         dto.setDepartureStation(idle.getDepartureStation());
+        dto.setDepartureStationCode(idle.getDepartureStationCode());
         dto.setCargo(idle.getCargo());
+        dto.setCargoCode(idle.getCargoCode());
         dto.setWagonType(idle.getWagonType());
         dto.setVolume(idle.getVolume());
         dto.setLoading(idle.getLoading());
@@ -68,20 +65,38 @@ public class FlightIdleMapper {
 
     private FlightIdle mapToLoadingUnloading(LoadIdleDto load, UnloadIdleDto unload) {
         if (load == null) {
-            return new FlightIdle(
-                    unload.getDestStation(), unload.getDestStationCode(),
-                    unload.getCargoCode6(), unload.getCarType(), unload.getVolume(),
-                    null, unload.getCarUnloadIdleDays());
-        } else if (unload == null) {
-            return new FlightIdle(
-                    load.getSourceStation(), load.getSourceStationCode(),
-                    load.getCargoCode6(), load.getCarType(), load.getVolume(),
-                    load.getCarLoadIdleDays(), null);
+            return FlightIdle.builder()
+                    .departureStation(unload.getDestStation())
+                    .departureStationCode(unload.getDestStationCode())
+                    .cargo(unload.getCargo())
+                    .cargoCode(unload.getCargoCode6())
+                    .wagonType(unload.getCarType())
+                    .volume(unload.getVolume() != null ? unload.getVolume().toString() : null)
+                    .loading(null)
+                    .unloading(unload.getCarUnloadIdleDays())
+                    .build();
         }
-
-        return new FlightIdle(
-                load.getSourceStation(), load.getSourceStationCode(),
-                load.getCargoCode6(), load.getCarType(), load.getVolume(),
-                load.getCarLoadIdleDays(), unload.getCarUnloadIdleDays());
+        if (unload == null) {
+            return FlightIdle.builder()
+                    .departureStation(load.getSourceStation())
+                    .departureStationCode(load.getSourceStationCode())
+                    .cargo(load.getCargo())
+                    .cargoCode(load.getCargoCode6())
+                    .wagonType(load.getCarType())
+                    .volume(load.getVolume() != null ? load.getVolume().toString() : null)
+                    .loading(load.getCarLoadIdleDays())
+                    .unloading(null)
+                    .build();
+        }
+        return FlightIdle.builder()
+                .departureStation(load.getSourceStation())
+                .departureStationCode(load.getSourceStationCode())
+                .cargo(load.getCargo())
+                .cargoCode(load.getCargoCode6())
+                .wagonType(load.getCarType())
+                .volume(load.getVolume() != null ? load.getVolume().toString() : null)
+                .loading(load.getCarLoadIdleDays())
+                .unloading(unload.getCarUnloadIdleDays())
+                .build();
     }
 }
