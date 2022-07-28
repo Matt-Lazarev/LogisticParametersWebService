@@ -1,6 +1,5 @@
 package com.uraltrans.logisticparamservice.utils;
 
-import com.uraltrans.logisticparamservice.LogisticParametersWebServiceApplication;
 import com.uraltrans.logisticparamservice.dto.logs.ActionLog;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,11 +10,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.*;
 
@@ -28,7 +25,7 @@ public class FileUtils {
     private static final Path DEFAULT_DISCARDED_FLIGHTS_FILE_PATH = Paths.get("logging/discarded_flights.log");
     private static final Path DEFAULT_BACK_BUTTON_FILE_PATH = Paths.get("button/button-url.txt");
 
-    private static final String CLIENT_ORDERS_SQL_SCRIPT_PATH = "sql/client_orders_script.sql";
+    private static final Path CLIENT_ORDERS_SQL_SCRIPT_PATH = Paths.get("sql/client_orders_script.sql");
 
     static{
         try{
@@ -95,11 +92,9 @@ public class FileUtils {
     }
 
     public static String getClientOrdersSqlScript(){
-        URL resource = FileUtils.class.getClassLoader().getResource(CLIENT_ORDERS_SQL_SCRIPT_PATH);
         try {
-            File file = new File(resource.toURI());
-            return String.join("\n", Files.readAllLines(file.toPath()));
-        } catch (URISyntaxException | IOException e) {
+            return String.join("\n", Files.readAllLines(CLIENT_ORDERS_SQL_SCRIPT_PATH));
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

@@ -30,9 +30,10 @@ public class TestController {
     public List<?> getAll(){
 //        cargoService.saveAll();
 //        return cargoService.getAllCargos();
-//        clientOrderService.saveAllClientOrders();
-        flightProfitService.saveAll();;
-        return flightProfitService.getAllFlightProfits();
+        clientOrderService.saveAllClientOrders();
+        return clientOrderService.getAllClientOrders();
+//        flightProfitService.saveAll();;
+//        return flightProfitService.getAllFlightProfits();
 //        return clientOrderService.getAllClientOrders();
 //        service.saveAllActualFlights();
 //        return service.getAllActualFlights();
