@@ -1,0 +1,33 @@
+package com.uraltrans.logisticparamservice.repository.postgres;
+
+import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+
+public interface FlightRequirementRepository extends JpaRepository<FlightRequirement, Long> {
+
+    @Query(value =
+            "select co.volume_from, co.volume_to, " +
+                    "co.source_station_code6, co.destination_station_code6, " +
+                    "co.cars_amount, af_sub.completed_orders, af_sub.in_progress_orders " +
+                    "from client_orders co " +
+                    "inner join " +
+                    "(select af.volume, af.source_station_code, af.destination_station_code, " +
+                    "        sum(af.completed_orders) as completed_orders, sum(af.in_progress_orders) as in_progress_orders " +
+                    "        from actual_flights af " +
+                    "        group by af.volume, af.source_station_code, af.destination_station_code) af_sub " +
+                    "on co.source_station_code6 = af_sub.source_station_code and " +
+                    "   co.destination_station_code6 = af_sub.destination_station_code " +
+                    "where af_sub.volume between co.volume_from and co.volume_to", nativeQuery = true)
+    List<Map<String, Object>> groupActualFlightsAndClientOrders();
+
+    @Modifying
+    @Transactional
+    @Query(value = "truncate table flight_requirements restart identity", nativeQuery = true)
+    void truncate();
+}

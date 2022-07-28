@@ -10,10 +10,14 @@ spring:
       username:
       password:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    integration-data:
+      jdbc-url: jdbc:sqlserver://dbsrv:1433;database=IntegrationData;trustServerCertificate=true
+      username:
+      password:
     postgres:
       jdbc-url: jdbc:postgresql://10.168.1.6:5432/log_param
       username:
-      password: 
+      password:
       driverClassname: org.postgresql.Driver
   jpa:
     hibernate:
@@ -23,16 +27,4 @@ spring:
     show-sql: true
 
   profiles:
-    active: "dev"
-
-params:
-  daysToRetrieveData: 90
-  nextDataLoadTime: '05:00:00'
-  maxLoadIdleDays: 20
-  maxUnloadIdleDays: 20
-  minLoadIdleDays: 0
-  minUnloadIdleDays: 0
-  maxTravelTime: 60
-  minTravelTime: 1
-  nextDataLoadTimeCron: '0 0 4 * * *'
-  flightProfitDaysToRetrieveData: 45
+    active: 'dev'

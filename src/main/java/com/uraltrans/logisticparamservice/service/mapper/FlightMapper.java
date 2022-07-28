@@ -1,6 +1,7 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
+import com.uraltrans.logisticparamservice.utils.Mapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -38,16 +39,11 @@ public class FlightMapper {
                 .setArriveToSourceStationDate((Timestamp) flightData.get("DateIn"))
                 .setDepartureFromSourceStationDateDate((Timestamp) flightData.get("DateOut"))
                 .setVolume((BigDecimal) flightData.get("Volume"))
-                .setDistance(mapToBigDecimal(flightData.get("Distance")))
+                .setDistance(Mapper.toBigDecimal((Double) flightData.get("Distance")))
                 .setLoaded((String) flightData.get("Loaded"))
                 .setDepartureFromDestStationDate((Timestamp) flightData.get("Отправление со ст. назн."))
                 .setUnloadOnDestStationDate((Timestamp) flightData.get("Выгрузка на ст. назн."))
                 .setFlightKind((String) flightData.get("FlightKind"))
                 .setNextFlightStartDate((Timestamp) flightData.get("Дата нач. след. Рейса (дата оформления вагона порожним)"));
-    }
-
-    private BigDecimal mapToBigDecimal(Object distance) {
-        Double dist = (Double) distance;
-        return dist != null ? BigDecimal.valueOf(dist) : null;
     }
 }

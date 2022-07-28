@@ -2,6 +2,7 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.station.StationResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
+import com.uraltrans.logisticparamservice.exception.StationsNotFoundException;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.mapper.StationHandbookMapper;
 import com.uraltrans.logisticparamservice.service.utcsrs.RawStationHandbookService;
@@ -37,7 +38,11 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     @Override
     @Transactional(readOnly = true)
     public List<StationResponse> getAllResponses() {
-        return stationHandbookMapper.mapToListResponses(stationHandbookRepository.findAll());
+        List<StationResponse> responses = stationHandbookMapper.mapToListResponses(stationHandbookRepository.findAll());
+        if(responses.size() == 0){
+            throw new StationsNotFoundException("Станции не были найдены. Повторите запрос позже");
+        }
+        return responses;
     }
 
     private void prepareNextSave() {

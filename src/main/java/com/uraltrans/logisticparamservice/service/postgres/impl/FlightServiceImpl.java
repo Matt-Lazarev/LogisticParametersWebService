@@ -2,7 +2,7 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
 import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
-import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.service.mapper.FlightMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ public class FlightServiceImpl implements FlightService {
 
     @Override
     @Transactional
-    public void saveAllFlights(LoadDataRequestDto dto) {
+    public void saveAllFlights(LoadParameters dto) {
         prepareNextSave();
         List<Flight> allFlights = getAllFlights(dto);
         flightRepository.saveAll(allFlights);
@@ -56,7 +55,7 @@ public class FlightServiceImpl implements FlightService {
         flightRepository.saveAll(flights);
     }
 
-    private List<Flight> getAllFlights(LoadDataRequestDto dto) {
+    private List<Flight> getAllFlights(LoadParameters dto) {
         List<Map<String, Object>> rawData = rawFlightService.getAllFlightsBetween(dto.getDaysToRetrieveData());
         return flightMapper.mapRawFlightsDataToFlightsList(rawData);
     }

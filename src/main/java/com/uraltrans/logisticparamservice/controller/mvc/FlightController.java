@@ -1,9 +1,10 @@
 package com.uraltrans.logisticparamservice.controller.mvc;
 
-import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,10 +20,11 @@ public class FlightController {
     private final FlightService flightService;
     private final FlightIdleService flightIdleService;
     private final FlightTimeDistanceService flightTimeDistanceService;
+    private final LoadParameterService loadParameterService;
 
     @PostMapping("/save_data")
     @Transactional
-    public String saveLoadedData(@ModelAttribute("dto") LoadDataRequestDto dto,
+    public String saveLoadedData(@ModelAttribute("dto") LoadParameters dto,
                                  @RequestParam String action, RedirectAttributes redirectAttrs){
 
         if(action.equals("save")){
@@ -30,7 +32,7 @@ public class FlightController {
             flightIdleService.saveAll(dto);
             flightTimeDistanceService.saveAll(dto);
         }
-
+        loadParameterService.updateLoadParameters(dto);
         redirectAttrs.addFlashAttribute("dto", dto);
         redirectAttrs.addFlashAttribute("message", "success");
         return "redirect:/home";

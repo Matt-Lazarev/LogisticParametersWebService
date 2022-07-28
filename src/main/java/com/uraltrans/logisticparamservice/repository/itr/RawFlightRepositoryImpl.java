@@ -15,6 +15,7 @@ import java.util.Map;
 
 @Repository
 public class RawFlightRepositoryImpl implements RawFlightRepository {
+    private static final String SQL = "EXEC Dashboard.Flight_ ?, ?";
 
     @Resource(name = "itrDataSource")
     private final DataSource itrDataSource;
@@ -29,7 +30,7 @@ public class RawFlightRepositoryImpl implements RawFlightRepository {
             List<Map<String, Object>> result = new ArrayList<>();
             Connection connection = itrDataSource.getConnection();
             for(String[] fromTo : fromToDatePairs){
-                try(PreparedStatement preparedStatement = connection.prepareStatement("EXEC Dashboard.Flight_ ?, ?")){
+                try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
                     preparedStatement.setString(1, fromTo[0]);
                     preparedStatement.setString(2, fromTo[1]);
                     try(ResultSet rs = preparedStatement.executeQuery()){

@@ -1,7 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.idle.FlightIdleDto;
-import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightIdle;
 import com.uraltrans.logisticparamservice.service.mapper.FlightIdleMapper;
@@ -9,12 +9,12 @@ import com.uraltrans.logisticparamservice.repository.postgres.FlightIdleReposito
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
+import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -37,7 +37,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
 
     @Override
     @Transactional
-    public void saveAll(LoadDataRequestDto dto) {
+    public void saveAll(LoadParameters dto) {
         prepareNextSave();
 
         List<Flight> allFlights = flightService.getAllFlights();
@@ -49,6 +49,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
 
         List<FlightIdle> data = mapper.mapToLoadingUnloadingList(
                 flightService.getGroupedCarLoadIdle(), flightService.getGroupCarUnloadIdle());
+        data = filterFlightIdles(data);
         flightIdleRepository.saveAll(data);
     }
 
@@ -90,7 +91,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
         }
 
         if (sendDate != null && arriveToSourceStation != null) {
-            long loadDays = ChronoUnit.DAYS.between(toLocalDate(arriveToSourceStation), toLocalDate(sendDate));
+            long loadDays = ChronoUnit.DAYS.between(Mapper.toLocalDate(arriveToSourceStation), Mapper.toLocalDate(sendDate));
             currFlight.setCarLoadIdleDays((int) loadDays);
         }
     }
@@ -116,13 +117,9 @@ public class FlightIdleServiceImpl implements FlightIdleService {
         }
 
         if (nextFlightStart != null && arriveToDestStation != null) {
-            long unloadDays = ChronoUnit.DAYS.between(toLocalDate(arriveToDestStation), toLocalDate(nextFlightStart));
+            long unloadDays = ChronoUnit.DAYS.between(Mapper.toLocalDate(arriveToDestStation), Mapper.toLocalDate(nextFlightStart));
             currFlight.setCarUnloadIdleDays((int) unloadDays);
         }
-    }
-
-    private LocalDate toLocalDate(Timestamp timestamp) {
-        return timestamp.toLocalDateTime().toLocalDate();
     }
 
     private boolean isBorderCrossingFlights(Flight first, Flight second) {
@@ -187,7 +184,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
         return o1.getSendDate().compareTo(o2.getSendDate());
     }
 
-    private void filterFlights(List<Flight> allFlights, LoadDataRequestDto dto) {
+    private void filterFlights(List<Flight> allFlights, LoadParameters dto) {
         List<String> discardedFlights = new ArrayList<>();
         allFlights
                 .stream()
@@ -209,5 +206,12 @@ public class FlightIdleServiceImpl implements FlightIdleService {
                 });
 
         FileUtils.writeDiscardedFlights(discardedFlights, false);
+    }
+
+    private List<FlightIdle> filterFlightIdles(List<FlightIdle> flightIdles){
+        return flightIdles
+                .stream()
+                .filter(f -> f.getLoading() != null || f.getUnloading() != null)
+                .collect(Collectors.toList());
     }
 }

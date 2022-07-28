@@ -14,7 +14,6 @@ import java.util.stream.Stream;
 
 @Service
 public class FlightIdleMapper {
-
     public List<FlightIdleDto> mapToListDto(List<FlightIdle> idles){
         return idles
                 .stream()
@@ -24,7 +23,7 @@ public class FlightIdleMapper {
 
     private FlightIdleDto mapToDto(FlightIdle idle) {
         FlightIdleDto dto = new FlightIdleDto();
-        dto.setId(idle.getCargo());
+        dto.setId(Long.toString(idle.getId()));
         dto.setDepartureStation(idle.getDepartureStation());
         dto.setDepartureStationCode(idle.getDepartureStationCode());
         dto.setCargo(idle.getCargo());

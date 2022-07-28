@@ -1,12 +1,11 @@
 package com.uraltrans.logisticparamservice.service.schedule;
 
-import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
-import com.uraltrans.logisticparamservice.utils.EnvUtils;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +20,11 @@ public class ScheduleFlightsService {
     private final FlightService flightService;
     private final FlightIdleService flightIdleService;
     private final FlightTimeDistanceService flightTimeDistanceService;
-
-    private final Environment env;
+    private final LoadParameterService loadParameterService;
 
     @Transactional
     public void saveDataWithDelay(){
-        LoadDataRequestDto params = EnvUtils.getRequestParams(env);
+        LoadParameters params = loadParameterService.getLoadParameters();
         flightService.saveAllFlights(params);
         flightIdleService.saveAll(params);
         flightTimeDistanceService.saveAll(params);
@@ -35,7 +33,7 @@ public class ScheduleFlightsService {
     public Date getNextExecution() {
         LocalTime now = LocalTime.now();
 
-        LocalTime nextExecutionTime = EnvUtils.getNextDataLoadTime(env);
+        LocalTime nextExecutionTime = loadParameterService.getNextDataLoadTime();
 
         LocalDateTime nextExecution;
         if(now.isBefore(nextExecutionTime)){

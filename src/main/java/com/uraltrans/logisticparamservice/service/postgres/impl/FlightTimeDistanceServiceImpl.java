@@ -2,7 +2,7 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceRequest;
 import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceResponse;
-import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightTimeDistance;
 import com.uraltrans.logisticparamservice.service.mapper.FlightTimeDistanceMapper;
@@ -10,12 +10,12 @@ import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightTimeDistanceRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
+import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -62,7 +62,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
 
     @Override
     @Transactional
-    public void saveAll(LoadDataRequestDto dto) {
+    public void saveAll(LoadParameters dto) {
         prepareNextSave();
 
         List<Flight> allFlights = flightRepository.findAll();
@@ -96,7 +96,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                         daysBetween(f.getDepartureFromSourceStationDateDate(), f.getArriveToDestStationDate())));
     }
 
-    private List<Flight> filterFlights(List<Flight> flights, LoadDataRequestDto dto) {
+    private List<Flight> filterFlights(List<Flight> flights, LoadParameters dto) {
         List<Flight> allFlights =  flights
                 .stream()
                 .filter(f -> f.getTravelTime() != null)
@@ -129,7 +129,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                 .stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        v -> round(v.getValue())
+                        v -> Mapper.round(v.getValue(), 2)
                 ));
     }
 
@@ -147,7 +147,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                 .stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        v -> round(v.getValue())
+                        v -> Mapper.round(v.getValue(), 2)
                 ));
     }
     private BigDecimal daysBetween(Timestamp fromDate, Timestamp toDate){
@@ -158,9 +158,5 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
         double hours = ChronoUnit.HOURS.between(from, to) - Duration.ofDays(days).toHours();
 
         return BigDecimal.valueOf(days + hours / Duration.ofDays(1).toHours());
-    }
-
-    private String round(double num){
-        return BigDecimal.valueOf(num).setScale(2, RoundingMode.HALF_UP).toString();
     }
 }

@@ -1,6 +1,6 @@
 package com.uraltrans.logisticparamservice.aop;
 
-import com.uraltrans.logisticparamservice.dto.request.LoadDataRequestDto;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -105,7 +105,7 @@ public class FlightSavingLogging {
 
     private String getSaveDataLogMessage(JoinPoint joinPoint, boolean isSuccess) {
         Object[] args = joinPoint.getArgs();
-        LoadDataRequestDto arg = (LoadDataRequestDto) args[0];
+        LoadParameters arg = (LoadParameters) args[0];
 
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusDays(arg.getDaysToRetrieveData());
@@ -117,7 +117,7 @@ public class FlightSavingLogging {
 
     private String getSaveIdleFlightsMessage(JoinPoint joinPoint, boolean isSuccess) {
         Object[] args = joinPoint.getArgs();
-        LoadDataRequestDto arg = (LoadDataRequestDto) args[0];
+        LoadParameters arg = (LoadParameters) args[0];
         String action = "Сохранение данных о простоях. Параметры: мин. вр. погрузки = " + arg.getMinLoadIdleDays() +
                 ", макс. вр. погрузки " + arg.getMaxLoadIdleDays() + ", мин. вр. выгрузки = " + arg.getMinUnloadIdleDays() +
                 ", макс. вр. выгрузки " + arg.getMaxUnloadIdleDays();
@@ -127,7 +127,7 @@ public class FlightSavingLogging {
 
     private String getSaveTimeDistanceFlightsMessage(JoinPoint joinPoint, boolean isSuccess) {
         Object[] args = joinPoint.getArgs();
-        LoadDataRequestDto arg = (LoadDataRequestDto) args[0];
+        LoadParameters arg = (LoadParameters) args[0];
         String action = "Сохранение данных о дистанции и времени поездки. Параметры: мин. вр. перевозки = " +
                 arg.getMinTravelTime() + ", макс. вр. перевозки = " + arg.getMaxTravelTime();
         String actionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

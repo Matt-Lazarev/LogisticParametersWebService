@@ -41,7 +41,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Login</a>
+                    <a class="nav-link active" aria-current="page" th:href="${url}">Back</a>
                 </li>
             </ul>
         </div>
@@ -118,6 +118,25 @@
             <div class="col-md-6 ">
                 <label> Введите глубину поиска для расчета доходности: </label>
                 <input type="text" class="form-control" th:field="*{flightProfitDaysToRetrieveData}">
+            </div>
+        </div>
+
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+        <div class="row">
+            <div class="col align-self-center">
+                <label> Статус: </label>
+                <input type="text" class="form-control" th:field="*{status}">
+            </div>
+            <div class="col align-self-center">
+                <label> Тип парка: </label>
+                <input type="text" class="form-control" th:field="*{carType}">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col align-self-center">
+                <label> ФИО сотрудников: </label>
+                <input type="text" class="form-control" th:field="*{managers}">
             </div>
         </div>
 

@@ -57,6 +57,34 @@ public class ScheduledTasksLogging {
         FileUtils.writeActionLog(message);
     }
 
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleActualFlightService.loadActualFlights())")
+    public void successfulInvokeLoadActualFlightsMethod() {
+        String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение факта перевозок");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleActualFlightService.loadActualFlights())")
+    public void failureInvokeLoadActualFlightsMethod() {
+        String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение факта перевозок");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightRequirementService.loadFlightRequirements())")
+    public void successfulInvokeLoadFlightRequirementsMethod() {
+        String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение потребности в перевозках");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightRequirementService.loadFlightRequirements())")
+    public void failureInvokeInvokeLoadFlightRequirementsMethod() {
+        String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение потребности в перевозках");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
     private String getSaveDataLogMessage(boolean isSuccess, String message) {
         String actionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         return message + FileUtils.DELIMITER + actionTime + FileUtils.DELIMITER + isSuccess;

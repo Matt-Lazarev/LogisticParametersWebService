@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ScheduleStationHandbookService {
     private final StationHandbookService stationHandbookService;
 
-    @Scheduled(cron = "${params.nextDataLoadTimeCron}")
+    @Scheduled(cron = "0 0 4 * * *")
     public void loadStationHandbook(){
         stationHandbookService.saveAll();
     }
