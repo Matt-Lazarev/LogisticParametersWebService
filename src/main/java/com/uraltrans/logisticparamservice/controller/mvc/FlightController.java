@@ -9,6 +9,7 @@ import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -22,11 +23,11 @@ public class FlightController {
     private final FlightTimeDistanceService flightTimeDistanceService;
     private final LoadParameterService loadParameterService;
 
-    @PostMapping("/save_data")
+
     @Transactional
+    @PostMapping("/save_data")
     public String saveLoadedData(@ModelAttribute("dto") LoadParameters dto,
                                  @RequestParam String action, RedirectAttributes redirectAttrs){
-
         if(action.equals("save")){
             flightService.saveAllFlights(dto);
             flightIdleService.saveAll(dto);

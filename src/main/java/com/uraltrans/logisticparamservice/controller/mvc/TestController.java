@@ -31,13 +31,11 @@ public class TestController {
 //        cargoService.saveAll();
 //        return cargoService.getAllCargos();
         clientOrderService.saveAllClientOrders();
-        return clientOrderService.getAllClientOrders();
-//        flightProfitService.saveAll();;
-//        return flightProfitService.getAllFlightProfits();
-//        return clientOrderService.getAllClientOrders();
-//        service.saveAllActualFlights();
+        service.saveAllActualFlights();
+        flightRequirementService.saveAllFlightRequirements();
+        return flightRequirementService.getAllFlightRequirements();
 //        return service.getAllActualFlights();
-//        flightRequirementService.saveAllFlightRequirements();
+//
 //        return flightRequirementService.getAllFlightRequirements();
     }
 }

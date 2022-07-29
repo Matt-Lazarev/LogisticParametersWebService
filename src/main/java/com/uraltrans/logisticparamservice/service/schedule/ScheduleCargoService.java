@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ScheduleCargoService {
     private final CargoService cargoService;
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "${params.nextDataLoadTimeCron}")
     public void loadCargos(){
         cargoService.saveAll();
     }

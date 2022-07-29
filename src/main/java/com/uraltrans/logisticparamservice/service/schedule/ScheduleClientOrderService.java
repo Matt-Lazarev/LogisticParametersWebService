@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ScheduleClientOrderService {
     private final ClientOrderService clientOrderService;
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "${params.nextDataLoadTimeCron}")
     public void loadClientOrders(){
         clientOrderService.saveAllClientOrders();
     }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ScheduleActualFlightService {
     private final ActualFlightService actualFlightService;
 
-    @Scheduled(cron = "0 0 4 * * *")
+    @Scheduled(cron = "${params.nextDataLoadTimeCron}")
     public void loadActualFlights(){
         actualFlightService.saveAllActualFlights();
     }

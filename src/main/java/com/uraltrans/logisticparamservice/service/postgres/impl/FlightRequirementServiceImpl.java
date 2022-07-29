@@ -8,8 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,10 +28,18 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
     @Override
     @Transactional
     public void saveAllFlightRequirements() {
-        List<Map<String, Object>> maps = flightRequirementRepository.groupActualFlightsAndClientOrders();
+        prepareNextSave();
         List<FlightRequirement> flightRequirements =
                 flightRequirementMapper.mapToList(flightRequirementRepository.groupActualFlightsAndClientOrders());
+        filterFlightRequirements(flightRequirements);
         flightRequirementRepository.saveAll(flightRequirements);
+    }
+
+    private void filterFlightRequirements(List<FlightRequirement> flightRequirements) {
+        flightRequirements
+                .stream()
+                .filter(f -> f.getRequirementOrders() < 0)
+                .forEach(f -> f.setRequirementOrders(0));
     }
 
     private void prepareNextSave(){

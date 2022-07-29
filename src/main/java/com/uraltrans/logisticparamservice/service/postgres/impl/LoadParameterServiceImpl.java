@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public LocalTime getNextDataLoadTime() {
         LoadParameters parameters = getOrDefault();
         String time = parameters.getNextDataLoadTime();
@@ -52,7 +54,10 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
     @Override
     @Transactional(readOnly = true)
     public List<String> getManagers() {
-        return null;
+        return Arrays
+                .stream(getOrDefault().getManagers().split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
     }
 
     private LoadParameters getOrDefault(){
@@ -62,12 +67,12 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
         }
 
         LoadParameters parameters = new LoadParameters(
-                90, "05:00:00",
+                1, "09:45:00",
                 20, 20,
                 0, 0,
                 60., 1.,
                 45, "Согласован",
-                "КР", "");
+                "КР", "Мельниченко Д.В., Чаброва М.С., Зырина Н.А., Холмогорова Е.А., Мелешкина Ю.В., Афанасьева А.Л., Субботин В.В., Артеменко М.Н., Коркишко В.В.");
         loadParametersRepository.save(parameters);
         return parameters;
     }

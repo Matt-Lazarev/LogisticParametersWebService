@@ -38,7 +38,7 @@ public class ClientOrderServiceImpl implements ClientOrderService {
         List<Map<String, Object>> clientOrders =
                 rawClientOrderRepository.getAllOrders(params.getStatus(), params.getCarType(), getFirstDayOfMonthDate());
         List<ClientOrder> orders = clientOrderMapper.mapRawDataToClientOrderList(clientOrders);
-        //orders = filterEmployees(orders);
+        orders = filterEmployeesAndCarsAmount(orders);
         clientOrderRepository.saveAll(orders);
     }
 
@@ -51,11 +51,12 @@ public class ClientOrderServiceImpl implements ClientOrderService {
         return LocalDate.of(now.getYear(), now.getMonth(), 1).toString();
     }
 
-    private List<ClientOrder> filterEmployees(List<ClientOrder> clientOrders){
+    private List<ClientOrder> filterEmployeesAndCarsAmount(List<ClientOrder> clientOrders){
         List<String> managers = loadParameterService.getManagers();
         return clientOrders
                 .stream()
                 .filter(clientOrder -> managers.contains(clientOrder.getManager()))
+                .filter(clientOrder -> clientOrder.getCarsAmount() != null && clientOrder.getCarsAmount() > 0)
                 .collect(Collectors.toList());
     }
 }

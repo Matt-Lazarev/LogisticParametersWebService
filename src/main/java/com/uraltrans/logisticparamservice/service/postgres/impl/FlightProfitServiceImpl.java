@@ -65,7 +65,7 @@ public class FlightProfitServiceImpl implements FlightProfitService {
                 .stream()
                 .filter(f -> f.getCurrencyProfit() != null && f.getCurrencyProfit().doubleValue() > 0)
                 .filter(f -> f.getCurrency() != null)
-                .forEach(f -> f.setProfit(convert(f.getCurrencyProfit(), f.getCurrency(), currencies)));
+                .forEach(f -> f.setProfit(convert(f.getProfit(), f.getCurrency(), currencies)));
     }
 
     private BigDecimal convert(BigDecimal profit, String currencyNumCode, Map<String, CurrencyDto> currencies) {

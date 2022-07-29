@@ -75,7 +75,6 @@ public class FileUtils {
                 else {
                     Files.write(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH, discardedFlights, CREATE, APPEND);
                 }
-
             }
         } catch (IOException e) {
             log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ScheduleFlightRequirementService {
     private final FlightRequirementService flightRequirementService;
 
-    @Scheduled(cron = "0 30 4 * * *")
+    @Scheduled(cron = "${params.nextFlightRequirementLoadTimeCron}")
     public void loadFlightRequirements(){
         flightRequirementService.saveAllFlightRequirements();
     }

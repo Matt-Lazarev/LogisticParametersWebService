@@ -100,10 +100,10 @@ public class Flight {
         return "Flight{" +
                 "carNumber=" + carNumber +
                 ", invNumber='" + invNumber + '\'' +
-                ", sourceStation='" + sourceStation + '\'' +
-                ", destStation='" + destStation + '\'' +
-                ", carLoadIdleDays=" + carLoadIdleDays +
-                ", carUnloadIdleDays=" + carUnloadIdleDays +
+                ", sourceStationCode='" + sourceStationCode + '\'' +
+                ", destStationCode='" + destStationCode + '\'' +
+                ", loading=" + carLoadIdleDays +
+                ", unloading=" + carUnloadIdleDays +
                 ", distance =" + (distance != null ? String.format("%.2f", distance.doubleValue()) : null) +
                 ", travelTime =" + (travelTime != null ? String.format("%.2f", travelTime.doubleValue()) : null) +
                 '}';

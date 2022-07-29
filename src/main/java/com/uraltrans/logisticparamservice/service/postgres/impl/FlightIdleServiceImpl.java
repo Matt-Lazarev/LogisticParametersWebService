@@ -205,7 +205,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
                     flight.setCarUnloadIdleDays(null);
                 });
 
-        FileUtils.writeDiscardedFlights(discardedFlights, false);
+        FileUtils.writeDiscardedFlights(discardedFlights, true);
     }
 
     private List<FlightIdle> filterFlightIdles(List<FlightIdle> flightIdles){
