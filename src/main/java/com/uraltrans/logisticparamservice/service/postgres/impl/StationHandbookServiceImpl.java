@@ -22,7 +22,6 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     private final StationHandbookMapper stationHandbookMapper;
 
     @Override
-    @Transactional
     public void saveAll() {
         prepareNextSave();
         List<Map<String, Object>> rawData = rawStationHandbookService.getAll();
@@ -30,19 +29,22 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<StationHandbook> getAll() {
         return stationHandbookRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<StationResponse> getAllResponses() {
         List<StationResponse> responses = stationHandbookMapper.mapToListResponses(stationHandbookRepository.findAll());
         if(responses.size() == 0){
             throw new StationsNotFoundException("Станции не были найдены. Повторите запрос позже");
         }
         return responses;
+    }
+
+    @Override
+    public String getRegionByCode6(String code) {
+        return stationHandbookRepository.findRegionByCode6(code);
     }
 
     private void prepareNextSave() {

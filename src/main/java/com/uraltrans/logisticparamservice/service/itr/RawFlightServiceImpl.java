@@ -19,7 +19,6 @@ public class RawFlightServiceImpl implements RawFlightService {
     private final RawFlightRepository rawFlightRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Map<String, Object>> getAllFlightsBetween(int days) {
         String[][] fromToDatePairs = divideDate(days);
         return rawFlightRepository.getAllFlightsBetween(fromToDatePairs);

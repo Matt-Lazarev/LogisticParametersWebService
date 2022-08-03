@@ -18,17 +18,19 @@ public class RawDislocationRepositoryImpl implements RawDislocationRepository{
             "if47._FLD2847 as DestinationStationCode, " +
             "if47._Fld2780 as SendDate, " +
             "if47._Fld177 as Feature2, " +
+            "if47._Fld2709 as Feature6, " +
             "if47._Fld2844 as Feature9, " +
             "if47._Fld2712 as Feature12, " +
             "if47._Fld234 as CarState, " +
             "if47._Fld235 as FleetState, " +
             "if47._Fld2848 as BeginOrderDate, " +
-            "if47._Fld2849 as EndOrderDate " +
+            "if47._Fld2849 as EndOrderDate, " +
+            "if47._Fld51 as Loaded " +
             "FROM _InfoRg47 if47 " +
-            "WHERE if47._Fld171 = ? and " +
+            "WHERE if47._Fld171 >= ? and " +
             "if47._Fld176 = N'УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ' and " +
-            "if47._Fld172 = N'КР' and " +
-            "if47._Fld51 = N'ГРУЖ'";
+            "if47._Fld172 = N'КР'";
+//            "if47._Fld51 = N'ГРУЖ'";
 
     @Resource(name = "integrationDataDataSource")
     private final DataSource integrationDataDataSource;
@@ -39,8 +41,7 @@ public class RawDislocationRepositoryImpl implements RawDislocationRepository{
 
     @Override
     public List<Map<String, Object>> getAllDislocations(String dislocationDate) {
-        try {
-            Connection connection = integrationDataDataSource.getConnection();
+        try (Connection connection = integrationDataDataSource.getConnection()) {
             try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
                 preparedStatement.setString(1, dislocationDate);
                 try(ResultSet rs = preparedStatement.executeQuery()){

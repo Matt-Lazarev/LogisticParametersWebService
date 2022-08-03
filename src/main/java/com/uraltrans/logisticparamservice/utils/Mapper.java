@@ -31,6 +31,10 @@ public class Mapper {
         return BigDecimal.valueOf(num).setScale(decimalPoints, RoundingMode.HALF_UP).toString();
     }
 
+    public static Integer toInteger(BigDecimal number) {
+        return number != null ? number.intValue() : null;
+    }
+
     public static Integer toInteger(BigInteger number) {
         return number != null ? number.intValue() : null;
     }

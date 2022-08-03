@@ -8,6 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 
 public interface StationHandbookRepository extends JpaRepository<StationHandbook, String> {
+
+    @Query("select s.region from StationHandbook s where s.code6 = :code")
+    String findRegionByCode6(String code);
+
     @Modifying
     @Transactional
     @Query(value = "truncate table station_handbook restart identity", nativeQuery = true)

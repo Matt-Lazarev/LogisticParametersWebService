@@ -12,23 +12,19 @@ spring:
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     integration-data:
       jdbc-url: jdbc:sqlserver://dbsrv:1433;database=IntegrationData;trustServerCertificate=true
-      username:
+      username: 
       password:
     postgres:
-      jdbc-url: jdbc:postgresql://10.168.1.6:5432/params
+      jdbc-url: jdbc:postgresql://localhost:5432/log_param
       username:
-      password: 
+      password:
       driverClassname: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
       naming:
         physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-    show-sql: true
+    show-sql: false
 
   profiles:
     active: 'dev'
-
-params:
-  nextDataLoadTimeCron: '0 0 4 * * *'
-  nextFlightRequirementLoadTimeCron: '0 30 4 * * *'

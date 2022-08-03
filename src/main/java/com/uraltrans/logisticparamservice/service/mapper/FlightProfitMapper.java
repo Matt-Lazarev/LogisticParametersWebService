@@ -25,7 +25,6 @@ public class FlightProfitMapper {
                 .setSourceStationCode((String) data.get("_SourceStationCode"))
                 .setDestStationCode((String) data.get("_DestStationCode"))
                 .setProfit((BigDecimal) data.get("_TotalProfit"))
-                .setCurrencyProfit((BigDecimal) data.get("_TotalCurrencyProfit"))
                 .setCurrency((String) data.get("_Currency"))
                 .setCargo((String) data.get("_Cargo"))
                 .setCargoCode((String) data.get("_CargoCode"))

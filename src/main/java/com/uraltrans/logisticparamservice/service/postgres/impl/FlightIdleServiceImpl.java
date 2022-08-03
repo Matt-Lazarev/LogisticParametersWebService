@@ -30,13 +30,11 @@ public class FlightIdleServiceImpl implements FlightIdleService {
     private final FlightIdleMapper mapper;
 
     @Override
-    @Transactional(readOnly = true)
     public List<FlightIdleDto> getAllLoadingUnloadingIdles() {
         return mapper.mapToListDto(flightIdleRepository.findAll());
     }
 
     @Override
-    @Transactional
     public void saveAll(LoadParameters dto) {
         prepareNextSave();
 

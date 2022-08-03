@@ -38,10 +38,6 @@ public class FlightProfit {
 
     private BigDecimal profit;
 
-    @JsonIgnore
-    @Column(name = "currency_profit")
-    private BigDecimal currencyProfit;
-
     @Column(name = "average_travel_time")
     private BigDecimal averageTravelTime;
 

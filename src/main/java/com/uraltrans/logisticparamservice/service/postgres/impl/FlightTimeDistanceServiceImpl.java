@@ -31,13 +31,11 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
     private final FlightTimeDistanceMapper mapper;
 
     @Override
-    @Transactional(readOnly = true)
     public List<FlightTimeDistance> getAllTimeDistances() {
         return flightTimeDistanceRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<FlightTimeDistanceResponse> getTimeDistanceResponses(List<FlightTimeDistanceRequest> requests) {
         List<FlightTimeDistanceResponse> responses = new ArrayList<>();
         requests.forEach(req -> {
@@ -61,7 +59,6 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
     }
 
     @Override
-    @Transactional
     public void saveAll(LoadParameters dto) {
         prepareNextSave();
 

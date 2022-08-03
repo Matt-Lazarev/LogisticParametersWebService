@@ -18,7 +18,6 @@ public class RawFlightProfitRepositoryImpl implements RawFlightProfitRepository 
             "SELECT r45_1._Code as _SourceStationCode, r45_2._Code as _DestStationCode, " +
             "r33._Code as _CargoCode, r33._Fld5637 as _Cargo, " +
             "inf._Fld6441 as _TotalProfit, r22._Code as _Currency, " +
-            "inf._Fld6628 as _TotalCurrencyProfit, " +
             "inf._Fld6629 as _Volume, inf._Fld6626 as _SendDate " +
             "FROM _InfoRg5865 inf " +
             "LEFT OUTER JOIN _Reference45 r45_1 on inf._Fld6583RRef = r45_1._IDRRef " +
@@ -36,8 +35,7 @@ public class RawFlightProfitRepositoryImpl implements RawFlightProfitRepository 
 
     @Override
     public List<Map<String, Object>> getAllFlightProfits(String fromDate) {
-        try {
-            Connection connection = utcsrsDataSource.getConnection();
+        try (Connection connection = utcsrsDataSource.getConnection()){
             PreparedStatement preparedStatement = connection.prepareStatement(SQL);
             preparedStatement.setString(1, fromDate);
             try(ResultSet rs = preparedStatement.executeQuery()){

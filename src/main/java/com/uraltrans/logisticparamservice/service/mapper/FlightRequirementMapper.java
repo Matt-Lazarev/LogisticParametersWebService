@@ -26,9 +26,10 @@ public class FlightRequirementMapper {
                 .volumeFrom((BigDecimal) data.get("volume_from"))
                 .sourceStationCode((String) data.get("source_station_code6"))
                 .destinationStationCode((String) data.get("destination_station_code6"))
-                .inPlanOrders((Integer) data.get("cars_amount"))
-                .completedOrders(Mapper.toInteger((BigInteger) data.get("completed_orders")))
-                .inProgressOrders(Mapper.toInteger((BigInteger) data.get("in_progress_orders")))
+                .inPlanOrders(Mapper.toInteger((BigInteger) data.get("cars_amount")))
+                //.inPlanOrders((Integer) data.get("cars_amount"))
+                .completedOrders(Mapper.toInteger((BigDecimal) data.get("completed_orders")))
+                .inProgressOrders(Mapper.toInteger((BigDecimal) data.get("in_progress_orders")))
                 .build();
 
         f.setRequirementOrders(f.getInPlanOrders() - f.getCompletedOrders() - f.getInProgressOrders());

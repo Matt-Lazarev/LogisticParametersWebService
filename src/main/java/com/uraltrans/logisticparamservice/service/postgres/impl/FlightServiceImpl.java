@@ -27,25 +27,21 @@ public class FlightServiceImpl implements FlightService {
     private final FlightMapper flightMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Flight> getAllFlights() {
         return flightRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LoadIdleDto> getGroupedCarLoadIdle() {
         return flightRepository.groupCarLoadIdle();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<UnloadIdleDto> getGroupCarUnloadIdle() {
         return flightRepository.groupCarUnloadIdle();
     }
 
     @Override
-    @Transactional
     public void saveAllFlights(LoadParameters dto) {
         prepareNextSave();
         List<Flight> allFlights = getAllFlights(dto);
@@ -54,7 +50,6 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    @Transactional
     public void saveAll(List<Flight> flights) {
         flightRepository.saveAll(flights);
     }
@@ -75,23 +70,20 @@ public class FlightServiceImpl implements FlightService {
                     if(f.getCargo() == null){
                         errorFlights.add(f + " --- (груз не найден)");
                     }
-                });
-        allFlights
-                .forEach(f -> {
-                    if(f.getSourceStationCode() == null){
+                    else if(f.getSourceStationCode() == null){
                         errorFlights.add(f + " --- (станция отправления не найдена)");
                     }
-
-                    if(f.getDestStationCode() == null){
+                    else if(f.getDestStationCode() == null){
                         errorFlights.add(f + " --- (станция назначения не найдена)");
                     }
-
-                    if(f.getSourceStationCode() != null && f.getSourceStationCode().length() != 6){
+                    else if(f.getSourceStationCode() != null && f.getSourceStationCode().length() != 6){
                         errorFlights.add(f + " --- (некорректный код станции отправления)");
                     }
-
-                    if(f.getDestStationCode() != null && f.getDestStationCode().length() != 6){
-                        errorFlights.add(f + " --- (некорректный код станции отправления)");
+                    else if(f.getDestStationCode() != null && f.getDestStationCode().length() != 6){
+                        errorFlights.add(f + " --- (некорректный код станции назначения)");
+                    }
+                    else if(f.getVolume() == null){
+                        errorFlights.add(f + " --- (объем кузова не найден)" );
                     }
                 });
 

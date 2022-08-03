@@ -25,13 +25,11 @@ public class ClientOrderServiceImpl implements ClientOrderService {
     private final LoadParameterService loadParameterService;
 
     @Override
-    @Transactional(readOnly = true)
     public List<ClientOrder> getAllClientOrders() {
         return clientOrderRepository.findAll();
     }
 
     @Override
-    @Transactional
     public void saveAllClientOrders() {
         prepareNextSave();
         LoadParameters params = loadParameterService.getLoadParameters();

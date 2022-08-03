@@ -14,7 +14,6 @@ public class RawStationHandbookServiceImpl implements RawStationHandbookService 
     private final RawStationHandbookRepository rawStationHandbookRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public  List<Map<String, Object>> getAll() {
         return rawStationHandbookRepository.getAllStations();
     }

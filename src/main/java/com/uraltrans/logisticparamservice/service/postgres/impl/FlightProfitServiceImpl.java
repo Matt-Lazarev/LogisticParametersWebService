@@ -27,13 +27,11 @@ public class FlightProfitServiceImpl implements FlightProfitService {
     private final CbrCurrencyReader cbrCurrencyReader;
 
     @Override
-    @Transactional(readOnly = true)
     public List<FlightProfit> getAllFlightProfits() {
         return flightProfitRepository.findAll();
     }
 
     @Override
-    @Transactional
     public void saveAll() {
         prepareNextSave();
         List<FlightProfit> flightProfits = flightProfitMapper.mapToList(rawFlightProfitService.getAll());
@@ -63,7 +61,6 @@ public class FlightProfitServiceImpl implements FlightProfitService {
         Map<String, CurrencyDto> currencies = cbrCurrencyReader.getAllCbrCurrencies();
         flightProfits
                 .stream()
-                .filter(f -> f.getCurrencyProfit() != null && f.getCurrencyProfit().doubleValue() > 0)
                 .filter(f -> f.getCurrency() != null)
                 .forEach(f -> f.setProfit(convert(f.getProfit(), f.getCurrency(), currencies)));
     }

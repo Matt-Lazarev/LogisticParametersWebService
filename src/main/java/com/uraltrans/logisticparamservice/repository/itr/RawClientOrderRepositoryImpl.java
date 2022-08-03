@@ -30,8 +30,7 @@ public class RawClientOrderRepositoryImpl implements RawClientOrderRepository{
 
     @Override
     public List<Map<String, Object>> getAllOrders(String status, String carType, String dateFrom) {
-        try {
-            Connection connection = itrDataSource.getConnection();
+        try (Connection connection = itrDataSource.getConnection()) {
             try(PreparedStatement preparedStatement = connection.prepareStatement(SQL)){
                 preparedStatement.setString(1, status);
                 preparedStatement.setString(2, carType);

@@ -10,4 +10,6 @@ public interface StationHandbookService {
     List<StationHandbook> getAll();
 
     List<StationResponse> getAllResponses();
+
+    String getRegionByCode6(String code);
 }

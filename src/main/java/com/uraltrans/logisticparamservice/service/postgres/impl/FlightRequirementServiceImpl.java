@@ -1,6 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
+import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRequirementRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightRequirementMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
@@ -8,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.List;
 
 @Service
@@ -20,13 +19,11 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
 
 
     @Override
-    @Transactional(readOnly = true)
     public List<FlightRequirement> getAllFlightRequirements() {
         return flightRequirementRepository.findAll();
     }
 
     @Override
-    @Transactional
     public void saveAllFlightRequirements() {
         prepareNextSave();
         List<FlightRequirement> flightRequirements =
@@ -34,6 +31,19 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
         filterFlightRequirements(flightRequirements);
         flightRequirementRepository.saveAll(flightRequirements);
     }
+
+    @Override
+    public Integer getFlightRequirement(PotentialFlight potentialFlight) {
+        return flightRequirementRepository.findRequirementByVolumeAndStationCodes(
+                potentialFlight.getVolume(), potentialFlight.getSourceStationCode(), potentialFlight.getDestinationStationCode()
+        );
+    }
+
+    @Override
+    public List<String> getAllSourceStationCodes() {
+        return flightRequirementRepository.findAllSourceStationCodes();
+    }
+
 
     private void filterFlightRequirements(List<FlightRequirement> flightRequirements) {
         flightRequirements

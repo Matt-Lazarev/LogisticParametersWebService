@@ -21,19 +21,16 @@ public class CargoServiceImpl implements CargoService {
     private final CargoMapper cargoMapper;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Cargo> getAllCargos() {
         return cargoRepository.findAll();
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<CargoResponse> getAllCargoResponses() {
         return cargoMapper.mapToCargoResponseList(cargoRepository.findAll());
     }
 
     @Override
-    @Transactional
     public void saveAll() {
         prepareNextSave();
         List<Cargo> cargos = cargoMapper.mapRawDataToCargoList(rawCargoRepository.getAllFlightProfits());

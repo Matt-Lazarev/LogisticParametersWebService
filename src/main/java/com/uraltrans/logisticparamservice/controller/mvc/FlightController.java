@@ -24,7 +24,6 @@ public class FlightController {
     private final LoadParameterService loadParameterService;
 
 
-    @Transactional
     @PostMapping("/save_data")
     public String saveLoadedData(@ModelAttribute("dto") LoadParameters dto,
                                  @RequestParam String action, RedirectAttributes redirectAttrs){

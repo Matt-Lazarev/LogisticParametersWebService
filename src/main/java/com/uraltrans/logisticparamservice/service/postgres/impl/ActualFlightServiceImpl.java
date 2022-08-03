@@ -1,62 +1,116 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
+import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.ActualFlightRepository;
+import com.uraltrans.logisticparamservice.repository.postgres.PotentialFlightRepository;
 import com.uraltrans.logisticparamservice.service.mapper.ActualFlightMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.ActualFlightService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ActualFlightServiceImpl implements ActualFlightService {
     private static final int SHIFT_1C_YEARS = 2000;
+    private static final Set<String> FILTER_VALUES = new HashSet<>(
+            Arrays.asList("вывод", "аренда", "тр", "др", "ремонт", "отстой", "вывод", "в тр", "промывка"));
+    private static final String FILTER_VALUE = "ремонт";
+
+    private final FlightRequirementService flightRequirementService;
+    private final StationHandbookService stationHandbookService;
 
     private final RawDislocationRepository rawDislocationRepository;
     private final ActualFlightRepository actualFlightRepository;
+    private final PotentialFlightRepository potentialFlightRepository;
     private final ActualFlightMapper actualFlightMapper;
 
 
     @Override
-    @Transactional(readOnly = true)
     public List<ActualFlight> getAllActualFlights() {
         return actualFlightRepository.findAll();
     }
 
     @Override
-    @Transactional
     public void saveAllActualFlights() {
-        prepareNextSave();
+        prepareNextActualFlightsSave();
         String dislocationDate = LocalDate.now().plusYears(SHIFT_1C_YEARS).toString();
         List<ActualFlight> actualFlights =
-                actualFlightMapper.mapRawDataToCargoList(rawDislocationRepository.getAllDislocations(dislocationDate));
-        actualFlights = filterFlights(actualFlights);
+                actualFlightMapper.mapRawDataToActualFlightsList(rawDislocationRepository.getAllDislocations(dislocationDate));
+        actualFlights = filterActualFlights(actualFlights);
         calculateCompletedAndInProgressOrders(actualFlights);
         actualFlightRepository.saveAll(actualFlights);
     }
 
-    private void prepareNextSave(){
+    @Override
+    public List<PotentialFlight> getAllPotentialFlights() {
+        return potentialFlightRepository.findAll();
+    }
+
+    @Override
+    public void saveAllPotentialFlights() {
+        prepareNextPotentialFlightsSave();
+
+        String dislocationDate = LocalDate.now().plusYears(SHIFT_1C_YEARS).toString();
+        List<PotentialFlight> potentialFlights =
+                actualFlightMapper.mapRawDataToPotentialFlightsList(rawDislocationRepository.getAllDislocations(dislocationDate));
+        potentialFlights = filterPotentialFlights(potentialFlights);
+        potentialFlightRepository.saveAllAndFlush(potentialFlights);
+    }
+
+    private void prepareNextActualFlightsSave(){
         actualFlightRepository.truncate();
     }
 
-    private List<ActualFlight> filterFlights(List<ActualFlight> actualFlights){
-        Set<String> filterValues = new HashSet<>(
-                Arrays.asList("вывод", "аренда", "тр", "др", "ремонт", "отстой", "вывод", "в тр", "промывка"));
-        String filterValue = "ремонт";
+    private void prepareNextPotentialFlightsSave(){
+        potentialFlightRepository.truncate();
+    }
+
+    private List<ActualFlight> filterActualFlights(List<ActualFlight> actualFlights){
         return actualFlights
                 .stream()
-                .filter(f -> !filterValues.contains(f.getFeature2().toLowerCase()))
-                .filter(f -> !filterValues.contains(f.getFeature12().toLowerCase()))
-                .filter(f -> !filterValue.contains(f.getCarState().toLowerCase()))
+                .filter(f -> !FILTER_VALUES.contains(f.getFeature2().toLowerCase()))
+                .filter(f -> !FILTER_VALUES.contains(f.getFeature12().toLowerCase()))
+                .filter(f -> !f.getCarState().toLowerCase().contains(FILTER_VALUE))
+                .collect(Collectors.toList());
+    }
+
+    private List<PotentialFlight> filterPotentialFlights(List<PotentialFlight> potentialFlights){
+        return potentialFlights
+                .stream()
+                .filter(f -> f.getLoaded() != null && f.getLoaded().equalsIgnoreCase("ГРУЖ"))
+                .filter(f -> !FILTER_VALUES.contains(f.getFeature2().toLowerCase()))
+                .filter(f -> !FILTER_VALUES.contains(f.getFeature12().toLowerCase()))
+                .filter(f -> !f.getCarState().toLowerCase().contains(FILTER_VALUE))
+                .filter(f -> f.getCarState().equalsIgnoreCase("гружёный ход"))
+                .filter(f -> !f.getCarState().toLowerCase().contains("заказан"))
+                .peek(f -> f.setRequirementOrders(flightRequirementService.getFlightRequirement(f)))
+                .filter(f -> f.getRequirementOrders() != null && f.getRequirementOrders() >= 1)
+                .filter(f -> {
+                    String destStationRegion = stationHandbookService.getRegionByCode6(f.getDestinationStationCode());
+                    if(destStationRegion == null){
+                        return false;
+                    }
+                    destStationRegion = destStationRegion.toLowerCase().trim();
+
+                    Set<String> flightRequirementsSourceStationRegions =
+                            flightRequirementService.getAllSourceStationCodes()
+                                    .stream()
+                                    .map(stationHandbookService::getRegionByCode6)
+                                    .filter(Objects::nonNull)
+                                    .map(region -> region.toLowerCase().trim())
+                                    .collect(Collectors.toSet());
+
+                    return flightRequirementsSourceStationRegions.contains(destStationRegion);
+                })
                 .collect(Collectors.toList());
     }
 

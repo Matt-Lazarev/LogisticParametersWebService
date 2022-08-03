@@ -19,7 +19,6 @@ public class RawFlightProfitServiceImpl implements RawFlightProfitService {
     private final LoadParameterService loadParameterService;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Map<String, Object>> getAll() {
         LoadParameters params = loadParameterService.getLoadParameters();
         Integer daysToRetrieve = params.getFlightProfitDaysToRetrieveData();

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -19,13 +20,11 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
     private final LoadParametersRepository loadParametersRepository;
 
     @Override
-    @Transactional(readOnly = true)
     public LoadParameters getLoadParameters() {
         return getOrDefault();
     }
 
     @Override
-    @Transactional
     public void updateLoadParameters(LoadParameters newParameters) {
         LoadParameters loadParameters = loadParametersRepository.findAll().get(0);
         loadParameters.setDaysToRetrieveData(newParameters.getDaysToRetrieveData());
@@ -44,7 +43,6 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public LocalTime getNextDataLoadTime() {
         LoadParameters parameters = getOrDefault();
         String time = parameters.getNextDataLoadTime();
@@ -52,7 +50,13 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    public void updateNextDataLoad(LocalDateTime nextExecution) {
+        LoadParameters parameters = getOrDefault();
+        parameters.setNextDataLoadTime(nextExecution.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+        loadParametersRepository.save(parameters);
+    }
+
+    @Override
     public List<String> getManagers() {
         return Arrays
                 .stream(getOrDefault().getManagers().split(","))

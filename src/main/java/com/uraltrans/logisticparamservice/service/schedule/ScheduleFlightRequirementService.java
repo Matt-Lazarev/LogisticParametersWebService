@@ -2,7 +2,6 @@ package com.uraltrans.logisticparamservice.service.schedule;
 
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 public class ScheduleFlightRequirementService {
     private final FlightRequirementService flightRequirementService;
 
-    @Scheduled(cron = "${params.nextFlightRequirementLoadTimeCron}")
     public void loadFlightRequirements(){
         flightRequirementService.saveAllFlightRequirements();
     }
