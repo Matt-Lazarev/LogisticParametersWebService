@@ -5,6 +5,7 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbook
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
@@ -19,5 +20,11 @@ public class StationController {
     public List<StationResponse> getAllResponses(){
         return stationHandbookService.getAllResponses();
     }
+
+    @PostMapping("/station/load")
+    public void loadStations(){
+        stationHandbookService.saveAll();
+    }
+
 
 }
