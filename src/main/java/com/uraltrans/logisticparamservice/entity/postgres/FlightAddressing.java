@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.entity.postgres;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,7 +38,35 @@ public class FlightAddressing {
     @Column(name="requirement_orders")
     private Integer requirementOrders;
 
-    private Integer tariff;
+    private BigDecimal tariff;
 
-    private Integer rate;
+    private BigDecimal rate;
+
+    @JsonIgnore
+    private String loaded;
+
+    @JsonIgnore
+    @Column(name="wagon_type")
+    private String wagonType;
+
+    @Column(name="date_from")
+    private String dateFrom;
+
+    @Column(name="date_to")
+    private String dateTo;
+
+    @Override
+    public String toString() {
+        return "FlightAddressing{" +
+                "carNumber='" + carNumber + '\'' +
+                ", volume=" + volume +
+                ", sourceStationCode='" + sourceStationCode + '\'' +
+                ", destinationStationCode='" + destinationStationCode + '\'' +
+                ", currentFlightDestStationCode='" + currentFlightDestStationCode + '\'' +
+                ", cargoCode='" + cargoCode + '\'' +
+                ", requirementOrders=" + requirementOrders +
+                ", loaded='" + loaded + '\'' +
+                ", wagonType='" + wagonType + '\'' +
+                '}';
+    }
 }

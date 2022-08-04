@@ -7,7 +7,6 @@ import com.uraltrans.logisticparamservice.service.mapper.FlightRequirementMapper
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,7 +32,7 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
     }
 
     @Override
-    public Integer getFlightRequirement(PotentialFlight potentialFlight) {
+    public FlightRequirement getFlightRequirement(PotentialFlight potentialFlight) {
         return flightRequirementRepository.findRequirementByVolumeAndStationCodes(
                 potentialFlight.getVolume(), potentialFlight.getSourceStationCode(), potentialFlight.getDestinationStationCode()
         );
@@ -43,7 +42,6 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
     public List<String> getAllSourceStationCodes() {
         return flightRequirementRepository.findAllSourceStationCodes();
     }
-
 
     private void filterFlightRequirements(List<FlightRequirement> flightRequirements) {
         flightRequirements

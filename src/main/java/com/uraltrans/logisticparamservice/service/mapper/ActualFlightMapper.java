@@ -63,6 +63,7 @@ public class ActualFlightMapper {
                 .fleetState((String) data.get("FleetState"))
                 .feature9((String) data.get("Feature9"))
                 .loaded((String) data.get("Loaded"))
+                .wagonType((String) data.get("WagonType"))
                 .currentOrderBegin(Mapper.fix1cDate((Timestamp) data.get("BeginOrderDate")))
                 .currentOrderEnd(Mapper.fix1cDate((Timestamp) data.get("EndOrderDate")))
                 .build();

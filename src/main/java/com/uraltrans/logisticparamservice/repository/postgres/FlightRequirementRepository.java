@@ -41,12 +41,12 @@ public interface FlightRequirementRepository extends JpaRepository<FlightRequire
     @Query(value = "truncate table flight_requirements restart identity", nativeQuery = true)
     void truncate();
 
-    @Query("select fr.requirementOrders " +
+    @Query("select fr " +
             "from FlightRequirement fr " +
             "where :volume between fr.volumeFrom and fr.volumeTo " +
             "and fr.sourceStationCode = :sourceStationCode " +
             "and fr.destinationStationCode = :destinationStationCode")
-    Integer findRequirementByVolumeAndStationCodes(BigDecimal volume, String sourceStationCode, String destinationStationCode);
+    FlightRequirement findRequirementByVolumeAndStationCodes(BigDecimal volume, String sourceStationCode, String destinationStationCode);
 
     @Query("select fr.sourceStationCode from FlightRequirement fr ")
     List<String> findAllSourceStationCodes();

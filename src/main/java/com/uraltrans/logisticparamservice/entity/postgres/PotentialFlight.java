@@ -76,4 +76,8 @@ public class PotentialFlight {
 
     @JsonIgnore
     private String loaded;
+
+    @JsonIgnore
+    @Column(name="wagon_type")
+    private String wagonType;
 }

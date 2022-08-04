@@ -42,8 +42,9 @@ public class ClientOrderServiceImpl implements ClientOrderService {
     }
 
     @Override
-    public ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volumeFrom, BigDecimal volumeTo) {
-        return clientOrderRepository.findByStationCodesAndVolume(sourceStation, destStation, volumeFrom, volumeTo);
+    public ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume) {
+        return clientOrderRepository.findByStationCodesAndVolume(sourceStation, destStation, volume);
+
     }
 
     private void prepareNextSave(){

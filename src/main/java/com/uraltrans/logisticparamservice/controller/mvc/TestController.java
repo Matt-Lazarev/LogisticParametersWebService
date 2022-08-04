@@ -1,11 +1,13 @@
 package com.uraltrans.logisticparamservice.controller.mvc;
 
-import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
+import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -28,15 +30,17 @@ public class TestController {
 
     final StationHandbookService stationHandbookService;
 
+    final FlightAddressingService flightAddressingService;
+
     @GetMapping
     public List<?> getAll() {
         clientOrderService.saveAllClientOrders();
         service.saveAllActualFlights();
         flightRequirementService.saveAllFlightRequirements();
-//        service.saveAllPotentialFlights();
-//        return flightRequirementService.getAllFlightRequirements();
         service.saveAllPotentialFlights();
-        return service.getAllPotentialFlights();
+        flightAddressingService.saveAll();
+
+        return flightAddressingService.getAll();
     }
 
     @GetMapping("/calc/tariff")

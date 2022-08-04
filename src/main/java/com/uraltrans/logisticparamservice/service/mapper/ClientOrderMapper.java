@@ -21,6 +21,7 @@ public class ClientOrderMapper {
 
     private ClientOrder mapToOrderClient(Map<String, Object> data) {
         return ClientOrder.builder()
+                .carNumber((String) data.get("CarNumber"))
                 .status((String) data.get("DocumentStateName"))
                 .carType((String) data.get("CarTypeName"))
                 .volumeFrom(Mapper.toBigDecimal((Double) data.get("VolumeFrom")))

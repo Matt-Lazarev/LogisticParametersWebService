@@ -43,4 +43,10 @@ public class FlightController {
         model.addAttribute("discarded_flights", FileUtils.readDiscardedFlights());
         return "discarded_flights";
     }
+
+    @GetMapping("/rate-tariff-errors")
+    public String getRateTariffErrors(Model model){
+        model.addAttribute("errors", FileUtils.readTariffRateErrors());
+        return "rate_tariff_errors";
+    }
 }

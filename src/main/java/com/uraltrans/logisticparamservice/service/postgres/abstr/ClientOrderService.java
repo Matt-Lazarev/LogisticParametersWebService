@@ -9,5 +9,5 @@ public interface ClientOrderService {
     List<ClientOrder> getAllClientOrders();
     void saveAllClientOrders();
 
-    ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volumeFrom, BigDecimal volumeTo);
+    ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
 }

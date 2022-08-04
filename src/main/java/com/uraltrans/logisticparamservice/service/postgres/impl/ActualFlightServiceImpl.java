@@ -1,6 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
+import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.ActualFlightRepository;
@@ -98,7 +99,12 @@ public class ActualFlightServiceImpl implements ActualFlightService {
                 .filter(f -> !f.getCarState().toLowerCase().contains(FILTER_VALUE))
                 .filter(f -> f.getCarState().equalsIgnoreCase("гружёный ход"))
                 .filter(f -> !f.getCarState().toLowerCase().contains("заказан"))
-                .peek(f -> f.setRequirementOrders(flightRequirementService.getFlightRequirement(f)))
+                .peek(f -> {
+                    FlightRequirement requirement = flightRequirementService.getFlightRequirement(f);
+                    if(requirement != null){
+                        f.setRequirementOrders(requirement.getRequirementOrders());
+                    }
+                })
                 .filter(f -> f.getRequirementOrders() != null && f.getRequirementOrders() >= 1)
                 .filter(f -> {
                     String destStationRegion = stationHandbookService.getRegionByCode6(f.getDestinationStationCode());

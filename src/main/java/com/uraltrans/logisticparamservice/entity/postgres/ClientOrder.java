@@ -24,6 +24,9 @@ public class ClientOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "car_number")
+    private String carNumber;
+
     private String status;
 
     @Column(name = "car_type")

@@ -26,6 +26,7 @@ public class RawDislocationRepositoryImpl implements RawDislocationRepository{
             "if47._Fld2848 as BeginOrderDate, " +
             "if47._Fld2849 as EndOrderDate, " +
             "if47._Fld51 as Loaded, " +
+            "if47._Fld172 as WagonType, " +
             "if47._Fld2850 as Cargo, " +
             "if47._Fld2852 as CargoCode " +
             "FROM _InfoRg47 if47 " +

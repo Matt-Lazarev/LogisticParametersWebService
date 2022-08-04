@@ -14,9 +14,9 @@ public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> 
            "from ClientOrder co " +
            "where co.sourceStationCode6 = :sourceStation and " +
            "      co.destinationStationCode6 = :destStation and " +
-           "      co.volumeFrom = :volumeFrom and " +
-           "      co.volumeTo = :volumeTo")
-    ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volumeFrom, BigDecimal volumeTo);
+           "      :volume between co.volumeFrom and co.volumeTo")
+    ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
+
     @Modifying
     @Transactional
     @Query(value = "truncate table client_orders restart identity", nativeQuery = true)
