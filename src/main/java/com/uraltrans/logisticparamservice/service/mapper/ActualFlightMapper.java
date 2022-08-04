@@ -57,6 +57,8 @@ public class ActualFlightMapper {
                 .feature2((String) data.get("Feature2"))
                 .feature6((String) data.get("Feature6"))
                 .feature12((String) data.get("Feature12"))
+                .cargo((String) data.get("Cargo"))
+                .cargoCode((String) data.get("CargoCode"))
                 .carState((String) data.get("CarState"))
                 .fleetState((String) data.get("FleetState"))
                 .feature9((String) data.get("Feature9"))

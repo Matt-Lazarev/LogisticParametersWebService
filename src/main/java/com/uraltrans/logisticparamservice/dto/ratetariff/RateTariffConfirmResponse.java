@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.dto.rate;
+package com.uraltrans.logisticparamservice.dto.ratetariff;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RateConfirmResponse {
+public class RateTariffConfirmResponse {
     private String id;
     private String success;
     private String errorText;

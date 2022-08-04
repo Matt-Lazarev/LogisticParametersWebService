@@ -51,6 +51,11 @@ public class PotentialFlight {
     @Column(name="current_order_end")
     private LocalDateTime currentOrderEnd;
 
+    private String cargo;
+
+    @Column(name = "cargo_code")
+    private String cargoCode;
+
     @Column(name="completed_orders")
     private Integer completedOrders;
 

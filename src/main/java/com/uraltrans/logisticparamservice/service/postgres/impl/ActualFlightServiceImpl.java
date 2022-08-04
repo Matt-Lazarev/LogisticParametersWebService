@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,6 +65,11 @@ public class ActualFlightServiceImpl implements ActualFlightService {
                 actualFlightMapper.mapRawDataToPotentialFlightsList(rawDislocationRepository.getAllDislocations(dislocationDate));
         potentialFlights = filterPotentialFlights(potentialFlights);
         potentialFlightRepository.saveAllAndFlush(potentialFlights);
+    }
+
+    @Override
+    public ActualFlight findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume) {
+        return actualFlightRepository.findByStationCodesAndVolume(sourceStation, destStation, volume);
     }
 
     private void prepareNextActualFlightsSave(){

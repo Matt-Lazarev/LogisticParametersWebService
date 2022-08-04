@@ -23,6 +23,7 @@ public class FileUtils {
     private static final int MAX_LOGS_AMOUNT = 20;
 
     private static final Path DEFAULT_DISCARDED_FLIGHTS_FILE_PATH = Paths.get("logging/discarded_flights.log");
+    private static final Path DEFAULT_TARIFF_RATE_ERRORS_FILE_PATH = Paths.get("logging/tariff_rate_errors.log");
     private static final Path DEFAULT_BACK_BUTTON_FILE_PATH = Paths.get("button/button-url.txt");
 
     private static final Path CLIENT_ORDERS_SQL_SCRIPT_PATH = Paths.get("sql/client_orders_script.sql");
@@ -67,13 +68,21 @@ public class FileUtils {
     }
 
     public static void writeDiscardedFlights(List<String> discardedFlights, boolean append) {
+        writeList(discardedFlights, append, DEFAULT_DISCARDED_FLIGHTS_FILE_PATH);
+    }
+
+    public static void writeTariffRateErrors(List<String> tariffRateErrors, boolean append) {
+        writeList(tariffRateErrors, append, DEFAULT_TARIFF_RATE_ERRORS_FILE_PATH);
+    }
+
+    private static void writeList(List<String> data, boolean append, Path path) {
         try {
             synchronized (FileUtils.class) {
                 if(!append){
-                    Files.write(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH, discardedFlights);
+                    Files.write(path, data);
                 }
                 else {
-                    Files.write(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH, discardedFlights, CREATE, APPEND);
+                    Files.write(path, data, CREATE, APPEND);
                 }
             }
         } catch (IOException e) {
@@ -84,6 +93,15 @@ public class FileUtils {
     public static List<String> readDiscardedFlights() {
         try {
             return Files.readAllLines(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH);
+        } catch (IOException e) {
+            log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
+        }
+        return new ArrayList<>();
+    }
+
+    public static List<String> readTariffRateErrors() {
+        try {
+            return Files.readAllLines(DEFAULT_TARIFF_RATE_ERRORS_FILE_PATH);
         } catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
         }

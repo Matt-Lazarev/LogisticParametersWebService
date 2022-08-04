@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.dto.rate;
+package com.uraltrans.logisticparamservice.dto.ratetariff;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RateRequest {
+public class TariffRequest {
     private String id;
     private String departureStation;
     private String destinationStation;

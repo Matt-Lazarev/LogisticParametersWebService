@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.dto.rate;
+package com.uraltrans.logisticparamservice.dto.ratetariff;
 
 import lombok.*;
 
@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RateResultResponse {
+@ToString
+public class RateTarrifResultResponse {
 
     private String id;
     private String status;

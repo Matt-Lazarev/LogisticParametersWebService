@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,11 @@ public class ClientOrderServiceImpl implements ClientOrderService {
         List<ClientOrder> orders = clientOrderMapper.mapRawDataToClientOrderList(clientOrders);
         orders = filterEmployeesAndCarsAmount(orders);
         clientOrderRepository.saveAll(orders);
+    }
+
+    @Override
+    public ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volumeFrom, BigDecimal volumeTo) {
+        return clientOrderRepository.findByStationCodesAndVolume(sourceStation, destStation, volumeFrom, volumeTo);
     }
 
     private void prepareNextSave(){

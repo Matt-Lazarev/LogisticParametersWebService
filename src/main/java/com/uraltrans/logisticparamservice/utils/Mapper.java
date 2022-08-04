@@ -32,11 +32,11 @@ public class Mapper {
     }
 
     public static Integer toInteger(BigDecimal number) {
-        return number != null ? number.intValue() : null;
+        return number != null ? number.intValue() : 0;
     }
 
     public static Integer toInteger(BigInteger number) {
-        return number != null ? number.intValue() : null;
+        return number != null ? number.intValue() : 0;
     }
 
     public static LocalDate to1cDate(LocalDate date) {

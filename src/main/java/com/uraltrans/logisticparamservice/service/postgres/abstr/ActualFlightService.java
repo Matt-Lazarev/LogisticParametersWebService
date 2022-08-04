@@ -3,6 +3,7 @@ package com.uraltrans.logisticparamservice.service.postgres.abstr;
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ActualFlightService {
@@ -10,4 +11,6 @@ public interface ActualFlightService {
     void saveAllActualFlights();
     List<PotentialFlight> getAllPotentialFlights();
     void saveAllPotentialFlights();
+
+    ActualFlight findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
 }
