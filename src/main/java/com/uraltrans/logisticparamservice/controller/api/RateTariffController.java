@@ -22,6 +22,8 @@ public class RateTariffController {
        responses
                .forEach(resp -> flightAddressingService.updateTariff(resp.getId(), resp.getTariff()));
         System.err.println("response");
+        responses.forEach(System.out::println);
+        System.out.println("\n\n");
     }
 
     @PostMapping(value = "/rate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
@@ -29,5 +31,7 @@ public class RateTariffController {
         responses
                 .forEach(resp -> flightAddressingService.updateRate(resp.getId(), resp.getRate()));
         System.err.println("response");
+        responses.forEach(System.out::println);
+        System.out.println("\n\n");
     }
 }
