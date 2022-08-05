@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.entity.postgres;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,4 +50,8 @@ public class FlightRequirement {
 
     @Column(name="requirement_orders")
     private Integer requirementOrders;
+
+    @JsonIgnore
+    @Column(name="client_order_id")
+    private Long clientOrderId;
 }

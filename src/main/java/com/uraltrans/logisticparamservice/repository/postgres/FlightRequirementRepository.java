@@ -13,13 +13,13 @@ import java.util.Map;
 public interface FlightRequirementRepository extends JpaRepository<FlightRequirement, Long> {
 
     @Query(value =
-            "select sub_co.volume_from, sub_co.volume_to,sub_co.source_station_code6, sub_co.destination_station_code6, " +
+            "select sub_co.volume_from, sub_co.volume_to,sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id, " +
                     "       sum(sub_co.cars_amount) as cars_amount, " +
                     "       sum(sub_co.completed_orders) as completed_orders, " +
                     "       sum(sub_co.in_progress_orders) as in_progress_orders " +
                     "from " +
                     "(select co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, " +
-                    "       co.cars_amount as cars_amount, " +
+                    "       co.cars_amount as cars_amount, co.id, " +
                     "       sum(af_sub.completed_orders) as completed_orders, " +
                     "       sum(af_sub.in_progress_orders) as in_progress_orders " +
                     "                    from client_orders co " +
@@ -27,13 +27,12 @@ public interface FlightRequirementRepository extends JpaRepository<FlightRequire
                     "                    (select af.volume, af.source_station_code, af.destination_station_code, " +
                     "                            sum(af.completed_orders) as completed_orders, sum(af.in_progress_orders) as in_progress_orders " +
                     "                            from actual_flights af " +
+                    "                            where af.source_station_code != af.destination_station_code " +
                     "                            group by af.volume, af.source_station_code, af.destination_station_code) af_sub " +
                     "                    on co.source_station_code6 = af_sub.source_station_code and " +
-                    "                       co.destination_station_code6 = af_sub.destination_station_code and " +
                     "                       af_sub.volume between co.volume_from and co.volume_to " +
-                    "                    group by co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, " +
-                    "                             co.cars_amount) sub_co " +
-                    "group by sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6;", nativeQuery = true)
+                    "                    group by co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, co.cars_amount, co.id) as sub_co " +
+                    "group by sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id;", nativeQuery = true)
     List<Map<String, Object>> groupActualFlightsAndClientOrders();
 
     @Modifying

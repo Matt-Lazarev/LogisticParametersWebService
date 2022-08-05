@@ -27,7 +27,7 @@ public class RateTariffController {
     @PostMapping(value = "/rate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public void takeRateResponse(@RequestBody List<RateTarrifResultResponse> responses) {
         responses
-                .forEach(resp -> flightAddressingService.updateTariff(resp.getId(), resp.getRate()));
+                .forEach(resp -> flightAddressingService.updateRate(resp.getId(), resp.getRate()));
         System.err.println("response");
     }
 }

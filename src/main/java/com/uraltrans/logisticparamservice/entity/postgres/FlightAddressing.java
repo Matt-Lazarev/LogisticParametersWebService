@@ -49,9 +49,11 @@ public class FlightAddressing {
     @Column(name="wagon_type")
     private String wagonType;
 
+    @JsonIgnore
     @Column(name="date_from")
     private String dateFrom;
 
+    @JsonIgnore
     @Column(name="date_to")
     private String dateTo;
 

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -48,9 +49,24 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
                 .stream()
                 .filter(f -> f.getRequirementOrders() < 0)
                 .forEach(f -> f.setRequirementOrders(0));
+
+        for (int i = 0; i < flightRequirements.size(); i++) {
+            for (int j = i + 1; j < flightRequirements.size(); j++) {
+                FlightRequirement fr1 = flightRequirements.get(i);
+                FlightRequirement fr2 = flightRequirements.get(j);
+                if (Objects.equals(fr1.getSourceStationCode(), fr2.getSourceStationCode())
+                        && Objects.equals(fr1.getDestinationStationCode(), fr2.getDestinationStationCode())
+                        && Objects.equals(fr1.getVolumeFrom(), fr2.getVolumeFrom())
+                        && Objects.equals(fr1.getVolumeTo(), fr2.getVolumeTo()))
+                {
+                    fr1.setInPlanOrders(fr1.getInPlanOrders() + fr2.getInPlanOrders());
+                    flightRequirements.remove(j--);
+                }
+            }
+        }
     }
 
-    private void prepareNextSave(){
-        flightRequirementRepository.truncate();;
+    private void prepareNextSave() {
+        flightRequirementRepository.truncate();
     }
 }

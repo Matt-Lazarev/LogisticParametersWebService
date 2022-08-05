@@ -37,10 +37,11 @@ public class TestController {
         clientOrderService.saveAllClientOrders();
         service.saveAllActualFlights();
         flightRequirementService.saveAllFlightRequirements();
-        service.saveAllPotentialFlights();
-        flightAddressingService.saveAll();
-
-        return flightAddressingService.getAll();
+        return flightRequirementService.getAllFlightRequirements();
+//        service.saveAllPotentialFlights();
+//        flightAddressingService.saveAll();
+//
+//        return flightAddressingService.getAll();
     }
 
     @GetMapping("/calc/tariff")

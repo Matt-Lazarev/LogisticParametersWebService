@@ -27,9 +27,9 @@ public class FlightRequirementMapper {
                 .sourceStationCode((String) data.get("source_station_code6"))
                 .destinationStationCode((String) data.get("destination_station_code6"))
                 .inPlanOrders(Mapper.toInteger((BigInteger) data.get("cars_amount")))
-               // .inPlanOrders((Integer) data.get("cars_amount"))
                 .completedOrders(Mapper.toInteger((BigDecimal) data.get("completed_orders")))
                 .inProgressOrders(Mapper.toInteger((BigDecimal) data.get("in_progress_orders")))
+                //.clientOrderId((Long) data.get("id"))
                 .build();
 
         f.setRequirementOrders(f.getInPlanOrders() - f.getCompletedOrders() - f.getInProgressOrders());
