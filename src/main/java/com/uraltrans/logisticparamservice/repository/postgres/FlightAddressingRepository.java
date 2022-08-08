@@ -21,9 +21,13 @@ public interface FlightAddressingRepository extends JpaRepository<FlightAddressi
                     "       where sh.code6 = :stationCode) = split_part(sh.region, ' ', 1)", nativeQuery = true)
     List<Map<String, Object>> findAllInRegion(String stationCode);
 
+    @Modifying
+    @Transactional
     @Query("update FlightAddressing fa set fa.tariff = :tariff where fa.id = :id")
     void updateTariffById(Long id, BigDecimal tariff);
 
+    @Modifying
+    @Transactional
     @Query("update FlightAddressing fa set fa.rate = :rate where fa.id = :id")
     void updateRateById(Long id, BigDecimal rate);
 
