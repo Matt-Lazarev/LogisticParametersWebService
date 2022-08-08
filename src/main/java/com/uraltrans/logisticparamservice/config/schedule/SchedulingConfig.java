@@ -23,12 +23,10 @@ public class SchedulingConfig implements SchedulingConfigurer {
     private final LoadParameterService loadParameterService;
 
     private final ScheduleFlightsService scheduleFlightsService;
-    private final ScheduleActualFlightService scheduleActualFlightService;
     private final ScheduleCargoService scheduleCargoService;
-    private final ScheduleClientOrderService scheduleClientOrderService;
-    private final ScheduleFlightRequirementService scheduleFlightRequirementService;
     private final ScheduleFlightProfitService scheduleFlightProfitService;
-    private final ScheduleStationHandbookService stationHandbookService;
+    private final ScheduleStationHandbookService scheduleStationHandbookService;
+    private final ScheduleFlightAddressingService scheduleFlightAddressingService;
 
     @Bean(destroyMethod = "shutdown")
     public Executor taskExecutor() {
@@ -40,42 +38,35 @@ public class SchedulingConfig implements SchedulingConfigurer {
         taskRegistrar.setScheduler(taskExecutor());
         List<Runnable> triggerTasks = Arrays.asList(
                 scheduleFlightsService::saveDataWithDelay,
-                scheduleActualFlightService::loadActualFlights,
                 scheduleCargoService::loadCargos,
-                scheduleClientOrderService::loadClientOrders,
-                scheduleFlightProfitService::loadFlightProfits,
-                stationHandbookService::loadStationHandbook
+                scheduleStationHandbookService::loadStationHandbook
         );
 
         for(Runnable task : triggerTasks){
-           registerTask(taskRegistrar, task, false);
+           registerTask(taskRegistrar, task, 0);
         }
 
-        registerTask(taskRegistrar, scheduleFlightRequirementService::loadFlightRequirements, true);
+        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 4);
+        registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 4);
     }
 
-    private void registerTask(ScheduledTaskRegistrar taskRegistrar, Runnable task, boolean isFlightRequirementTask){
+    private void registerTask(ScheduledTaskRegistrar taskRegistrar, Runnable task, int additionalTime){
         taskRegistrar.addTriggerTask(
                 task,
                 triggerContext -> {
                     Calendar nextExecutionTime = new GregorianCalendar();
-                    nextExecutionTime.setTime(isFlightRequirementTask ? getFlightRequirementsNextExecution() : getNextExecution());
+                    nextExecutionTime.setTime(getNextExecution(additionalTime));
                     return nextExecutionTime.getTime();
                 }
         );
     }
 
-    private Date getNextExecution() {
-        LocalDateTime nextExecution = getExecutionTime();
+    private Date getNextExecution(int additionalTime) {
+        LocalDateTime nextExecution = getExecutionTime().plusMinutes(additionalTime);
         System.err.println(nextExecution);
         return java.sql.Timestamp.valueOf(nextExecution);
     }
 
-    private Date getFlightRequirementsNextExecution() {
-        LocalDateTime nextExecution = getExecutionTime().plusSeconds(20);
-        System.err.println(nextExecution);
-        return java.sql.Timestamp.valueOf(nextExecution);
-    }
 
     private LocalDateTime getExecutionTime(){
         LocalTime now = LocalTime.now();

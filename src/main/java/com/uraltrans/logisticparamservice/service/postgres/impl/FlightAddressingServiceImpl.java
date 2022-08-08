@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -133,12 +135,18 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
             BigDecimal volume = addressing.getVolume();
             String sourceStation = addressing.getSourceStationCode();
             String destStation = addressing.getDestinationStationCode();
+
             ClientOrder clientOrder = clientOrderService.findByStationCodesAndVolume(sourceStation, destStation, volume);
             if(clientOrder != null){
                 addressing.setCargoCode(clientOrder.getCargoCode());
-                addressing.setDateFrom(clientOrder.getFromDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
-                addressing.setDateTo(clientOrder.getToDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
             }
+
+            addressing.setDateFrom(
+                    LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0))
+                            .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            addressing.setDateTo(
+                    LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59))
+                            .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         });
     }
 }

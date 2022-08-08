@@ -57,30 +57,60 @@ public class ScheduledTasksLogging {
         FileUtils.writeActionLog(message);
     }
 
-    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleActualFlightService.loadActualFlights())")
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.ActualFlightService.saveAllActualFlights())")
     public void successfulInvokeLoadActualFlightsMethod() {
         String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение факта перевозок");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleActualFlightService.loadActualFlights())")
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.ActualFlightService.saveAllActualFlights())")
     public void failureInvokeLoadActualFlightsMethod() {
         String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение факта перевозок");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightRequirementService.loadFlightRequirements())")
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.ClientOrderService.saveAllClientOrders())")
+    public void successfulInvokeLoadClientOrdersMethod() {
+        String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение плана перевозок");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.ClientOrderService.saveAllClientOrders())")
+    public void failureInvokeLoadClientOrdersMethod() {
+        String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение плана перевозок");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService.saveAllFlightRequirements())")
     public void successfulInvokeLoadFlightRequirementsMethod() {
         String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение потребности в перевозках");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
-    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightRequirementService.loadFlightRequirements())")
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService.saveAllFlightRequirements())")
     public void failureInvokeInvokeLoadFlightRequirementsMethod() {
         String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение потребности в перевозках");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    //
+
+    @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.FlightAddressingService.saveAll())")
+    public void successfulInvokeLoadFlightAddressingsMethod() {
+        String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение адресации перевозок");
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.FlightAddressingService.saveAll())")
+    public void failureInvokeInvokeLoadFlightAddressingsMethod() {
+        String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение адресации перевозок");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }

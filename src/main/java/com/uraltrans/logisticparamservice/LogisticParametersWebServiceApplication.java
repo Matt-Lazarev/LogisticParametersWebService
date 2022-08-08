@@ -27,12 +27,11 @@ public class LogisticParametersWebServiceApplication {
 
         List<FlightRequirement> all = context.getBean(FlightRequirementRepository.class).findAll();
 
-        List<String> headers = Arrays.asList("ID",
-                "Объем ОТ", "Объем ДО",
-                "Станция отправления", "Станция назначения",
-                "Рейсов в плане", "Завершенные рейсы", "Рейсов в работе", "Потребность в рейсах");
+        List<String> headers = Arrays.asList(
+                "ID", "Объем ОТ", "Объем ДО",
+                "Ст. отправления", "Ст. назначения", "В плане", "Завершено", "В работе", "Потребность");
 
         ExcelReaderWriterService<FlightRequirement> writer = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
-        writer.write("Потребность в рейсах2.xlsx", "Потребность", headers, all, null);
+        writer.write("Потребность в рейсах3.xlsx", "Потребность", headers, all, null);
     }
 }
