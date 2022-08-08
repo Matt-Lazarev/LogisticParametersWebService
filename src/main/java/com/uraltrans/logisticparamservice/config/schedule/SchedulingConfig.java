@@ -46,8 +46,8 @@ public class SchedulingConfig implements SchedulingConfigurer {
            registerTask(taskRegistrar, task, 0);
         }
 
-        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 4);
-        registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 4);
+        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 60);
+        registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 60);
     }
 
     private void registerTask(ScheduledTaskRegistrar taskRegistrar, Runnable task, int additionalTime){

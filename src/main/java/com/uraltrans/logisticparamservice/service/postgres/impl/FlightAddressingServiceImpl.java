@@ -46,11 +46,12 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         prepareNextSave();
         List<PotentialFlight> potentialFlights = actualFlightService.getAllPotentialFlights();
         List<FlightAddressing> addressings = getAllFlightAddressings(potentialFlights);
-        flightAddressingRepository.saveAllAndFlush(addressings);
 
+        flightAddressingRepository.saveAllAndFlush(addressings);
         sendTariffRequest(addressings);
 
         loadClientOrderCargosAndDates(addressings);
+        flightAddressingRepository.saveAllAndFlush(addressings);
         sendRateRequest(addressings);
     }
 
