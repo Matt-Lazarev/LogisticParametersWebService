@@ -25,14 +25,14 @@ public class LogisticParametersWebServiceApplication {
     public static void main(String[] args) throws IOException, URISyntaxException {
         ApplicationContext context = SpringApplication.run(LogisticParametersWebServiceApplication.class, args);
 
-//        List<FlightRequirement> all = context.getBean(FlightRequirementRepository.class).findAll();
-//
-//        List<String> headers = Arrays.asList("ID",
-//                "Объем ОТ", "Объем ДО",
-//                "Станция отправления", "Станция назначения",
-//                "Рейсов в плане", "Завершенные рейсы", "Рейсов в работе", "Потребность в рейсах");
-//
-//        ExcelReaderWriterService<FlightRequirement> writer = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
-//        writer.write("Потребность в рейсах2.xlsx", "Потребность", headers, all, null);
+        List<FlightRequirement> all = context.getBean(FlightRequirementRepository.class).findAll();
+
+        List<String> headers = Arrays.asList("ID",
+                "Объем ОТ", "Объем ДО",
+                "Станция отправления", "Станция назначения",
+                "Рейсов в плане", "Завершенные рейсы", "Рейсов в работе", "Потребность в рейсах");
+
+        ExcelReaderWriterService<FlightRequirement> writer = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
+        writer.write("Потребность в рейсах2.xlsx", "Потребность", headers, all, null);
     }
 }

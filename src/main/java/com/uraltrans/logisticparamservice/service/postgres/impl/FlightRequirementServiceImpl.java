@@ -60,6 +60,7 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
                         && Objects.equals(fr1.getVolumeTo(), fr2.getVolumeTo()))
                 {
                     fr1.setInPlanOrders(fr1.getInPlanOrders() + fr2.getInPlanOrders());
+                    fr1.setRequirementOrders(fr1.getInPlanOrders() - fr1.getInProgressOrders() - fr1.getCompletedOrders());
                     flightRequirements.remove(j--);
                 }
             }

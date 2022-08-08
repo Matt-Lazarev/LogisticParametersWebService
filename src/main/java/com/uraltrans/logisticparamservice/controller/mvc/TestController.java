@@ -39,7 +39,7 @@ public class TestController {
         flightRequirementService.saveAllFlightRequirements();
         service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
-        return flightAddressingService.getAll();
+        return flightRequirementService.getAllFlightRequirements();
     }
 
     @GetMapping("/calc/tariff")

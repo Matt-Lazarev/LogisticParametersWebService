@@ -1,6 +1,6 @@
 package com.uraltrans.logisticparamservice.controller.api;
 
-import com.uraltrans.logisticparamservice.dto.ratetariff.RateTarrifResultResponse;
+import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffResultResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +14,7 @@ import java.util.List;
 public class PotentialFlightController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
-    public void takeResponse(@RequestBody List<RateTarrifResultResponse> body){
+    public void takeResponse(@RequestBody List<RateTariffResultResponse> body){
         System.err.println(body);
     }
 }

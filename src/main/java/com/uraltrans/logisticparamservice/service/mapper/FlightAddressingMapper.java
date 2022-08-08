@@ -63,7 +63,7 @@ public class FlightAddressingMapper {
                 .cargo(flightAddressing.getCargoCode())
                 .wagonType(flightAddressing.getWagonType())
                 .volune(flightAddressing.getVolume().toString())
-                .flightType(flightAddressing.getLoaded())
+                .flightType("Порожний")
                 .url(TARIFF_CALLBACK_URL)
                 .build();
     }

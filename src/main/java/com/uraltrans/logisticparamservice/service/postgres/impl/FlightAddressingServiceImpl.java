@@ -54,34 +54,32 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     @Override
     public void updateTariff(String id, BigDecimal tariff) {
-        flightAddressingRepository.findById(Long.valueOf(id))
-                .ifPresent(flightAddressing -> {
-                    BigDecimal t = tariff != null ? tariff : BigDecimal.valueOf(0);
-                    flightAddressing.setTariff(t);
-                    flightAddressingRepository.save(flightAddressing);
+        Long entityId = Long.parseLong(id);
+        if(flightAddressingRepository.existsById(entityId)){
+            BigDecimal t = tariff != null ? tariff : BigDecimal.valueOf(0);
+            flightAddressingRepository.updateTariffById(entityId, t);
 
-                    if(t.equals(BigDecimal.valueOf(0))){
-                        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                        String error = "[" + time + "]" + flightAddressing + " -> (тариф не расчитан)";
-                        FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
-                    }
-                });
+            if(t.equals(BigDecimal.valueOf(0))){
+                String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                String error = "[" + time + "]" + flightAddressingRepository.findById(entityId).get() + " -> (тариф не расчитан)";
+                FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
+            }
+        }
     }
 
     @Override
     public void updateRate(String id, BigDecimal rate) {
-        flightAddressingRepository.findById(Long.valueOf(id))
-                .ifPresent(flightAddressing -> {
-                    BigDecimal r = rate != null ? rate : BigDecimal.valueOf(0);
-                    flightAddressing.setRate(r);
-                    flightAddressingRepository.save(flightAddressing);
+        Long entityId = Long.parseLong(id);
+        if(flightAddressingRepository.existsById(entityId)) {
+            BigDecimal r = rate != null ? rate : BigDecimal.valueOf(0);
+            flightAddressingRepository.updateRateById(entityId, r);
 
-                    if(r.equals(BigDecimal.valueOf(0))){
-                        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                        String error = "[" + time + "]" + flightAddressing + " -> (ставка не расчитана)";
-                        FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
-                    }
-                });
+            if (r.equals(BigDecimal.valueOf(0))) {
+                String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                String error = "[" + time + "]" + flightAddressingRepository.findById(entityId).get() + " -> (ставка не расчитана)";
+                FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
+            }
+        }
     }
 
     private void prepareNextSave() {
@@ -99,6 +97,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                             .mapRawDataToFlightAddressingList(rawData, potentialFlight)
                             .stream();
                 })
+                .filter(f -> f.getRequirementOrders() > 0)
                 .collect(Collectors.toList());
     }
 

@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
-public class RateTarrifResultResponse {
+public class RateTariffResultResponse {
 
     private String id;
     private String status;
