@@ -46,7 +46,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         List<PotentialFlight> potentialFlights = actualFlightService.getAllPotentialFlights();
         List<FlightAddressing> addressings = getAllFlightAddressings(potentialFlights);
         loadClientOrderCargosAndDates(addressings);
-        
+
         flightAddressingRepository.saveAllAndFlush(addressings);
         sendTariffRequest(addressings);
         sendRateRequest(addressings);
@@ -134,7 +134,6 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         addressings.forEach(addressing -> {
             BigDecimal volume = addressing.getVolume();
             String sourceStation = addressing.getSourceStationCode();
-            String destStation = addressing.getDestinationStationCode();
 
             List<String> cargos = clientOrderService.findByStationCodesAndVolume(sourceStation, volume);
             if(cargos.size() != 0){
@@ -145,7 +144,14 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                     additional.add(fa);
                 }
             }
+        });
+        setDateAndDefaultTariff(addressings);
+        setDateAndDefaultTariff(additional);
+        addressings.addAll(additional);
+    }
 
+    private void setDateAndDefaultTariff(List<FlightAddressing> flightAddressings){
+        flightAddressings.forEach(addressing -> {
             addressing.setDateFrom(
                     LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0))
                             .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
@@ -155,6 +161,5 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
             addressing.setTariff(BigDecimal.valueOf(0));
             addressing.setRate(BigDecimal.valueOf(0));
         });
-        addressings.addAll(additional);
     }
 }
