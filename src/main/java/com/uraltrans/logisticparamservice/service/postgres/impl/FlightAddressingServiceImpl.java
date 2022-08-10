@@ -46,8 +46,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         List<PotentialFlight> potentialFlights = actualFlightService.getAllPotentialFlights();
         List<FlightAddressing> addressings = getAllFlightAddressings(potentialFlights);
         loadClientOrderCargosAndDates(addressings);
-
-        addressings = addressings.stream().limit(10).collect(Collectors.toList());
+        
         flightAddressingRepository.saveAllAndFlush(addressings);
         sendTariffRequest(addressings);
         sendRateRequest(addressings);
