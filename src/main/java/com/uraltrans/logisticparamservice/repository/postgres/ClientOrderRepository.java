@@ -17,10 +17,9 @@ public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> 
     @Query("select co.cargoCode " +
            "from ClientOrder co " +
            "where co.sourceStationCode6 = :sourceStation and " +
-           "      co.destinationStationCode6 = :destStation and " +
            "      :volume between co.volumeFrom and co.volumeTo " +
-           "group by co.sourceStationCode6, co.destinationStationCode6, co.volumeFrom, co.volumeTo, co.cargoCode")
-    List<String> findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
+           "group by co.sourceStationCode6, co.volumeFrom, co.volumeTo, co.cargoCode")
+    List<String> findByStationCodesAndVolume(String sourceStation, BigDecimal volume);
 
     @Modifying
     @Transactional

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class RateTariffController {
     @PostMapping(value = "/tariff", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public void takeTariffResponse(@RequestBody List<RateTariffResultResponse> responses) {
        responses
-               .forEach(resp -> flightAddressingService.updateTariff(resp.getId(), resp.getTariff()));
+               .forEach(resp -> flightAddressingService.updateTariff(resp.getId(), BigDecimal.valueOf(resp.getTariffVat())));
         System.err.println("response");
         responses.forEach(System.out::println);
         System.out.println("\n\n");
@@ -29,7 +30,7 @@ public class RateTariffController {
     @PostMapping(value = "/rate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public void takeRateResponse(@RequestBody List<RateTariffResultResponse> responses) {
         responses
-                .forEach(resp -> flightAddressingService.updateRate(resp.getId(), resp.getRate()));
+                .forEach(resp -> flightAddressingService.updateRate(resp.getId(), BigDecimal.valueOf(resp.getRateVat())));
         System.err.println("response");
         responses.forEach(System.out::println);
         System.out.println("\n\n");
