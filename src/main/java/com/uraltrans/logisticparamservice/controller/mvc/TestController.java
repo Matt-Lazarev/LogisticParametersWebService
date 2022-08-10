@@ -3,6 +3,7 @@ package com.uraltrans.logisticparamservice.controller.mvc;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
+import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,6 +32,8 @@ public class TestController {
     final StationHandbookService stationHandbookService;
 
     final FlightAddressingService flightAddressingService;
+
+    final StationHandbookService serv;
 
     @GetMapping
     public List<?> getAll() {

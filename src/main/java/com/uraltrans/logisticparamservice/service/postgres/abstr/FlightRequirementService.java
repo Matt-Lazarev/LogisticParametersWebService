@@ -10,7 +10,7 @@ public interface FlightRequirementService {
     List<FlightRequirement> getAllFlightRequirements();
     void saveAllFlightRequirements();
 
-    FlightRequirement getFlightRequirement(PotentialFlight potentialFlight);
+    Integer getFlightRequirement(PotentialFlight potentialFlight);
 
     List<String> getAllSourceStationCodes();
 }

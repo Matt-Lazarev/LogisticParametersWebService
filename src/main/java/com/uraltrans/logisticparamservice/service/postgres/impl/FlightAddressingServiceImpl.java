@@ -95,7 +95,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 .stream()
                 .flatMap(potentialFlight -> {
                     String currentStation = potentialFlight.getDestinationStationCode();
-                    List<Map<String, Object>> rawData = flightAddressingRepository.findAllInRegion(currentStation);
+                    BigDecimal volume = potentialFlight.getVolume();
+                    List<Map<String, Object>> rawData = flightAddressingRepository.findAllInRegion(currentStation, volume);
                     return flightAddressingMapper
                             .mapRawDataToFlightAddressingList(rawData, potentialFlight)
                             .stream();

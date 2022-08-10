@@ -33,10 +33,14 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
     }
 
     @Override
-    public FlightRequirement getFlightRequirement(PotentialFlight potentialFlight) {
-        return flightRequirementRepository.findRequirementByVolumeAndStationCodes(
+    public Integer getFlightRequirement(PotentialFlight potentialFlight) {
+        Integer fr = flightRequirementRepository.findRequirementByVolumeAndStationCodes(
                 potentialFlight.getVolume(), potentialFlight.getSourceStationCode(), potentialFlight.getDestinationStationCode()
         );
+        return fr != null
+                ? fr
+                : flightRequirementRepository.findAllRequirementByVolumeAndSourceStationCode(
+                        potentialFlight.getVolume(), potentialFlight.getSourceStationCode());
     }
 
     @Override

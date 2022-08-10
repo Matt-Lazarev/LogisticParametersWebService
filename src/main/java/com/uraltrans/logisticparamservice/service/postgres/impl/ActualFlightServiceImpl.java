@@ -28,7 +28,6 @@ public class ActualFlightServiceImpl implements ActualFlightService {
     private static final String FILTER_VALUE = "ремонт";
 
     private final FlightRequirementService flightRequirementService;
-    private final StationHandbookService stationHandbookService;
 
     private final RawDislocationRepository rawDislocationRepository;
     private final ActualFlightRepository actualFlightRepository;
@@ -64,7 +63,9 @@ public class ActualFlightServiceImpl implements ActualFlightService {
         String dislocationDate = LocalDate.now().plusYears(SHIFT_1C_YEARS).toString();
         List<PotentialFlight> potentialFlights =
                 actualFlightMapper.mapRawDataToPotentialFlightsList(rawDislocationRepository.getAllDislocations(dislocationDate));
+        System.err.println(potentialFlights.size());
         potentialFlights = filterPotentialFlights(potentialFlights);
+        System.err.println(potentialFlights.size());
         potentialFlightRepository.saveAllAndFlush(potentialFlights);
     }
 
@@ -100,29 +101,12 @@ public class ActualFlightServiceImpl implements ActualFlightService {
                 .filter(f -> f.getCarState().equalsIgnoreCase("гружёный ход"))
                 .filter(f -> !f.getCarState().toLowerCase().contains("заказан"))
                 .peek(f -> {
-                    FlightRequirement requirement = flightRequirementService.getFlightRequirement(f);
+                    Integer requirement = flightRequirementService.getFlightRequirement(f);
                     if(requirement != null){
-                        f.setRequirementOrders(requirement.getRequirementOrders());
+                        f.setRequirementOrders(requirement);
                     }
                 })
                 .filter(f -> f.getRequirementOrders() != null && f.getRequirementOrders() >= 1)
-                .filter(f -> {
-                    String destStationRegion = stationHandbookService.getRegionByCode6(f.getDestinationStationCode());
-                    if(destStationRegion == null){
-                        return false;
-                    }
-                    destStationRegion = destStationRegion.toLowerCase().trim();
-
-                    Set<String> flightRequirementsSourceStationRegions =
-                            flightRequirementService.getAllSourceStationCodes()
-                                    .stream()
-                                    .map(stationHandbookService::getRegionByCode6)
-                                    .filter(Objects::nonNull)
-                                    .map(region -> region.toLowerCase().trim())
-                                    .collect(Collectors.toSet());
-
-                    return flightRequirementsSourceStationRegions.contains(destStationRegion);
-                })
                 .collect(Collectors.toList());
     }
 

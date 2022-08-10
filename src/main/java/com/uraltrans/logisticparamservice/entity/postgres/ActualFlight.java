@@ -62,4 +62,7 @@ public class ActualFlight {
 
     @JsonIgnore
     private String feature12;
+
+    @JsonIgnore
+    private String loaded;
 }

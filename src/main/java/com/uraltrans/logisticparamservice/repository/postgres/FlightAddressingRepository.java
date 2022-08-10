@@ -17,9 +17,10 @@ public interface FlightAddressingRepository extends JpaRepository<FlightAddressi
                     "from flight_requirements fr " +
                     "         inner join station_handbook sh " +
                     "         on fr.source_station_code = sh.code6 " +
-                    "where (select distinct split_part(sh.region, ' ', 1) from station_handbook sh " +
-                    "       where sh.code6 = :stationCode) = split_part(sh.region, ' ', 1)", nativeQuery = true)
-    List<Map<String, Object>> findAllInRegion(String stationCode);
+                    "where (select distinct lower(split_part(sh.region, ' ', 1)) from station_handbook sh " +
+                    "       where sh.code6 = :stationCode) = lower(split_part(sh.region, ' ', 1)) " +
+                    "and :volume between fr.volume_from and fr.volume_to", nativeQuery = true)
+    List<Map<String, Object>> findAllInRegion(String stationCode, BigDecimal volume);
 
     @Modifying
     @Transactional
