@@ -73,7 +73,7 @@ public class FlightAddressingMapper {
                 .id(Long.toString(flightAddressing.getId()))
                 .departureStation(flightAddressing.getSourceStationCode())
                 .destinationStation(flightAddressing.getDestinationStationCode())
-                .cargo(flightAddressing.getCargoCode())
+                .cargo(flightAddressing.getClientOrderCargoCode())
                 .wagonType(flightAddressing.getWagonType())
                 .volune(flightAddressing.getVolume().toString())
                 .datefrom(flightAddressing.getDateFrom())

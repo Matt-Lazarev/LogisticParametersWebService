@@ -57,6 +57,21 @@ public class FlightAddressing {
     @Column(name="date_to")
     private String dateTo;
 
+    @Column(name="client_orders_cargo")
+    private String clientOrderCargoCode;
+
+    public FlightAddressing(FlightAddressing addressing) {
+        this.carNumber = addressing.carNumber;
+        this.volume = addressing.volume;
+        this.sourceStationCode = addressing.sourceStationCode;
+        this.destinationStationCode = addressing.destinationStationCode;
+        this.currentFlightDestStationCode = addressing.currentFlightDestStationCode;
+        this.cargoCode = addressing.cargoCode;
+        this.requirementOrders = addressing.requirementOrders;
+        this.loaded = addressing.loaded;
+        this.wagonType = addressing.wagonType;
+    }
+
     @Override
     public String toString() {
         return "FlightAddressing{" +

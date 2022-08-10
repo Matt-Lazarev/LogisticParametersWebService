@@ -7,15 +7,20 @@ import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> {
 
-    @Query("select co " +
+    //source_station_code6, destination_station_code6, volume_from, volume_to, cargo_code from client_orders
+    //group by source_station_code6, destination_station_code6, volume_from, volume_to, cargo_code
+
+    @Query("select co.cargoCode " +
            "from ClientOrder co " +
            "where co.sourceStationCode6 = :sourceStation and " +
            "      co.destinationStationCode6 = :destStation and " +
-           "      :volume between co.volumeFrom and co.volumeTo")
-    ClientOrder findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
+           "      :volume between co.volumeFrom and co.volumeTo " +
+           "group by co.sourceStationCode6, co.destinationStationCode6, co.volumeFrom, co.volumeTo, co.cargoCode")
+    List<String> findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
 
     @Modifying
     @Transactional

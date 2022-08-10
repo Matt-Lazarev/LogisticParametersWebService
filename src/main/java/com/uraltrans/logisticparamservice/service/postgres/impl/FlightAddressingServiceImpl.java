@@ -3,7 +3,6 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
-import com.uraltrans.logisticparamservice.entity.postgres.ClientOrder;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightAddressingRepository;
@@ -46,12 +45,10 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         prepareNextSave();
         List<PotentialFlight> potentialFlights = actualFlightService.getAllPotentialFlights();
         List<FlightAddressing> addressings = getAllFlightAddressings(potentialFlights);
+        loadClientOrderCargosAndDates(addressings);
 
         flightAddressingRepository.saveAllAndFlush(addressings);
         sendTariffRequest(addressings);
-
-        loadClientOrderCargosAndDates(addressings);
-        flightAddressingRepository.saveAllAndFlush(addressings);
         sendRateRequest(addressings);
     }
 
@@ -133,14 +130,20 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     }
 
     private void loadClientOrderCargosAndDates(List<FlightAddressing> addressings){
+        List<FlightAddressing> additional = new ArrayList<>();
         addressings.forEach(addressing -> {
             BigDecimal volume = addressing.getVolume();
             String sourceStation = addressing.getSourceStationCode();
             String destStation = addressing.getDestinationStationCode();
 
-            ClientOrder clientOrder = clientOrderService.findByStationCodesAndVolume(sourceStation, destStation, volume);
-            if(clientOrder != null){
-                addressing.setCargoCode(clientOrder.getCargoCode());
+            List<String> cargos = clientOrderService.findByStationCodesAndVolume(sourceStation, destStation, volume);
+            if(cargos.size() != 0){
+                addressing.setClientOrderCargoCode(cargos.get(0));
+                for(int i=1; i<cargos.size(); i++){
+                    FlightAddressing fa = new FlightAddressing(addressing);
+                    fa.setClientOrderCargoCode(cargos.get(i));
+                    additional.add(fa);
+                }
             }
 
             addressing.setDateFrom(
@@ -150,5 +153,6 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                     LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59))
                             .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         });
+        addressings.addAll(additional);
     }
 }

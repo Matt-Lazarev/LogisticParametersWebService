@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.repository.postgres;
 
+import com.uraltrans.logisticparamservice.dto.idle.LoadUnloadIdleDto;
 import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
@@ -25,6 +26,13 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
             "group by f.volume, f.cargo, f.cargoCode6, f.destStation, f.destStationCode, f.carType")
     List<UnloadIdleDto> groupCarUnloadIdle();
+
+    @Query("select new com.uraltrans.logisticparamservice.dto.idle.LoadUnloadIdleDto " +
+            "(f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode, AVG(f.carLoadIdleDays), AVG(f.carUnloadIdleDays)) " +
+            "from Flight f " +
+            "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
+            "group by f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode")
+    List<LoadUnloadIdleDto> groupCarLoadUnloadIdle();
 
     @Modifying
     @Transactional

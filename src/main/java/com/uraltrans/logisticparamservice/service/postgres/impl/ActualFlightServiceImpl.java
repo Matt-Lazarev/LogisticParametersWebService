@@ -63,9 +63,7 @@ public class ActualFlightServiceImpl implements ActualFlightService {
         String dislocationDate = LocalDate.now().plusYears(SHIFT_1C_YEARS).toString();
         List<PotentialFlight> potentialFlights =
                 actualFlightMapper.mapRawDataToPotentialFlightsList(rawDislocationRepository.getAllDislocations(dislocationDate));
-        System.err.println(potentialFlights.size());
         potentialFlights = filterPotentialFlights(potentialFlights);
-        System.err.println(potentialFlights.size());
         potentialFlightRepository.saveAllAndFlush(potentialFlights);
     }
 
