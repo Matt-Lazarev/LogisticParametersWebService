@@ -102,6 +102,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         return flightAddressingMapper.mapToResponses(
                 flightAddressingRepository.findAll()
                 .stream()
+                .peek(f -> f.setWagonType(request.getWagonType()))
                 .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
                 .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
                 .filter(f -> request.getCargoId().equals(f.getCargoCode()))
