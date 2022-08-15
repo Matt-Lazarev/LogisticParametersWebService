@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,6 +61,11 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
                 request.getWagonType(), request.getVolume()).allMatch(Objects::isNull)){
             return flightRequirementMapper.mapToResponses(flightRequirementRepository.findAll());
         }
+
+        if(!request.getWagonType().equalsIgnoreCase("Крытый")){
+            return Collections.emptyList();
+        }
+
         return flightRequirementMapper.mapToResponses(
                 flightRequirementRepository.findAll()
                         .stream()

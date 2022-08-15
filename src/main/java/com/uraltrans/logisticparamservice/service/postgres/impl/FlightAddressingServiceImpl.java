@@ -94,12 +94,16 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         if(request == null || isNull(request)){
             return flightAddressingMapper.mapToResponses(flightAddressingRepository.findAll());
         }
+
+        if(!request.getWagonType().equalsIgnoreCase("Крытый")){
+            return Collections.emptyList();
+        }
+
         return flightAddressingMapper.mapToResponses(
                 flightAddressingRepository.findAll()
                 .stream()
                 .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
                 .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
-                .filter(f -> request.getWagonType().equals(f.getWagonType()))
                 .filter(f -> request.getCargoId().equals(f.getCargoCode()))
                 .filter(f -> request.getDestinationStation() == null || request.getDestinationStation().equals(f.getDestinationStationCode()))
                 .collect(Collectors.toList()));
