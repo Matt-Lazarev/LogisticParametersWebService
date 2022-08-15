@@ -1,5 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.addressing.AddressingRequest;
+import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
@@ -23,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +55,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         loadStationsParams(addressings);
 
         flightAddressingRepository.saveAllAndFlush(addressings);
-        sendTariffRequest(addressings);
-        sendRateRequest(addressings);
+        //sendTariffRequest(addressings);
+        //sendRateRequest(addressings);
     }
 
     @Override
@@ -84,6 +87,22 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
             }
         }
+    }
+
+    @Override
+    public List<AddressingResponse> getAllByRequest(AddressingRequest request) {
+        if(request == null || isNull(request)){
+            return flightAddressingMapper.mapToResponses(flightAddressingRepository.findAll());
+        }
+        return flightAddressingMapper.mapToResponses(
+                flightAddressingRepository.findAll()
+                .stream()
+                .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
+                .filter(f -> request.getVolume().equals(String.valueOf(f.getVolume())))
+                .filter(f -> request.getWagonType().equals(f.getWagonType()))
+                .filter(f -> request.getCargoId().equals(f.getCargoCode()))
+                .filter(f -> request.getDestinationStation() == null || request.getDestinationStation().equals(f.getDestinationStationCode()))
+                .collect(Collectors.toList()));
     }
 
     private void prepareNextSave() {
@@ -189,6 +208,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
             String sourceStation = addressing.getSourceStationCode();
             String destStation = addressing.getDestinationStationCode();
             String currFlightDestStation = addressing.getCurrentFlightDestStationCode();
+            String dislocationStation = addressing.getDislocationStationCode();
 
             if(sourceStation != null){
                 StationHandbook sh = stationHandbookService.findStationByCode6(sourceStation);
@@ -216,6 +236,23 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                     addressing.setCurrentFlightDestStationRoad(sh.getRoad());
                 }
             }
+
+            if(dislocationStation != null){
+                StationHandbook sh = stationHandbookService.findStationByCode6(dislocationStation);
+                if(sh != null){
+                    addressing.setDislocationStation(sh.getStation());
+                }
+            }
         });
+    }
+
+    private boolean isNull(AddressingRequest request){
+        return Stream.of(
+                    request.getCargoId(),
+                    request.getDepartureStation(),
+                    request.getDestinationStation(),
+                    request.getWagonType(),
+                    request.getVolume())
+                .allMatch(Objects::isNull);
     }
 }

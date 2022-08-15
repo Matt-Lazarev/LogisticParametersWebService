@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
+import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightProfit;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.utils.Mapper;
@@ -20,6 +21,13 @@ public class FlightRequirementMapper {
                 .collect(Collectors.toList());
     }
 
+    public List<PlanFactResponse> mapToResponses(List<FlightRequirement> requirements){
+        return requirements
+                .stream()
+                .map(this::mapToPlanFactResponse)
+                .collect(Collectors.toList());
+    }
+
     private FlightRequirement mapToFlightRequirement(Map<String, Object> data) {
         FlightRequirement f = FlightRequirement.builder()
                 .volumeTo((BigDecimal) data.get("volume_to"))
@@ -29,10 +37,22 @@ public class FlightRequirementMapper {
                 .inPlanOrders(Mapper.toInteger((BigInteger) data.get("cars_amount")))
                 .completedOrders(Mapper.toInteger((BigDecimal) data.get("completed_orders")))
                 .inProgressOrders(Mapper.toInteger((BigDecimal) data.get("in_progress_orders")))
-                //.clientOrderId((Long) data.get("id"))
                 .build();
 
         f.setRequirementOrders(f.getInPlanOrders() - f.getCompletedOrders() - f.getInProgressOrders());
         return f;
+    }
+
+    private PlanFactResponse mapToPlanFactResponse(FlightRequirement requirement) {
+        return PlanFactResponse.builder()
+                .departureStation(requirement.getSourceStationCode())
+                .destinationStation(requirement.getDestinationStationCode())
+                .volumeFrom(String.valueOf(requirement.getVolumeFrom()))
+                .volumeTo(String.valueOf(requirement.getVolumeTo()))
+                .planQuantity(requirement.getInPlanOrders())
+                .planReady(requirement.getCompletedOrders())
+                .planInWork(requirement.getInProgressOrders())
+                .shortage(requirement.getRequirementOrders())
+                .build();
     }
 }

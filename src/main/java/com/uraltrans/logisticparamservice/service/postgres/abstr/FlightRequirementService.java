@@ -1,5 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.abstr;
 
+import com.uraltrans.logisticparamservice.dto.planfact.PlanFactRequest;
+import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 
@@ -13,4 +15,6 @@ public interface FlightRequirementService {
     Integer getFlightRequirement(PotentialFlight potentialFlight);
 
     List<String> getAllSourceStationCodes();
+
+    List<PlanFactResponse> getAllFlightRequirementsByRequest(PlanFactRequest request);
 }

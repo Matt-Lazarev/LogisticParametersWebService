@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
+import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
@@ -27,6 +28,7 @@ public class FlightAddressingMapper {
                 .peek(f -> f.setVolume(potentialFlight.getVolume()))
                 .peek(f -> f.setLoaded(potentialFlight.getLoaded()))
                 .peek(f -> f.setWagonType(potentialFlight.getWagonType()))
+                .peek(f -> f.setDislocationStationCode(potentialFlight.getDislocationStationCode()))
                 .collect(Collectors.toList());
     }
 
@@ -79,6 +81,29 @@ public class FlightAddressingMapper {
                 .datefrom(flightAddressing.getDateFrom())
                 .dateto(flightAddressing.getDateTo())
                 .url(RATE_CALLBACK_URL)
+                .build();
+    }
+
+    public List<AddressingResponse> mapToResponses(List<FlightAddressing> addressings) {
+        return addressings
+                .stream()
+                .map(this::toAddressingResponse)
+                .collect(Collectors.toList());
+    }
+
+    private AddressingResponse toAddressingResponse(FlightAddressing flightAddressing) {
+        return AddressingResponse.builder()
+                .departureStation(flightAddressing.getSourceStationCode())
+                .destinationStation(flightAddressing.getDestinationStationCode())
+                .cargoId(flightAddressing.getCargoCode())
+                .wagonType(flightAddressing.getWagonType())
+                .volume(String.valueOf(flightAddressing.getVolume()))
+                .planQuantity(flightAddressing.getRequirementOrders())
+                .carNumber(flightAddressing.getCarNumber())
+                .destinationStationCurrentFlight(flightAddressing.getCurrentFlightDestStationCode())
+                .dislocationStationCurrentFlight(flightAddressing.getDislocationStationCode())
+                .tariff(String.valueOf(flightAddressing.getTariff()))
+                .rate(String.valueOf(flightAddressing.getRate()))
                 .build();
     }
 }

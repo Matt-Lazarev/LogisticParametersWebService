@@ -59,6 +59,12 @@ public class FlightAddressing {
     @Column(name="current_flight_dest_station_road")
     private String currentFlightDestStationRoad;
 
+    @Column(name="dislocation_station")
+    private String dislocationStation;
+
+    @Column(name="dislocation_station_code")
+    private String dislocationStationCode;
+
     @Column(name="cargo")
     private String cargo;
 

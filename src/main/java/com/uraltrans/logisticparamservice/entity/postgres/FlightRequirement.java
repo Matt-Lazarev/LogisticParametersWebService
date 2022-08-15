@@ -50,8 +50,4 @@ public class FlightRequirement {
 
     @Column(name="requirement_orders")
     private Integer requirementOrders;
-
-    @JsonIgnore
-    @Column(name="client_order_id")
-    private Long clientOrderId;
 }

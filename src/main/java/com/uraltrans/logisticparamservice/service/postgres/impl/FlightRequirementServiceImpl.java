@@ -1,5 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.planfact.PlanFactRequest;
+import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRequirementRepository;
@@ -8,8 +10,11 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequireme
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +51,25 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
     @Override
     public List<String> getAllSourceStationCodes() {
         return flightRequirementRepository.findAllSourceStationCodes();
+    }
+
+    @Override
+    public List<PlanFactResponse> getAllFlightRequirementsByRequest(PlanFactRequest request) {
+        if(request == null || Stream.of(
+                request.getDepartureStation(), request.getDestinationStation(),
+                request.getWagonType(), request.getVolume()).allMatch(Objects::isNull)){
+            return flightRequirementMapper.mapToResponses(flightRequirementRepository.findAll());
+        }
+        return flightRequirementMapper.mapToResponses(
+                flightRequirementRepository.findAll()
+                        .stream()
+                        .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
+                        .filter(f->{
+                            BigDecimal volume = new BigDecimal(request.getVolume());
+                            return volume.compareTo(f.getVolumeFrom()) >= 0 && volume.compareTo(f.getVolumeTo()) <= 0;
+                        })
+                        .filter(f -> request.getDestinationStation() == null || request.getDestinationStation().equals(f.getDestinationStationCode()))
+                        .collect(Collectors.toList()));
     }
 
     private void filterFlightRequirements(List<FlightRequirement> flightRequirements) {
