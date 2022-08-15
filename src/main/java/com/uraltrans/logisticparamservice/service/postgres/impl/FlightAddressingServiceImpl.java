@@ -98,7 +98,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 flightAddressingRepository.findAll()
                 .stream()
                 .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
-                .filter(f -> request.getVolume().equals(String.valueOf(f.getVolume())))
+                .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
                 .filter(f -> request.getWagonType().equals(f.getWagonType()))
                 .filter(f -> request.getCargoId().equals(f.getCargoCode()))
                 .filter(f -> request.getDestinationStation() == null || request.getDestinationStation().equals(f.getDestinationStationCode()))
