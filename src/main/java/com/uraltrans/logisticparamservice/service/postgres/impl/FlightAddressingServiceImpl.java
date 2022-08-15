@@ -9,6 +9,7 @@ import com.uraltrans.logisticparamservice.entity.postgres.Cargo;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
+import com.uraltrans.logisticparamservice.exception.AddressApiRequestException;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightAddressingRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -93,6 +95,22 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     public List<AddressingResponse> getAllByRequest(AddressingRequest request) {
         if(request == null || isNull(request)){
             return flightAddressingMapper.mapToResponses(flightAddressingRepository.findAll());
+        }
+
+        List<Field> fields = Arrays
+                .stream(request.getClass().getDeclaredFields())
+                .filter(f -> !f.getName().equals("destinationStation"))
+                .collect(Collectors.toList());
+
+        for(Field field : fields){
+            field.setAccessible(true);
+            try {
+                if(field.get(request) == null){
+                    throw new AddressApiRequestException(String.format("Необходимо указать поле '%s'", field.getName()));
+                }
+            } catch (IllegalAccessException e) {
+                throw new AddressApiRequestException(e.getMessage());
+            }
         }
 
         if(!request.getWagonType().equalsIgnoreCase("Крытый")){
