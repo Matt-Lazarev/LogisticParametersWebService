@@ -8,6 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import javax.transaction.Transactional;
 
 public interface CargoRepository extends JpaRepository<Cargo, Long> {
+
+    @Query("select c.name from Cargo c where c.code = :code")
+    String findCargoNameByCode(String code);
+
     @Modifying
     @Transactional
     @Query(value = "truncate table cargos restart identity", nativeQuery = true)

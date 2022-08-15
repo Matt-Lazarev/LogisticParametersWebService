@@ -3,13 +3,13 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
+import com.uraltrans.logisticparamservice.entity.postgres.Cargo;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
+import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightAddressingRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.ActualFlightService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.ClientOrderService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightAddressingService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +32,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     private final FlightAddressingRepository flightAddressingRepository;
     private final FlightAddressingMapper flightAddressingMapper;
+    private final StationHandbookService stationHandbookService;
+    private final CargoService cargoService;
     private final ClientOrderService clientOrderService;
     private final ActualFlightService actualFlightService;
     private final RestTemplate restTemplate;
@@ -45,11 +48,12 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         prepareNextSave();
         List<PotentialFlight> potentialFlights = actualFlightService.getAllPotentialFlights();
         List<FlightAddressing> addressings = getAllFlightAddressings(potentialFlights);
-        loadClientOrderCargosAndDates(addressings);
+        loadCargosAndDates(addressings);
+        loadStationsParams(addressings);
 
         flightAddressingRepository.saveAllAndFlush(addressings);
-        sendTariffRequest(addressings);
-        sendRateRequest(addressings);
+        //sendTariffRequest(addressings);
+        //sendRateRequest(addressings);
     }
 
     @Override
@@ -129,7 +133,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         FileUtils.writeTariffRateErrors(errors, true);
     }
 
-    private void loadClientOrderCargosAndDates(List<FlightAddressing> addressings){
+    private void loadCargosAndDates(List<FlightAddressing> addressings){
         List<FlightAddressing> additional = new ArrayList<>();
         addressings.forEach(addressing -> {
             BigDecimal volume = addressing.getVolume();
@@ -148,6 +152,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         setDateAndDefaultTariff(addressings);
         setDateAndDefaultTariff(additional);
         addressings.addAll(additional);
+        setCargosName(addressings);
     }
 
     private void setDateAndDefaultTariff(List<FlightAddressing> flightAddressings){
@@ -160,6 +165,57 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                             .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
             addressing.setTariff(BigDecimal.valueOf(0));
             addressing.setRate(BigDecimal.valueOf(0));
+        });
+    }
+
+    private void setCargosName(List<FlightAddressing> addressings) {
+        addressings.forEach(addressing -> {
+            String cargoCode = addressing.getCargoCode();
+            if(cargoCode != null){
+                String cargoName = cargoService.findCargoNameByCode(cargoCode);
+                addressing.setCargo(cargoName);
+            }
+
+            String clientCargoCode = addressing.getClientOrderCargoCode();
+            if(clientCargoCode != null){
+                String cargoName = cargoService.findCargoNameByCode(clientCargoCode);
+                addressing.setClientOrderCargo(cargoName);
+            }
+        });
+    }
+
+    private void loadStationsParams(List<FlightAddressing> flightAddressings){
+        flightAddressings.forEach(addressing -> {
+            String sourceStation = addressing.getSourceStationCode();
+            String destStation = addressing.getDestinationStationCode();
+            String currFlightDestStation = addressing.getCurrentFlightDestStationCode();
+
+            if(sourceStation != null){
+                StationHandbook sh = stationHandbookService.findStationByCode6(sourceStation);
+                if(sh != null){
+                    addressing.setSourceStation(sh.getStation());
+                    addressing.setSourceStationRegion(sh.getRegion());
+                    addressing.setSourceStationRoad(sh.getRoad());
+                }
+            }
+
+            if(destStation != null){
+                StationHandbook sh = stationHandbookService.findStationByCode6(destStation);
+                if(sh != null){
+                    addressing.setDestinationStation(sh.getStation());
+                    addressing.setDestinationStationRegion(sh.getRegion());
+                    addressing.setDestinationStationRoad(sh.getRoad());
+                }
+            }
+
+            if(currFlightDestStation != null){
+                StationHandbook sh = stationHandbookService.findStationByCode6(currFlightDestStation);
+                if(sh != null){
+                    addressing.setCurrentFlightDestStation(sh.getStation());
+                    addressing.setCurrentFlightDestStationRegion(sh.getRegion());
+                    addressing.setCurrentFlightDestStationRoad(sh.getRoad());
+                }
+            }
         });
     }
 }

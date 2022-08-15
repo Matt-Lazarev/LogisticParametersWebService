@@ -23,17 +23,53 @@ public class FlightAddressing {
 
     private BigDecimal volume;
 
+    @Column(name="source_station")
+    private String sourceStation;
+
     @Column(name="source_station_code")
     private String sourceStationCode;
+
+    @Column(name = "source_station_region")
+    private String sourceStationRegion;
+
+    @Column(name = "source_station_road")
+    private String sourceStationRoad;
+
+    @Column(name="destination_station")
+    private String destinationStation;
 
     @Column(name="destination_station_code")
     private String destinationStationCode;
 
+    @Column(name = "destination_station_region")
+    private String destinationStationRegion;
+
+    @Column(name = "destination_station_road")
+    private String destinationStationRoad;
+
+    @Column(name="current_flight_dest_station")
+    private String currentFlightDestStation;
+
     @Column(name="current_flight_dest_station_code")
     private String currentFlightDestStationCode;
 
+    @Column(name="current_flight_dest_station_region")
+    private String currentFlightDestStationRegion;
+
+    @Column(name="current_flight_dest_station_road")
+    private String currentFlightDestStationRoad;
+
+    @Column(name="cargo")
+    private String cargo;
+
     @Column(name="cargo_code")
     private String cargoCode;
+
+    @Column(name="client_orders_cargo")
+    private String clientOrderCargo;
+
+    @Column(name="client_orders_cargo_code")
+    private String clientOrderCargoCode;
 
     @Column(name="requirement_orders")
     private Integer requirementOrders;
@@ -56,9 +92,6 @@ public class FlightAddressing {
     @JsonIgnore
     @Column(name="date_to")
     private String dateTo;
-
-    @Column(name="client_orders_cargo")
-    private String clientOrderCargoCode;
 
     public FlightAddressing(FlightAddressing addressing) {
         this.carNumber = addressing.carNumber;

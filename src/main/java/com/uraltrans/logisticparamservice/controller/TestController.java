@@ -1,4 +1,4 @@
-package com.uraltrans.logisticparamservice.controller.mvc;
+package com.uraltrans.logisticparamservice.controller;
 
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;

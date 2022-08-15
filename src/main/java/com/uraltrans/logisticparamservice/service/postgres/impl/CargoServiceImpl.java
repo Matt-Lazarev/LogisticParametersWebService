@@ -31,6 +31,11 @@ public class CargoServiceImpl implements CargoService {
     }
 
     @Override
+    public String findCargoNameByCode(String code) {
+        return cargoRepository.findCargoNameByCode(code);
+    }
+
+    @Override
     public void saveAll() {
         prepareNextSave();
         List<Cargo> cargos = cargoMapper.mapRawDataToCargoList(rawCargoRepository.getAllFlightProfits());

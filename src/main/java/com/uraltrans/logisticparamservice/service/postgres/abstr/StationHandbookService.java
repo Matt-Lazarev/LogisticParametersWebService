@@ -12,4 +12,6 @@ public interface StationHandbookService {
     List<StationResponse> getAllResponses();
 
     String getRegionByCode6(String code);
+
+    StationHandbook findStationByCode6(String code);
 }

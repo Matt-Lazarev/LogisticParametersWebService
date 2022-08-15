@@ -50,6 +50,11 @@ public class StationHandbookServiceImpl implements StationHandbookService {
         return stationHandbookRepository.findRegionByCode6(code);
     }
 
+    @Override
+    public StationHandbook findStationByCode6(String code) {
+        return stationHandbookRepository.findStationByCode6(code);
+    }
+
     private void prepareNextSave() {
         stationHandbookRepository.truncate();
     }

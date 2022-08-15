@@ -12,6 +12,9 @@ public interface StationHandbookRepository extends JpaRepository<StationHandbook
     @Query("select s.region from StationHandbook s where s.code6 = :code")
     String findRegionByCode6(String code);
 
+    @Query("select s from StationHandbook s where s.code6 = :code")
+    StationHandbook findStationByCode6(String code);
+
     @Modifying
     @Transactional
     @Query(value = "truncate table station_handbook restart identity", nativeQuery = true)

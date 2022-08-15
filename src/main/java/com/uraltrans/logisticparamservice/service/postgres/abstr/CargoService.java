@@ -8,5 +8,7 @@ import java.util.List;
 public interface CargoService {
     List<Cargo> getAllCargos();
     List<CargoResponse> getAllCargoResponses();
+
+    String findCargoNameByCode(String code);
     void saveAll();
 }
