@@ -5,11 +5,9 @@ import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
-import com.uraltrans.logisticparamservice.entity.postgres.Cargo;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
-import com.uraltrans.logisticparamservice.exception.AddressApiRequestException;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightAddressingRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
@@ -25,7 +23,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -93,24 +90,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     @Override
     public List<AddressingResponse> getAllByRequest(AddressingRequest request) {
-        if(request == null || isNull(request)){
+        if(request == null){
             return flightAddressingMapper.mapToResponses(flightAddressingRepository.findAll());
-        }
-
-        List<Field> fields = Arrays
-                .stream(request.getClass().getDeclaredFields())
-                .filter(f -> !f.getName().equals("destinationStation"))
-                .collect(Collectors.toList());
-
-        for(Field field : fields){
-            field.setAccessible(true);
-            try {
-                if(field.get(request) == null){
-                    throw new AddressApiRequestException(String.format("Необходимо указать поле '%s'", field.getName()));
-                }
-            } catch (IllegalAccessException e) {
-                throw new AddressApiRequestException(e.getMessage());
-            }
         }
 
         if(!request.getWagonType().equalsIgnoreCase("Крытый")){
@@ -120,7 +101,6 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         return flightAddressingMapper.mapToResponses(
                 flightAddressingRepository.findAll()
                 .stream()
-                .peek(f -> f.setWagonType(request.getWagonType()))
                 .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
                 .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
                 .filter(f -> request.getCargoId().equals(f.getCargoCode()))
@@ -267,15 +247,5 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 }
             }
         });
-    }
-
-    private boolean isNull(AddressingRequest request){
-        return Stream.of(
-                    request.getCargoId(),
-                    request.getDepartureStation(),
-                    request.getDestinationStation(),
-                    request.getWagonType(),
-                    request.getVolume())
-                .allMatch(Objects::isNull);
     }
 }

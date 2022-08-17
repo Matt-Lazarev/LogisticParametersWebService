@@ -17,6 +17,7 @@ public interface ActualFlightRepository extends JpaRepository<ActualFlight, Long
             "      co.destinationStationCode = :destStation and " +
             "      co.volume = :volume")
     ActualFlight findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
+
     @Modifying
     @Transactional
     @Query(value = "truncate table actual_flights restart identity", nativeQuery = true)

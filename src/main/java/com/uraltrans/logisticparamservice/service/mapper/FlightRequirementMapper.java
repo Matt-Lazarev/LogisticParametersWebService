@@ -37,6 +37,7 @@ public class FlightRequirementMapper {
                 .inPlanOrders(Mapper.toInteger((BigInteger) data.get("cars_amount")))
                 .completedOrders(Mapper.toInteger((BigDecimal) data.get("completed_orders")))
                 .inProgressOrders(Mapper.toInteger((BigDecimal) data.get("in_progress_orders")))
+                .utRate((BigDecimal) data.get("ut_rate"))
                 .build();
 
         f.setRequirementOrders(f.getInPlanOrders() - f.getCompletedOrders() - f.getInProgressOrders());
@@ -53,6 +54,7 @@ public class FlightRequirementMapper {
                 .planReady(requirement.getCompletedOrders())
                 .planInWork(requirement.getInProgressOrders())
                 .shortage(requirement.getRequirementOrders())
+                .rateFact(String.valueOf(requirement.getUtRate()))
                 .build();
     }
 }

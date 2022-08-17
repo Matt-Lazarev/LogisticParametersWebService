@@ -1,4 +1,3 @@
-declare @DefaultCountryID int = 8
 Select O.AID,ddOrder.STATE as [Статус],
        O.NUM [Номер заявки],
        O.DOCDATA [Дата заявки],
@@ -71,7 +70,33 @@ Select O.AID,ddOrder.STATE as [Статус],
     cast(null as varchar(2000)) as claim_DB,
     cast(null as varchar(2000)) as claim_DE,
     dpril.ShortAbout as PrilAbout,
-    cast(null as decimal(18,2)) as UT_Rate,
+
+    cast(
+               (select
+                    UT_Rate = case when p_.Is_Dep_Dis=3 then kst.X when p_.Is_Dep_Dis=4 then kst2.X else IsNull(u.S_AG, p_.S_AG) end
+                from res_copy r
+                         --Трунов 30.05.2018 по просьбе ITR
+                         left join dbo.pe_agr_klient_pred p_ on p_.ID = r.PredID
+                         outer apply(select top 1 kst.X as X from KL_PRED_STATIONS_TO kst
+                                                                      inner join  qstation stto on kst.Id_Station=stto.AID
+                                     where kst.ID_KL_PREDMET=p_.ID and stto.Code6=r.StationCode6To) kst
+                    --03062018 Сабиров..
+                         outer apply(select top 1 kst.X as X from Calc.KlientPredRoute kst
+                                                                      inner join  qstation stto on kst.StationID = stto.AID
+                                     where kst.PredID = p_.ID and kst.StationTypeID = 4 and stto.Code6=r.StationCode6To) kst2
+                         outer apply
+                     (
+                         select top 1 p.S_AG, p.type_calc
+                         from do_Document do
+                                  left join DO_DOCUMENT_ADD da on da.ID_DOCUMENT = do.aid
+                                  left join do_Document d on d.aid = da.ID_DOCUMENT_ADD and d.id_doc = 50 -- приложение
+                                  left join dbo.PE_AGR_KLIENT_PRED p on p.IDParentDocument = d.aid and p.id=r.PredID /*Трунов 23.04.2019 когда несколько УТ в приложении*/
+                         where do.aid = r.DocumentID
+                         order by d.DATE_INS desc
+                     ) u
+                where aid = O.AID)
+           as decimal(18,2)) as UT_Rate,
+
     cast(null as varchar(400)) as UT_TypeObject,
     cast(null as varchar(200)) as Flow_About,
     AddDocs.flow_note,
@@ -109,15 +134,15 @@ Select O.AID,ddOrder.STATE as [Статус],
            на станции назначения КЗХ и Петропавловск, Мамлютка, Булаево (дорога ЮУР) как импорт
            на станции назначения  не КЗХ и Илецк I, Неверовская, Третьяково, Маймак, Мактаарал (дорога КЗХ) как транзит
            */
-        when @DefaultCountryID = 8 and SF.Code in (70780,70770,71010,70850,71040) and (St.LocationCountryID = @DefaultCountryID or St.Code in (82000,82620,82520)) then 'импорт'
-        when @DefaultCountryID = 8 and SF.Code in (70780,70770,71010,70850,71040) And (St.LocationCountryID <> @DefaultCountryID or ST.Code in (66690,71170,71190,70600, 69700)) then 'транзит'
-        when @DefaultCountryID = 8 and Isnull(SF.RealCountryID, SF.LocationCountryID) = @DefaultCountryID and Isnull(SF.RealCountryID, St.LocationCountryID) = @DefaultCountryID then 'внутриказахстанская'
+        when SF.Code in (70780,70770,71010,70850,71040) and (St.LocationCountryID = 8 or St.Code in (82000,82620,82520)) then 'импорт'
+        when SF.Code in (70780,70770,71010,70850,71040) And (St.LocationCountryID <> 8 or ST.Code in (66690,71170,71190,70600, 69700)) then 'транзит'
+        when Isnull(SF.RealCountryID, SF.LocationCountryID) = 8 and Isnull(SF.RealCountryID, St.LocationCountryID) = 8 then 'внутриказахстанская'
            --Select * from dbo.QStation where Name in  ( 'Алтынколь (эксп.)', 'Алтынколь (эксп. перев. авто)','Достык (эксп.)', 'Достык (эксп., перев.)', 'Достык (эксп. перев. авто)')
            --Select * from dbo.QStation where Code in (70780,70770,71010,70850,71040)
-        when Isnull(SF.RealCountryID, SF.LocationCountryID) = @DefaultCountryID and Isnull(SF.RealCountryID, St.LocationCountryID) = @DefaultCountryID then 'внутрироссийская'
-        when Isnull(SF.RealCountryID, SF.LocationCountryID) = @DefaultCountryID and Isnull(SF.RealCountryID, St.LocationCountryID) <> @DefaultCountryID then 'экспорт'
-        when Isnull(SF.RealCountryID, SF.LocationCountryID) <> @DefaultCountryID and Isnull(SF.RealCountryID, St.LocationCountryID) = @DefaultCountryID then 'импорт'
-        when Isnull(SF.RealCountryID, SF.LocationCountryID) <> @DefaultCountryID and Isnull(SF.RealCountryID, St.LocationCountryID) <> @DefaultCountryID then 'транзит'
+        when Isnull(SF.RealCountryID, SF.LocationCountryID) = 8 and Isnull(SF.RealCountryID, St.LocationCountryID) = 8 then 'внутрироссийская'
+        when Isnull(SF.RealCountryID, SF.LocationCountryID) = 8 and Isnull(SF.RealCountryID, St.LocationCountryID) <> 8 then 'экспорт'
+        when Isnull(SF.RealCountryID, SF.LocationCountryID) <> 8 and Isnull(SF.RealCountryID, St.LocationCountryID) = 8 then 'импорт'
+        when Isnull(SF.RealCountryID, SF.LocationCountryID) <> 8 and Isnull(SF.RealCountryID, St.LocationCountryID) <> 8 then 'транзит'
            end as TranKindName,
     Cast(0 as int) SanctionedCargoCount,
     PunktNameFrom = adrFrom.name, -- Трунов 27.08.2020
@@ -316,7 +341,8 @@ from dbo.AGR_KLIENT_ORDERS O
          left join LIST_USER On LIST_USER.AID = O.ID_USER_INS
          left join dStruct On dStruct.ID = LIST_USER.ID_STRUCT
 WHERE
-    Dds.name = ? and
-    Cast(ct.ShortName as varchar(1000)) = ? and
-    O.Data >= ? and
-    Org.name = N'УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ';
+        Dds.name = ? and
+        Cast(ct.ShortName as varchar(1000)) = ? and
+        O.Data >= ? and
+        Org.name = N'УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ';
+

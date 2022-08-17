@@ -63,5 +63,6 @@ public class ClientOrder {
     private LocalDateTime toDate;
 
     @JsonIgnore
-    private String firm;
+    @Column(name="UT_rate")
+    private BigDecimal utRate;
 }

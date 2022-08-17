@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,7 +17,7 @@ public class FlightAddressingController {
     private final FlightAddressingService flightAddressingService;
 
     @PostMapping("/result/address")
-    public List<AddressingResponse> getAddressingsByRequest(@RequestBody(required = false) AddressingRequest request){
+    public List<AddressingResponse> getAddressingsByRequest(@Valid @RequestBody(required = false) AddressingRequest request){
         return flightAddressingService.getAllByRequest(request);
     }
 }

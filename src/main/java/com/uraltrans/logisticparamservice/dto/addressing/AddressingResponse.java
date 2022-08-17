@@ -23,4 +23,5 @@ public class AddressingResponse {
     private String dislocationStationCurrentFlight;
     private String tariff;
     private String rate;
+    private String rateFact;
 }

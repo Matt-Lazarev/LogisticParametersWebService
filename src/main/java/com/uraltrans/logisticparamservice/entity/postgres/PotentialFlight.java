@@ -56,6 +56,9 @@ public class PotentialFlight {
     @Column(name = "cargo_code")
     private String cargoCode;
 
+    @Column(name="plan_orders")
+    private Integer planOrders;
+
     @Column(name="completed_orders")
     private Integer completedOrders;
 
@@ -64,6 +67,10 @@ public class PotentialFlight {
 
     @Column(name="requirement_orders")
     private Integer requirementOrders;
+
+    @JsonIgnore
+    @Column(name="UT_rate")
+    private BigDecimal utRate;
 
     @JsonIgnore
     private String feature2;

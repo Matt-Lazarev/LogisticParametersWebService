@@ -28,7 +28,11 @@ public class RawDislocationRepositoryImpl implements RawDislocationRepository{
             "if47._Fld51 as Loaded, " +
             "if47._Fld172 as WagonType, " +
             "if47._Fld2850 as Cargo, " +
-            "if47._Fld2852 as CargoCode " +
+            "if47._Fld2852 as CargoCode, " +
+            "if47._Fld173 as Owner, " +
+            "if47._Fld2777 as Operation, " +
+            "if47._Fld52 as Model, " +
+            "if47._Fld2783 as NextStation " +
             "FROM _InfoRg47 if47 " +
             "WHERE if47._Fld171 = ? and " +
             "if47._Fld176 = N'УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ' and " +

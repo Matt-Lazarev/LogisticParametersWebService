@@ -29,6 +29,7 @@ public class FlightAddressingMapper {
                 .peek(f -> f.setLoaded(potentialFlight.getLoaded()))
                 .peek(f -> f.setWagonType(potentialFlight.getWagonType()))
                 .peek(f -> f.setDislocationStationCode(potentialFlight.getDislocationStationCode()))
+                .peek(f -> f.setUtRate(potentialFlight.getUtRate()))
                 .collect(Collectors.toList());
     }
 
@@ -54,6 +55,7 @@ public class FlightAddressingMapper {
                 .sourceStationCode((String) data.get("source_station_code"))
                 .cargoCode((String) data.get("cargo_code"))
                 .requirementOrders((Integer) data.get("requirement_orders"))
+                .planOrders((Integer) data.get("in_plan_orders"))
                 .build();
     }
 
@@ -96,7 +98,7 @@ public class FlightAddressingMapper {
                 .departureStation(flightAddressing.getSourceStationCode())
                 .destinationStation(flightAddressing.getDestinationStationCode())
                 .cargoId(flightAddressing.getCargoCode())
-                .wagonType(flightAddressing.getWagonType())
+                .wagonType("Крытый")
                 .volume(String.valueOf(flightAddressing.getVolume()))
                 .planQuantity(flightAddressing.getRequirementOrders())
                 .carNumber(flightAddressing.getCarNumber())
@@ -104,6 +106,7 @@ public class FlightAddressingMapper {
                 .dislocationStationCurrentFlight(flightAddressing.getDislocationStationCode())
                 .tariff(String.valueOf(flightAddressing.getTariff()))
                 .rate(String.valueOf(flightAddressing.getRate()))
+                .rateFact(String.valueOf(flightAddressing.getUtRate()))
                 .build();
     }
 }

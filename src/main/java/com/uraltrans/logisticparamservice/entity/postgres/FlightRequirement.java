@@ -50,4 +50,7 @@ public class FlightRequirement {
 
     @Column(name="requirement_orders")
     private Integer requirementOrders;
+
+    @Column(name="ut_rate")
+    private BigDecimal utRate;
 }

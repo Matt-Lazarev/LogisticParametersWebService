@@ -1,7 +1,9 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.dislocation.DislocationRequest;
+import com.uraltrans.logisticparamservice.dto.dislocation.DislocationResponse;
+import com.uraltrans.logisticparamservice.dto.planfact.OrdersDto;
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
-import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.ActualFlightRepository;
@@ -12,7 +14,6 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequireme
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ public class ActualFlightServiceImpl implements ActualFlightService {
     private static final String FILTER_VALUE = "ремонт";
 
     private final FlightRequirementService flightRequirementService;
+    private final StationHandbookService stationHandbookService;
 
     private final RawDislocationRepository rawDislocationRepository;
     private final ActualFlightRepository actualFlightRepository;
@@ -72,6 +74,29 @@ public class ActualFlightServiceImpl implements ActualFlightService {
         return actualFlightRepository.findByStationCodesAndVolume(sourceStation, destStation, volume);
     }
 
+    @Override
+    public List<DislocationResponse> getAllByRequest(DislocationRequest request) {
+        if(request == null){
+            return actualFlightMapper.mapToResponses(actualFlightRepository.findAll());
+        }
+
+        if(!request.getWagonType().equalsIgnoreCase("Крытый")){
+            return Collections.emptyList();
+        }
+
+        String region = stationHandbookService.getRegionByCode6(request.getDestinationStationCurrentFlight());
+
+        return actualFlightMapper.mapToResponses(
+                actualFlightRepository.findAll()
+                        .stream()
+                        .filter(f -> {
+                            String flightRegion = stationHandbookService.getRegionByCode6(f.getDestinationStationCode());
+                            return region.equalsIgnoreCase(flightRegion);
+                        })
+                        .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
+                        .collect(Collectors.toList()));
+    }
+
     private void prepareNextActualFlightsSave(){
         actualFlightRepository.truncate();
     }
@@ -99,9 +124,10 @@ public class ActualFlightServiceImpl implements ActualFlightService {
                 .filter(f -> f.getCarState().equalsIgnoreCase("гружёный ход"))
                 .filter(f -> !f.getCarState().toLowerCase().contains("заказан"))
                 .peek(f -> {
-                    Integer requirement = flightRequirementService.getFlightRequirement(f);
+                    OrdersDto requirement = flightRequirementService.getFlightRequirement(f);
                     if(requirement != null){
-                        f.setRequirementOrders(requirement);
+                        f.setRequirementOrders(requirement.getRequirementOrders());
+                        f.setUtRate(requirement.getUtRate());
                     }
                 })
                 .filter(f -> f.getRequirementOrders() != null && f.getRequirementOrders() >= 1)

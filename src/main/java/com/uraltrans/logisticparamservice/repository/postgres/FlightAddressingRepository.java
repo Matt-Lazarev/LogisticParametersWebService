@@ -13,7 +13,7 @@ import java.util.Map;
 public interface FlightAddressingRepository extends JpaRepository<FlightAddressing, Long> {
 
     @Query(value =
-            "select fr.destination_station_code, fr.source_station_code, fr.requirement_orders " +
+            "select fr.destination_station_code, fr.source_station_code, fr.requirement_orders, fr.in_plan_orders " +
                     "from flight_requirements fr " +
                     "         inner join station_handbook sh " +
                     "         on fr.source_station_code = sh.code6 " +

@@ -37,12 +37,23 @@ public class TestController {
 
     @GetMapping
     public List<?> getAll() {
+        stationHandbookService.saveAll();
         clientOrderService.saveAllClientOrders();
         service.saveAllActualFlights();
         flightRequirementService.saveAllFlightRequirements();
         service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
         return flightAddressingService.getAll();
+    }
+
+
+    @GetMapping("/1")
+    public List<?> getAll1() {
+        clientOrderService.saveAllClientOrders();
+        service.saveAllActualFlights();
+        flightRequirementService.saveAllFlightRequirements();
+        service.saveAllPotentialFlights();
+        return flightRequirementService.getAllFlightRequirements();
     }
 
     @GetMapping("/calc/tariff")

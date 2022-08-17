@@ -35,7 +35,7 @@ public class ClientOrderMapper {
                 .manager((String) data.get("Менеджер"))
                 .fromDate(((Timestamp) data.get("Date_B")).toLocalDateTime())
                 .toDate(((Timestamp) data.get("Date_e")).toLocalDateTime())
-                .firm((String) data.get("Firma"))
+                .utRate((BigDecimal) data.get("UT_Rate"))
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.repository.postgres;
 
+import com.uraltrans.logisticparamservice.dto.planfact.OrdersDto;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,10 +17,11 @@ public interface FlightRequirementRepository extends JpaRepository<FlightRequire
             "select sub_co.volume_from, sub_co.volume_to,sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id, " +
                     "       sum(sub_co.cars_amount) as cars_amount, " +
                     "       sum(sub_co.completed_orders) as completed_orders, " +
-                    "       sum(sub_co.in_progress_orders) as in_progress_orders " +
+                    "       sum(sub_co.in_progress_orders) as in_progress_orders, " +
+                    "       avg(sub_co.ut_rate) as ut_rate " +
                     "from " +
                     "(select co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, " +
-                    "       co.cars_amount as cars_amount, co.id, " +
+                    "       co.cars_amount as cars_amount, co.ut_rate as ut_rate, co.id, " +
                     "       sum(af_sub.completed_orders) as completed_orders, " +
                     "       sum(af_sub.in_progress_orders) as in_progress_orders " +
                     "                    from client_orders co " +
@@ -32,7 +34,7 @@ public interface FlightRequirementRepository extends JpaRepository<FlightRequire
                     "                    on co.source_station_code6 = af_sub.source_station_code and " +
                     "                       af_sub.volume between co.volume_from and co.volume_to " +
                     "                    group by co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, co.cars_amount, co.id) as sub_co " +
-                    "group by sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id;", nativeQuery = true)
+                    "group by sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id, sub_co.ut_rate;", nativeQuery = true)
     List<Map<String, Object>> groupActualFlightsAndClientOrders();
 
     @Modifying
@@ -40,19 +42,21 @@ public interface FlightRequirementRepository extends JpaRepository<FlightRequire
     @Query(value = "truncate table flight_requirements restart identity", nativeQuery = true)
     void truncate();
 
-    @Query("select fr.requirementOrders " +
+    @Query("select new com.uraltrans.logisticparamservice.dto.planfact.OrdersDto" +
+            "(fr.requirementOrders, fr.utRate) " +
             "from FlightRequirement fr " +
             "where :volume between fr.volumeFrom and fr.volumeTo " +
             "and fr.sourceStationCode = :sourceStationCode " +
             "and fr.destinationStationCode = :destinationStationCode")
-    Integer findRequirementByVolumeAndStationCodes(BigDecimal volume, String sourceStationCode, String destinationStationCode);
+    OrdersDto findRequirementByVolumeAndStationCodes(BigDecimal volume, String sourceStationCode, String destinationStationCode);
 
-    @Query("select sum(fr.requirementOrders) " +
+    @Query("select new com.uraltrans.logisticparamservice.dto.planfact.OrdersDto " +
+            "(sum(fr.requirementOrders), avg(fr.utRate)) " +
             "from FlightRequirement fr " +
             "where :volume between fr.volumeFrom and fr.volumeTo " +
             "and fr.sourceStationCode = :sourceStationCode " +
             "group by fr.sourceStationCode")
-    Integer findAllRequirementByVolumeAndSourceStationCode(BigDecimal volume, String sourceStationCode);
+    OrdersDto findAllRequirementByVolumeAndSourceStationCode(BigDecimal volume, String sourceStationCode);
 
     @Query("select fr.sourceStationCode from FlightRequirement fr ")
     List<String> findAllSourceStationCodes();

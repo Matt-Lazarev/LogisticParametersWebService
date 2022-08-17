@@ -1,5 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.abstr;
 
+import com.uraltrans.logisticparamservice.dto.dislocation.DislocationRequest;
+import com.uraltrans.logisticparamservice.dto.dislocation.DislocationResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 
@@ -13,4 +15,6 @@ public interface ActualFlightService {
     void saveAllPotentialFlights();
 
     ActualFlight findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
+
+    List<DislocationResponse> getAllByRequest(DislocationRequest request);
 }

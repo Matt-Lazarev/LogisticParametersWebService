@@ -77,12 +77,19 @@ public class FlightAddressing {
     @Column(name="client_orders_cargo_code")
     private String clientOrderCargoCode;
 
+    @Column(name="plan_orders")
+    private Integer planOrders;
+
     @Column(name="requirement_orders")
     private Integer requirementOrders;
 
     private BigDecimal tariff;
 
     private BigDecimal rate;
+
+    @JsonIgnore
+    @Column(name="ut_rate")
+    private BigDecimal utRate;
 
     @JsonIgnore
     private String loaded;
@@ -102,13 +109,31 @@ public class FlightAddressing {
     public FlightAddressing(FlightAddressing addressing) {
         this.carNumber = addressing.carNumber;
         this.volume = addressing.volume;
+
         this.sourceStationCode = addressing.sourceStationCode;
+        this.sourceStation = addressing.sourceStation;
+        this.sourceStationRegion = addressing.sourceStationRegion;
+        this.sourceStationRoad = addressing.sourceStationRoad;
+
         this.destinationStationCode = addressing.destinationStationCode;
+        this.destinationStation = addressing.destinationStation;
+        this.destinationStationRegion = addressing.destinationStationRegion;
+        this.destinationStationRoad = addressing.destinationStationRoad;
+
         this.currentFlightDestStationCode = addressing.currentFlightDestStationCode;
+        this.currentFlightDestStation = addressing.currentFlightDestStation;
+        this.currentFlightDestStationRegion = addressing.currentFlightDestStationRegion;
+        this.currentFlightDestStationRoad = addressing.currentFlightDestStationRoad;
+
+        this.dislocationStation = addressing.dislocationStation;
+        this.dislocationStationCode = addressing.dislocationStationCode;
+
         this.cargoCode = addressing.cargoCode;
+        this.planOrders = addressing.planOrders;
         this.requirementOrders = addressing.requirementOrders;
         this.loaded = addressing.loaded;
         this.wagonType = addressing.wagonType;
+        this.utRate = addressing.utRate;
     }
 
     @Override

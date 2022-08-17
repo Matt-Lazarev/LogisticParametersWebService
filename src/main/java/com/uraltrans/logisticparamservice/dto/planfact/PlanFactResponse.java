@@ -20,4 +20,5 @@ public class PlanFactResponse {
     private Integer planReady;
     private Integer planInWork;
     private Integer shortage;
+    private String rateFact;
 }

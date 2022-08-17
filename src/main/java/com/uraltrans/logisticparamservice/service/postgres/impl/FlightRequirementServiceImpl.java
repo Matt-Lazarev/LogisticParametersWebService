@@ -1,25 +1,21 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.planfact.OrdersDto;
 import com.uraltrans.logisticparamservice.dto.planfact.PlanFactRequest;
 import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
-import com.uraltrans.logisticparamservice.exception.AddressApiRequestException;
-import com.uraltrans.logisticparamservice.exception.PlanFactApiRequestException;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRequirementRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightRequirementMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +39,8 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
     }
 
     @Override
-    public Integer getFlightRequirement(PotentialFlight potentialFlight) {
-        Integer fr = flightRequirementRepository.findRequirementByVolumeAndStationCodes(
+    public OrdersDto getFlightRequirement(PotentialFlight potentialFlight) {
+        OrdersDto fr = flightRequirementRepository.findRequirementByVolumeAndStationCodes(
                 potentialFlight.getVolume(), potentialFlight.getSourceStationCode(), potentialFlight.getDestinationStationCode()
         );
         return fr != null
@@ -60,28 +56,9 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
 
     @Override
     public List<PlanFactResponse> getAllFlightRequirementsByRequest(PlanFactRequest request) {
-        if(request == null || Stream.of(
-                request.getDepartureStation(), request.getDestinationStation(),
-                request.getWagonType(), request.getVolume()).allMatch(Objects::isNull)){
+        if(request == null){
             return flightRequirementMapper.mapToResponses(flightRequirementRepository.findAll());
         }
-
-        List<Field> fields = Arrays
-                .stream(request.getClass().getDeclaredFields())
-                .filter(f -> !f.getName().equals("destinationStation"))
-                .collect(Collectors.toList());
-
-        for(Field field : fields){
-            field.setAccessible(true);
-            try {
-                if(field.get(request) == null){
-                    throw new PlanFactApiRequestException(String.format("Необходимо указать поле '%s'", field.getName()));
-                }
-            } catch (IllegalAccessException e) {
-                throw new PlanFactApiRequestException(e.getMessage());
-            }
-        }
-
 
         if(!request.getWagonType().equalsIgnoreCase("Крытый")){
             return Collections.emptyList();
