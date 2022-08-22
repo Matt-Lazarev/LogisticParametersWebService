@@ -2,6 +2,8 @@ package com.uraltrans.logisticparamservice.dto.dislocation;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -28,4 +30,7 @@ public class DislocationResponse {
     private String nextManager;
     private String nextStation;
     private String statusWagon;
+    private BigDecimal daysBeforeDatePlanRepair;
+    private BigDecimal distanceFromCurrentStation;
+    private BigDecimal restRun;
 }

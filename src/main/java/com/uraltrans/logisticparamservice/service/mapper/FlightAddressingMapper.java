@@ -30,6 +30,13 @@ public class FlightAddressingMapper {
                 .peek(f -> f.setWagonType(potentialFlight.getWagonType()))
                 .peek(f -> f.setDislocationStationCode(potentialFlight.getDislocationStationCode()))
                 .peek(f -> f.setUtRate(potentialFlight.getUtRate()))
+                .peek(f -> f.setFeature2(potentialFlight.getFeature2()))
+                .peek(f -> f.setFeature12(potentialFlight.getFeature12()))
+                .peek(f -> f.setFeature20(potentialFlight.getFeature20()))
+                .peek(f -> f.setCarState(potentialFlight.getCarState()))
+                .peek(f -> f.setDistanceFromCurrentStation(potentialFlight.getDistanceFromCurrentStation()))
+                .peek(f -> f.setDaysBeforeDatePlanRepair(potentialFlight.getDaysBeforeDatePlanRepair()))
+                .peek(f -> f.setRestRun(potentialFlight.getRestRun()))
                 .collect(Collectors.toList());
     }
 
@@ -100,13 +107,22 @@ public class FlightAddressingMapper {
                 .cargoId(flightAddressing.getCargoCode())
                 .wagonType("Крытый")
                 .volume(String.valueOf(flightAddressing.getVolume()))
-                .planQuantity(flightAddressing.getRequirementOrders())
+                .planQuantity(flightAddressing.getPlanOrders())
+                .shortage(flightAddressing.getRequirementOrders())
                 .carNumber(flightAddressing.getCarNumber())
                 .destinationStationCurrentFlight(flightAddressing.getCurrentFlightDestStationCode())
                 .dislocationStationCurrentFlight(flightAddressing.getDislocationStationCode())
                 .tariff(String.valueOf(flightAddressing.getTariff()))
                 .rate(String.valueOf(flightAddressing.getRate()))
                 .rateFact(String.valueOf(flightAddressing.getUtRate()))
+                .p2(flightAddressing.getFeature2())
+                .p12(flightAddressing.getFeature12())
+                //.feature20(flightAddressing.getFeature20()) FIXME
+                .p20("")
+                .statusWagon(flightAddressing.getCarState())
+                .distanceFromCurrentStation(flightAddressing.getDistanceFromCurrentStation())
+                .daysBeforeDatePlanRepair(flightAddressing.getDaysBeforeDatePlanRepair())
+                .restRun(flightAddressing.getRestRun())
                 .build();
     }
 }

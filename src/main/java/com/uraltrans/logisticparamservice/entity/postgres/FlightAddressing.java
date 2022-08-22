@@ -106,6 +106,31 @@ public class FlightAddressing {
     @Column(name="date_to")
     private String dateTo;
 
+    @JsonIgnore
+    private String feature2;
+
+    @JsonIgnore
+    private String feature12;
+
+    @JsonIgnore
+    private String feature20;
+
+    @JsonIgnore
+    @Column(name = "car_state")
+    private String carState;
+
+    @JsonIgnore
+    @Column(name="days_before_date_plan_repair")
+    private BigDecimal daysBeforeDatePlanRepair;
+
+    @JsonIgnore
+    @Column(name="distance_from_current_station")
+    private BigDecimal distanceFromCurrentStation;
+
+    @JsonIgnore
+    @Column(name="rest_run")
+    private BigDecimal restRun;
+
     public FlightAddressing(FlightAddressing addressing) {
         this.carNumber = addressing.carNumber;
         this.volume = addressing.volume;
@@ -134,6 +159,15 @@ public class FlightAddressing {
         this.loaded = addressing.loaded;
         this.wagonType = addressing.wagonType;
         this.utRate = addressing.utRate;
+
+        this.feature2 = addressing.feature2;
+        this.feature12 = addressing.feature12;
+        this.feature20 = addressing.feature20;
+        this.carState = addressing.carState;
+
+        this.daysBeforeDatePlanRepair = addressing.daysBeforeDatePlanRepair;
+        this.distanceFromCurrentStation = addressing.distanceFromCurrentStation;
+        this.restRun = addressing.restRun;
     }
 
     @Override

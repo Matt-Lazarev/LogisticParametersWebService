@@ -1,10 +1,8 @@
 package com.uraltrans.logisticparamservice.dto.addressing;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -18,10 +16,18 @@ public class AddressingResponse {
     private String wagonType;
     private String volume;
     private Integer planQuantity;
+    private Integer shortage;
     private String carNumber;
     private String destinationStationCurrentFlight;
     private String dislocationStationCurrentFlight;
     private String tariff;
     private String rate;
     private String rateFact;
+    private String p2;
+    private String p12;
+    private String p20;
+    private String statusWagon;
+    private BigDecimal daysBeforeDatePlanRepair;
+    private BigDecimal distanceFromCurrentStation;
+    private BigDecimal restRun;
 }

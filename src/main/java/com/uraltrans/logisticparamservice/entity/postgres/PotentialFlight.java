@@ -82,9 +82,24 @@ public class PotentialFlight {
     private String feature12;
 
     @JsonIgnore
+    private String feature20;
+
+    @JsonIgnore
     private String loaded;
 
     @JsonIgnore
     @Column(name="wagon_type")
     private String wagonType;
+
+    @JsonIgnore
+    @Column(name="days_before_date_plan_repair")
+    private BigDecimal daysBeforeDatePlanRepair;
+
+    @JsonIgnore
+    @Column(name="distance_from_current_station")
+    private BigDecimal distanceFromCurrentStation;
+
+    @JsonIgnore
+    @Column(name="rest_run")
+    private BigDecimal restRun;
 }

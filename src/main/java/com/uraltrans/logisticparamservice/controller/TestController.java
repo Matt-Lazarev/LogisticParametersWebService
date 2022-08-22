@@ -3,6 +3,7 @@ package com.uraltrans.logisticparamservice.controller;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
+import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepositoryImpl;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +37,8 @@ public class TestController {
 
     final StationHandbookService serv;
 
+    final RawDislocationRepositoryImpl rep;
+
     @GetMapping
     public List<?> getAll() {
         stationHandbookService.saveAll();
@@ -44,6 +48,8 @@ public class TestController {
         service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
         return flightAddressingService.getAll();
+//        String dislocationDate = LocalDate.now().plusYears(2000).toString();
+//        return rep.getAllDislocations(dislocationDate);
     }
 
 

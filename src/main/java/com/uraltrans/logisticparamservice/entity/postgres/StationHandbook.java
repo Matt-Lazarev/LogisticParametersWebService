@@ -6,11 +6,12 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "station_handbook")
 @Accessors(chain = true)
 @Getter
 @Setter
+@Entity
+@Table(name = "station_handbook",
+       uniqueConstraints = @UniqueConstraint(name = "unique_code6_idx", columnNames = "code6"))
 public class StationHandbook {
 
     @Id

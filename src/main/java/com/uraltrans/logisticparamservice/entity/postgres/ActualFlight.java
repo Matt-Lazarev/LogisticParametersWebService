@@ -105,4 +105,16 @@ public class ActualFlight {
     @JsonIgnore
     @Column(name="next_station")
     private String nextStation;
+
+    @JsonIgnore
+    @Column(name="days_before_date_plan_repair")
+    private BigDecimal daysBeforeDatePlanRepair;
+
+    @JsonIgnore
+    @Column(name="distance_from_current_station")
+    private BigDecimal distanceFromCurrentStation;
+
+    @JsonIgnore
+    @Column(name="rest_run")
+    private BigDecimal restRun;
 }
