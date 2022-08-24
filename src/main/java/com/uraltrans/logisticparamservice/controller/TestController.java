@@ -38,6 +38,7 @@ public class TestController {
     final StationHandbookService serv;
 
     final RawDislocationRepositoryImpl rep;
+    final RawStationHandbookRepository rep2;
 
     @GetMapping
     public List<?> getAll() {
@@ -48,8 +49,6 @@ public class TestController {
         service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
         return flightAddressingService.getAll();
-//        String dislocationDate = LocalDate.now().plusYears(2000).toString();
-//        return rep.getAllDislocations(dislocationDate);
     }
 
 

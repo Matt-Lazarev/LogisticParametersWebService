@@ -2,9 +2,11 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingRequest;
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
+import com.uraltrans.logisticparamservice.dto.cargo.CargoDto;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
+import com.uraltrans.logisticparamservice.entity.postgres.ClientOrder;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
@@ -161,12 +163,15 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
             BigDecimal volume = addressing.getVolume();
             String sourceStation = addressing.getSourceStationCode();
 
-            List<String> cargos = clientOrderService.findByStationCodesAndVolume(sourceStation, volume);
-            if(cargos.size() != 0){
-                addressing.setClientOrderCargoCode(cargos.get(0));
-                for(int i=1; i<cargos.size(); i++){
+            List<CargoDto> clientOrders = clientOrderService.findByStationCodesAndVolume(sourceStation, volume);
+            if(clientOrders.size() != 0){
+                addressing.setClientOrderCargoCode(clientOrders.get(0).getCargoCode());
+                if(addressing.getUtRate() == null){
+                    addressing.setUtRate(clientOrders.get(0).getUtRate());
+                }
+                for(int i=1; i<clientOrders.size(); i++){
                     FlightAddressing fa = new FlightAddressing(addressing);
-                    fa.setClientOrderCargoCode(cargos.get(i));
+                    fa.setClientOrderCargoCode(clientOrders.get(i).getCargoCode());
                     additional.add(fa);
                 }
             }

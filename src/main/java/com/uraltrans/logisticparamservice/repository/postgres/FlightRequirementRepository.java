@@ -33,8 +33,8 @@ public interface FlightRequirementRepository extends JpaRepository<FlightRequire
                     "                            group by af.volume, af.source_station_code, af.destination_station_code) af_sub " +
                     "                    on co.source_station_code6 = af_sub.source_station_code and " +
                     "                       af_sub.volume between co.volume_from and co.volume_to " +
-                    "                    group by co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, co.cars_amount, co.id) as sub_co " +
-                    "group by sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id, sub_co.ut_rate;", nativeQuery = true)
+                    "                    group by co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, co.cars_amount, co.id, co.ut_rate) as sub_co " +
+                    "group by sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id;", nativeQuery = true)
     List<Map<String, Object>> groupActualFlightsAndClientOrders();
 
     @Modifying

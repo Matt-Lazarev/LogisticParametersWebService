@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.cargo.CargoDto;
 import com.uraltrans.logisticparamservice.entity.postgres.ClientOrder;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.repository.itr.RawClientOrderRepository;
@@ -42,7 +43,7 @@ public class ClientOrderServiceImpl implements ClientOrderService {
     }
 
     @Override
-    public List<String> findByStationCodesAndVolume(String sourceStation, BigDecimal volume) {
+    public List<CargoDto> findByStationCodesAndVolume(String sourceStation, BigDecimal volume) {
         return clientOrderRepository.findByStationCodesAndVolume(sourceStation, volume);
 
     }

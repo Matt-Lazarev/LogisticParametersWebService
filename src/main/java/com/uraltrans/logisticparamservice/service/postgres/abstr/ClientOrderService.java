@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.postgres.abstr;
 
+import com.uraltrans.logisticparamservice.dto.cargo.CargoDto;
 import com.uraltrans.logisticparamservice.entity.postgres.ClientOrder;
 
 import java.math.BigDecimal;
@@ -9,5 +10,5 @@ public interface ClientOrderService {
     List<ClientOrder> getAllClientOrders();
     void saveAllClientOrders();
 
-    List<String> findByStationCodesAndVolume(String sourceStation, BigDecimal volume);
+    List<CargoDto> findByStationCodesAndVolume(String sourceStation, BigDecimal volume);
 }
