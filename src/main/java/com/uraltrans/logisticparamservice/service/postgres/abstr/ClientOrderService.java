@@ -10,5 +10,8 @@ public interface ClientOrderService {
     List<ClientOrder> getAllClientOrders();
     void saveAllClientOrders();
 
-    List<CargoDto> findByStationCodesAndVolume(String sourceStation, BigDecimal volume);
+    List<CargoDto> findBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume);
+    BigDecimal findUtRateByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
+
+    BigDecimal findUtRateBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume);
 }

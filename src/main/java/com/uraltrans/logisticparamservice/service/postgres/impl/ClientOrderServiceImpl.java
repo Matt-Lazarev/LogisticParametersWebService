@@ -10,7 +10,6 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.ClientOrderServ
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -43,9 +42,19 @@ public class ClientOrderServiceImpl implements ClientOrderService {
     }
 
     @Override
-    public List<CargoDto> findByStationCodesAndVolume(String sourceStation, BigDecimal volume) {
-        return clientOrderRepository.findByStationCodesAndVolume(sourceStation, volume);
+    public List<CargoDto> findBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume) {
+        return clientOrderRepository.findBySourceStationCodeAndVolume(sourceStation, volume);
 
+    }
+
+    @Override
+    public BigDecimal findUtRateByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume) {
+        return clientOrderRepository.findUtRateByStationCodesAndVolume(sourceStation, destStation, volume);
+    }
+
+    @Override
+    public BigDecimal findUtRateBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume) {
+        return clientOrderRepository.findUtRateBySourceStationCodeAndVolume(sourceStation, volume);
     }
 
     private void prepareNextSave(){

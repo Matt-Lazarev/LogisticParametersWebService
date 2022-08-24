@@ -20,10 +20,28 @@ public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> 
            "where co.sourceStationCode6 = :sourceStation and " +
            "      :volume between co.volumeFrom and co.volumeTo " +
            "group by co.sourceStationCode6, co.volumeFrom, co.volumeTo, co.cargoCode, co.utRate")
-    List<CargoDto> findByStationCodesAndVolume(String sourceStation, BigDecimal volume);
+    List<CargoDto> findBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume);
+
+    @Query("select avg(co.utRate) " +
+            "from ClientOrder co " +
+            "where co.sourceStationCode6 = :sourceStation and " +
+            "      co.destinationStationCode6 = :destStation and " +
+            "      :volume between co.volumeFrom and co.volumeTo " +
+            "group by co.sourceStationCode6, co.destinationStationCode6, co.volumeFrom, co.volumeTo")
+    BigDecimal findUtRateByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
+
+    @Query("select avg(co.utRate) " +
+            "from ClientOrder co " +
+            "where co.sourceStationCode6 = :sourceStation and " +
+            "      co.destinationStationCode6 is null and " +
+            "      :volume between co.volumeFrom and co.volumeTo " +
+            "group by co.sourceStationCode6, co.destinationStationCode6, co.volumeFrom, co.volumeTo")
+    BigDecimal findUtRateBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume);
 
     @Modifying
     @Transactional
     @Query(value = "truncate table client_orders restart identity", nativeQuery = true)
     void truncate();
+
+
 }
