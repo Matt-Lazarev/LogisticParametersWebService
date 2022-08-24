@@ -87,7 +87,6 @@ public class FlightAddressing {
 
     private BigDecimal rate;
 
-    @JsonIgnore
     @Column(name="ut_rate")
     private BigDecimal utRate;
 

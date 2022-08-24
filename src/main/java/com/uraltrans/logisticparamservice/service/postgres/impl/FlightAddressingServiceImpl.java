@@ -26,7 +26,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -56,8 +55,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         loadStationsParams(addressings);
 
         flightAddressingRepository.saveAllAndFlush(addressings);
-        sendTariffRequest(addressings);
-        sendRateRequest(addressings);
+        //sendTariffRequest(addressings);
+        //sendRateRequest(addressings);
     }
 
     @Override

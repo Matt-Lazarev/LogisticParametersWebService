@@ -55,10 +55,7 @@ public class TestController {
     @GetMapping("/1")
     public List<?> getAll1() {
         clientOrderService.saveAllClientOrders();
-        service.saveAllActualFlights();
-        flightRequirementService.saveAllFlightRequirements();
-        service.saveAllPotentialFlights();
-        return flightRequirementService.getAllFlightRequirements();
+        return clientOrderService.getAllClientOrders();
     }
 
     @GetMapping("/calc/tariff")
