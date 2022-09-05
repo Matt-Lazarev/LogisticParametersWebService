@@ -23,7 +23,7 @@ public class LoadUnloadIdleDto {
     private Integer carLoadIdleDays;
     private Integer carUnloadIdleDays;
 
-    public LoadUnloadIdleDto(BigDecimal volume, String cargo, String cargoCode6,
+    public LoadUnloadIdleDto( String cargo, String cargoCode6,
                              String sourceStation, String sourceStationCode,
                              String destStation, String destStationCode,
                              Double carLoadIdleDays, Double carUnloadIdleDays) {

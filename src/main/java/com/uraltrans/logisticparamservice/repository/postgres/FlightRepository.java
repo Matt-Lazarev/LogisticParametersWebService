@@ -28,10 +28,10 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
     List<UnloadIdleDto> groupCarUnloadIdle();
 
     @Query("select new com.uraltrans.logisticparamservice.dto.idle.LoadUnloadIdleDto " +
-            "(f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode, AVG(f.carLoadIdleDays), AVG(f.carUnloadIdleDays)) " +
+            "('', '', f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode, AVG(f.carLoadIdleDays), AVG(f.carUnloadIdleDays)) " +
             "from Flight f " +
             "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
-            "group by f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode")
+            "group by f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode")
     List<LoadUnloadIdleDto> groupCarLoadUnloadIdle();
 
     @Modifying

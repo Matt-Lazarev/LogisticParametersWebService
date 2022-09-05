@@ -17,7 +17,7 @@ public class RawStationHandbookRepositoryImpl implements RawStationHandbookRepos
             "FROM _Reference45 r45 " +
             "LEFT OUTER JOIN _Reference3349 r3349 ON r45._Fld3371RRef = r3349._IDRRef " +
             "LEFT OUTER JOIN _Reference46 r46 ON r3349._Fld3355RRef = r46._IDRRef " +
-            "WHERE r3349._Marked != 'AQ=='";
+            "WHERE r45._Marked != 'AQ=='";
 
     @Resource(name = "utcsrsDataSource")
     private final DataSource utcsrsDataSource;

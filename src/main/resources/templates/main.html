@@ -140,6 +140,25 @@
             </div>
         </div>
 
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+        <div class="row">
+            <div class="col align-self-center">
+                <label> Яндекс Geocoder API-KEY: </label>
+                <input type="text" class="form-control" th:field="*{apikeyGeocoder}">
+            </div>
+            <div class="col align-self-center">
+                <label> Яндекс StationsList API-KEY: </label>
+                <input type="text" class="form-control" th:field="*{apikeyStationList}">
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 ">
+                <label> Количество запросов в день: </label>
+                <input type="text" class="form-control" th:field="*{requestsAmountInDay}">
+            </div>
+        </div>
+
         <div class="row">
             <div class="col box-footer mb-1 mt-3">
                 <button id="load_button" onclick="alerts()"

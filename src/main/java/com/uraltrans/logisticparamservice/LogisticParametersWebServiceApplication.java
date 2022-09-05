@@ -29,16 +29,15 @@ public class LogisticParametersWebServiceApplication {
     public static void main(String[] args) throws IOException, URISyntaxException {
         ApplicationContext context = SpringApplication.run(LogisticParametersWebServiceApplication.class, args);
 
+        List<LoadUnloadIdleDto> all = context.getBean(FlightRepository.class).groupCarLoadUnloadIdle()
+                .stream()
+                .filter(f -> f.getCarLoadIdleDays() != null || f.getCarUnloadIdleDays() != null)
+                .collect(Collectors.toList());
+        List<String> headers = Arrays.asList("Ст. отправления", "Код ст. отправления",
+                "Ст. назначения", "Код ст. назначения", "Объем", "Груз", "Код груза", "Простой под подгрузкой", "Простой под выгрузкой");
 
-//        List<LoadUnloadIdleDto> all = context.getBean(FlightRepository.class).groupCarLoadUnloadIdle()
-//                .stream()
-//                .filter(f -> f.getCarLoadIdleDays() != null || f.getCarUnloadIdleDays() != null)
-//                .collect(Collectors.toList());
-//        List<String> headers = Arrays.asList("Ст. отправления", "Код ст. отправления",
-//                "Ст. назначения", "Код ст. назначения", "Объем", "Груз", "Код груза", "Простой под подгрузкой", "Простой под выгрузкой");
-//
-//        ExcelReaderWriterService<LoadUnloadIdleDto> writer = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
-//        writer.write("Простои.xlsx", "Простои", headers, all, null);
+        ExcelReaderWriterService<LoadUnloadIdleDto> writer = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
+        writer.write("Простои.xlsx", "Простои общ", headers, all, null);
 
 
 //

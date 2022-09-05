@@ -39,6 +39,9 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
         loadParameters.setStatus(newParameters.getStatus());
         loadParameters.setCarType(newParameters.getCarType());
         loadParameters.setManagers(newParameters.getManagers());
+        loadParameters.setApikeyGeocoder(newParameters.getApikeyGeocoder());
+        loadParameters.setApikeyStationList(newParameters.getApikeyStationList());
+        loadParameters.setRequestsAmountInDay(newParameters.getRequestsAmountInDay());
         loadParametersRepository.save(loadParameters);
     }
 
@@ -71,12 +74,13 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
         }
 
         LoadParameters parameters = new LoadParameters(
-                1, "09:45:00",
-                20, 20,
+                90, "03:00:00",
+                30, 30,
                 0, 0,
                 60., 1.,
                 45, "Согласован",
-                "КР", "Мельниченко Д.В., Чаброва М.С., Зырина Н.А., Холмогорова Е.А., Мелешкина Ю.В., Афанасьева А.Л., Субботин В.В., Артеменко М.Н., Коркишко В.В.");
+                "КР", "Мельниченко Д.В., Чаброва М.С., Зырина Н.А., Холмогорова Е.А., Мелешкина Ю.В., Афанасьева А.Л., Субботин В.В., Артеменко М.Н., Коркишко В.В., Варфоломеев В.., Панов С.Н.",
+                "791b94ee-cac3-44b3-896e-d31264886a32", "d2290efc-9926-474b-ba3e-854bb0b9c7e6", 1000);
         loadParametersRepository.save(parameters);
         return parameters;
     }

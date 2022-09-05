@@ -27,13 +27,17 @@ public class LoadParameters {
     private String status;
     private String carType;
     private String managers;
+    private String apikeyStationList;
+    private String apikeyGeocoder;
+    private Integer requestsAmountInDay;
 
     public LoadParameters(Integer daysToRetrieveData, String nextDataLoadTime,
                           Integer maxLoadIdleDays, Integer maxUnloadIdleDays,
                           Integer minLoadIdleDays, Integer minUnloadIdleDays,
                           Double maxTravelTime, Double minTravelTime,
                           Integer flightProfitDaysToRetrieveData, String status,
-                          String carType, String managers) {
+                          String carType, String managers, String apikeyGeocoder,
+                          String apikeyStationList, Integer requestsAmountInDay) {
         this.daysToRetrieveData = daysToRetrieveData;
         this.nextDataLoadTime = nextDataLoadTime;
         this.maxLoadIdleDays = maxLoadIdleDays;
@@ -46,5 +50,8 @@ public class LoadParameters {
         this.status = status;
         this.carType = carType;
         this.managers = managers;
+        this.apikeyGeocoder = apikeyGeocoder;
+        this.apikeyStationList = apikeyStationList;
+        this.requestsAmountInDay = requestsAmountInDay;
     }
 }
