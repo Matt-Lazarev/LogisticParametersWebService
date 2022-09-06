@@ -80,7 +80,7 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
                 60., 1.,
                 45, "Согласован",
                 "КР", "Мельниченко Д.В., Чаброва М.С., Зырина Н.А., Холмогорова Е.А., Мелешкина Ю.В., Афанасьева А.Л., Субботин В.В., Артеменко М.Н., Коркишко В.В., Варфоломеев В.., Панов С.Н.",
-                "791b94ee-cac3-44b3-896e-d31264886a32", "d2290efc-9926-474b-ba3e-854bb0b9c7e6", 1000);
+                "791b94ee-cac3-44b3-896e-d31264886a32", "d2290efc-9926-474b-ba3e-854bb0b9c7e6", 950);
         loadParametersRepository.save(parameters);
         return parameters;
     }

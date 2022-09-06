@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface StationHandbookService {
     void saveAll();
+
+    void updateCoordinates();
     List<StationHandbook> getAll();
 
     List<StationResponse> getAllResponses();

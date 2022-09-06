@@ -43,8 +43,13 @@ public class StationHandbookServiceImpl implements StationHandbookService {
         List<StationHandbook> stationHandbook = stationHandbookMapper.mapRawStationHandbookData(rawData);
         removeDuplicates(stationHandbook);
         updateCoordinatesFromYandexStationList(stationHandbook);
-        updateCoordinates(stationHandbook);
         stationHandbookRepository.saveAll(stationHandbook);
+    }
+
+    @Override
+    public void updateCoordinates() {
+        List<StationHandbook> stationHandbook = stationHandbookRepository.findAll();
+        updateCoordinates(stationHandbook);
     }
 
     @Override
