@@ -16,15 +16,9 @@ import com.uraltrans.logisticparamservice.service.utcsrs.RawStationHandbookServi
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,7 +27,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StationHandbookServiceImpl implements StationHandbookService {
     private static final String API_YANDEX_STATION_LIST_URL = "https://api.rasp.yandex.net/v3.0/stations_list/?apikey=%s";
-    private static final String ALTA_SOFT_URL = "https://www.alta.ru/railway/station/%s/";
 
     private final GeocodeService geocodeService;
     private final StationHandbookRepository stationHandbookRepository;

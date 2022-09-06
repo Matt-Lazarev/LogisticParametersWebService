@@ -77,7 +77,7 @@ public class TestController {
     @GetMapping("/yandex")
     @SneakyThrows
     public Map<?,?> getGeocoder() {
-        geocodeService.saveGeocodes();
+        //geocodeService.saveGeocodes();
         stationHandbookService.saveAll();
         return geocodeService.getGeocodesCache();
     }
