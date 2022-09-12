@@ -8,8 +8,6 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterSe
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -41,12 +39,12 @@ public class FlightController {
     @GetMapping("/discarded")
     public String getDiscardedFlights(Model model){
         model.addAttribute("discarded_flights", FileUtils.readDiscardedFlights());
-        return "discarded_flights";
+        return "html/discarded_flights";
     }
 
     @GetMapping("/rate-tariff-errors")
     public String getRateTariffErrors(Model model){
         model.addAttribute("errors", FileUtils.readTariffRateErrors());
-        return "rate_tariff_errors";
+        return "html/rate_tariff_errors";
     }
 }

@@ -50,6 +50,7 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     public void updateCoordinates() {
         List<StationHandbook> stationHandbook = stationHandbookRepository.findAll();
         updateCoordinates(stationHandbook);
+        stationHandbookRepository.saveAll(stationHandbook);
     }
 
     @Override

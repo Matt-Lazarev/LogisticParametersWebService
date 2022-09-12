@@ -24,6 +24,6 @@ public class MainController {
         model.addAttribute("dto", parameters);
         model.addAttribute("url", FileUtils.getBackButtonUrl());
         model.addAttribute("logs", FileUtils.readAllLogs());
-        return "main";
+        return "html/main";
     }
 }
