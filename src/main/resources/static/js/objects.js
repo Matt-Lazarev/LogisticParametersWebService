@@ -43,11 +43,12 @@ function getCluster() {
     });
 
     let getPointData = function (planfact) {
+        let ut_rate = planfact.rateFact !== "null" ? 'Согласована' : 'Не задана';
         return {
             balloonContentBody:
                 '<p>Станция: ' + planfact.station + '</p>' +
                 '<p>Код: ' + planfact.departureStation + '</p>' +
-                '<p>UR_rate: ' + planfact.rateFact + '</p>' +
+                '<p>UT_rate: ' + ut_rate + '</p>' +
                 '<p>Вагоноотправок по плану: ' + planfact.planQuantity + '</p>' +
                 '<p>Выполненных заявок: ' + planfact.planReady + '</p>' +
                 '<p>Заявок в работе: ' + planfact.planInWork + '</p>' +
