@@ -9,6 +9,7 @@ import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmRespon
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
 import com.uraltrans.logisticparamservice.entity.postgres.Geocode;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
+import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepositoryImpl;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
@@ -56,6 +57,8 @@ public class TestController {
 
     final StationHandbookRepository stationHandbookRepository;
 
+    final CarRepairInfoRepository carRepairInfoRepository;
+
     @GetMapping
     public List<?> getAll() {
         stationHandbookService.saveAll();
@@ -65,6 +68,7 @@ public class TestController {
         service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
         return flightAddressingService.getAll();
+       // return carRepairInfoRepository.getAllCarRepairs("4022-09-23");
     }
 
 

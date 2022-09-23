@@ -1,6 +1,8 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
+import com.uraltrans.logisticparamservice.dto.carinfo.CarRepairDto;
+import com.uraltrans.logisticparamservice.dto.carinfo.CarThicknessDto;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
@@ -8,6 +10,7 @@ import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -123,6 +126,40 @@ public class FlightAddressingMapper {
                 .distanceFromCurrentStation(flightAddressing.getDistanceFromCurrentStation())
                 .daysBeforeDatePlanRepair(flightAddressing.getDaysBeforeDatePlanRepair())
                 .restRun(flightAddressing.getRestRun())
+                .build();
+    }
+
+    public Map<String, CarRepairDto> mapRawDataToCarRepairMap(List<Map<String, Object>> data){
+        return data.stream()
+                .map(this::mapToCarRepairDto)
+                .collect(Collectors.toMap(
+                        CarRepairDto::getCarNumber,
+                        x -> x
+                ));
+    }
+
+    private CarRepairDto mapToCarRepairDto(Map<String, Object> data){
+        return CarRepairDto.builder()
+                .carNumber((String) data.get("CarNumber"))
+                .nonworkingPark(((byte[]) data.get("NonworkingPark"))[0] == 0)
+                .refurbished(((byte[]) data.get("Refurbished"))[0] == 0)
+                .rejected(((byte[]) data.get("Rejected"))[0] == 0)
+                .build();
+    }
+
+    public Map<String, CarThicknessDto> mapRawDataToCarThicknessMap(List<Map<String, Object>> data){
+        return data.stream()
+                .map(this::mapToCarThicknessDto)
+                .collect(Collectors.toMap(
+                        CarThicknessDto::getCarNumber,
+                        x -> x
+                ));
+    }
+
+    private CarThicknessDto mapToCarThicknessDto(Map<String, Object> data) {
+        return CarThicknessDto.builder()
+                .carNumber((String) data.get("CarNumber"))
+                .thicknessWheel((BigDecimal) data.get("ThicknessWheel"))
                 .build();
     }
 }

@@ -18,15 +18,15 @@ public class FlightAddressing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="car_number")
+    @Column(name = "car_number")
     private String carNumber;
 
     private BigDecimal volume;
 
-    @Column(name="source_station")
+    @Column(name = "source_station")
     private String sourceStation;
 
-    @Column(name="source_station_code")
+    @Column(name = "source_station_code")
     private String sourceStationCode;
 
     @Column(name = "source_station_region")
@@ -35,10 +35,10 @@ public class FlightAddressing {
     @Column(name = "source_station_road")
     private String sourceStationRoad;
 
-    @Column(name="destination_station")
+    @Column(name = "destination_station")
     private String destinationStation;
 
-    @Column(name="destination_station_code")
+    @Column(name = "destination_station_code")
     private String destinationStationCode;
 
     @Column(name = "destination_station_region")
@@ -47,62 +47,62 @@ public class FlightAddressing {
     @Column(name = "destination_station_road")
     private String destinationStationRoad;
 
-    @Column(name="current_flight_dest_station")
+    @Column(name = "current_flight_dest_station")
     private String currentFlightDestStation;
 
-    @Column(name="current_flight_dest_station_code")
+    @Column(name = "current_flight_dest_station_code")
     private String currentFlightDestStationCode;
 
-    @Column(name="current_flight_dest_station_region")
+    @Column(name = "current_flight_dest_station_region")
     private String currentFlightDestStationRegion;
 
-    @Column(name="current_flight_dest_station_road")
+    @Column(name = "current_flight_dest_station_road")
     private String currentFlightDestStationRoad;
 
-    @Column(name="dislocation_station")
+    @Column(name = "dislocation_station")
     private String dislocationStation;
 
-    @Column(name="dislocation_station_code")
+    @Column(name = "dislocation_station_code")
     private String dislocationStationCode;
 
-    @Column(name="cargo")
+    @Column(name = "cargo")
     private String cargo;
 
-    @Column(name="cargo_code")
+    @Column(name = "cargo_code")
     private String cargoCode;
 
-    @Column(name="client_orders_cargo")
+    @Column(name = "client_orders_cargo")
     private String clientOrderCargo;
 
-    @Column(name="client_orders_cargo_code")
+    @Column(name = "client_orders_cargo_code")
     private String clientOrderCargoCode;
 
-    @Column(name="plan_orders")
+    @Column(name = "plan_orders")
     private Integer planOrders;
 
-    @Column(name="requirement_orders")
+    @Column(name = "requirement_orders")
     private Integer requirementOrders;
 
     private BigDecimal tariff;
 
     private BigDecimal rate;
 
-    @Column(name="ut_rate")
+    @Column(name = "ut_rate")
     private BigDecimal utRate;
 
     @JsonIgnore
     private String loaded;
 
     @JsonIgnore
-    @Column(name="wagon_type")
+    @Column(name = "wagon_type")
     private String wagonType;
 
     @JsonIgnore
-    @Column(name="date_from")
+    @Column(name = "date_from")
     private String dateFrom;
 
     @JsonIgnore
-    @Column(name="date_to")
+    @Column(name = "date_to")
     private String dateTo;
 
     @JsonIgnore
@@ -119,16 +119,26 @@ public class FlightAddressing {
     private String carState;
 
     @JsonIgnore
-    @Column(name="days_before_date_plan_repair")
+    @Column(name = "days_before_date_plan_repair")
     private BigDecimal daysBeforeDatePlanRepair;
 
     @JsonIgnore
-    @Column(name="distance_from_current_station")
+    @Column(name = "distance_from_current_station")
     private BigDecimal distanceFromCurrentStation;
 
     @JsonIgnore
-    @Column(name="rest_run")
+    @Column(name = "rest_run")
     private BigDecimal restRun;
+
+    @Column(name = "thickness_wheel")
+    private BigDecimal thicknessWheel;
+
+    @Column(name = "nonworking_park")
+    private Boolean nonworkingPark;
+
+    private Boolean refurbished;
+
+    private Boolean rejected;
 
     public FlightAddressing(FlightAddressing addressing) {
         this.carNumber = addressing.carNumber;
@@ -167,6 +177,11 @@ public class FlightAddressing {
         this.daysBeforeDatePlanRepair = addressing.daysBeforeDatePlanRepair;
         this.distanceFromCurrentStation = addressing.distanceFromCurrentStation;
         this.restRun = addressing.restRun;
+
+        this.thicknessWheel = addressing.thicknessWheel;
+        this.nonworkingPark = addressing.nonworkingPark;
+        this.refurbished = addressing.refurbished;
+        this.rejected = addressing.rejected;
     }
 
     @Override

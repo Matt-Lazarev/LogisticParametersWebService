@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,5 +53,19 @@ public class LogisticParametersWebServiceApplication {
 //
 //        ExcelReaderWriterService<FlightIdle> writer = new ExcelReaderWriterService<>(new SimpleExcelRowMapper<>());
 //        writer.write("Простои.xlsx", "Простои", headers, Arrays.stream(all).collect(Collectors.toList()), null);
+
+
+//        List<String> list1 = Files.readAllLines(Paths.get("test1.txt"));
+//        List<String> list2 = Files.readAllLines(Paths.get("test2.txt"));
+//
+//        int count = 0;
+//
+//        for(String s1 : list1){
+//            if(list2.contains(s1)){
+//                count++;
+//            }
+//        }
+//
+//        System.out.println(count);
     }
 }

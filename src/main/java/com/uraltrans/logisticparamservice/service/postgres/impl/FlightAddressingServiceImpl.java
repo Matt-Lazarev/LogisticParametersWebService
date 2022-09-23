@@ -3,21 +3,29 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingRequest;
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.cargo.CargoDto;
+import com.uraltrans.logisticparamservice.dto.carinfo.CarRepairDto;
+import com.uraltrans.logisticparamservice.dto.carinfo.CarThicknessDto;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
+import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightAddressingRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
+import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -32,6 +40,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     private static final String RATE_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/rateflight";
 
     private final FlightAddressingRepository flightAddressingRepository;
+    private final CarRepairInfoRepository carRepairInfoRepository;
     private final FlightAddressingMapper flightAddressingMapper;
     private final StationHandbookService stationHandbookService;
     private final CargoService cargoService;
@@ -52,6 +61,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         loadCargosAndDates(addressings);
         loadStationsParams(addressings);
         loadUtRate(addressings);
+        loadCarInfo(addressings);
 
         flightAddressingRepository.saveAllAndFlush(addressings);
         sendTariffRequest(addressings);
@@ -265,5 +275,30 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 }
             }
         });
+    }
+
+    private void loadCarInfo(List<FlightAddressing> addressings) {
+        Map<String, CarRepairDto> repairs = flightAddressingMapper.mapRawDataToCarRepairMap(
+                carRepairInfoRepository.getAllCarRepairs(
+                Mapper.to1cDate(LocalDate.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+
+        Map<String, CarThicknessDto> thicknesses = flightAddressingMapper.mapRawDataToCarThicknessMap(
+                carRepairInfoRepository.getAllCarWheelThicknesses(
+                Mapper.to1cDate(LocalDate.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+
+        addressings
+                .forEach(addressing ->{
+                    if(repairs.containsKey(addressing.getCarNumber())){
+                        CarRepairDto repair = repairs.get(addressing.getCarNumber());
+                        addressing.setNonworkingPark(repair.getNonworkingPark());
+                        addressing.setRefurbished(repair.getRefurbished());
+                        addressing.setRejected(repair.getRejected());
+                    }
+
+                    if(thicknesses.containsKey(addressing.getCarNumber())){
+                        CarThicknessDto thickness = thicknesses.get(addressing.getCarNumber());
+                        addressing.setThicknessWheel(thickness.getThicknessWheel());
+                    }
+                });
     }
 }

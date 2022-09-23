@@ -64,8 +64,7 @@ public class GeocodeServiceImpl implements GeocodeService {
     @SneakyThrows
     private void save(String stationCode, String url) {
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(response.getBody());
+        JsonNode rootNode = new ObjectMapper().readTree(response.getBody());
 
         if(!rootNode.findValue("GeocoderResponseMetaData").get("found").textValue().equalsIgnoreCase("1")){
             return;
@@ -81,9 +80,11 @@ public class GeocodeServiceImpl implements GeocodeService {
     }
 
     public List<StationHandbook> filterStations(List<StationHandbook> stations, int amount) {
+        Map<String, Geocode> cache = getGeocodesCache();
         return stations
                 .stream()
                 .filter(s -> s.getLongitude().isEmpty() || s.getLatitude().isEmpty())
+                .filter(s -> !cache.containsKey(s.getCode6()))
                 .limit(amount)
                 .collect(Collectors.toList());
     }
