@@ -133,6 +133,9 @@ public class FlightAddressing {
     @Column(name = "thickness_wheel")
     private BigDecimal thicknessWheel;
 
+    @Column(name = "thickness_comb")
+    private BigDecimal thicknessComb;
+
     @Column(name = "nonworking_park")
     private Boolean nonworkingPark;
 
@@ -179,6 +182,7 @@ public class FlightAddressing {
         this.restRun = addressing.restRun;
 
         this.thicknessWheel = addressing.thicknessWheel;
+        this.thicknessComb = addressing.thicknessComb;
         this.nonworkingPark = addressing.nonworkingPark;
         this.refurbished = addressing.refurbished;
         this.rejected = addressing.rejected;

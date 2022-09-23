@@ -1,21 +1,39 @@
 package com.uraltrans.logisticparamservice.utils;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import javax.sql.DataSource;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class JdbcUtils {
-    public static List<Map<String, Object>> getAllData(Connection connection, String SQL) throws SQLException {
+    public static List<Map<String, Object>> getAllData(DataSource dataSource, String SQL) {
         List<Map<String, Object>> data = new ArrayList<>();
-        try (Statement statement = connection.createStatement()) {
-            try (ResultSet rs = statement.executeQuery(SQL)) {
-                return getDataFromResultSet(rs, data);
+        try(Connection connection = dataSource.getConnection()){
+            try (Statement statement = connection.createStatement()) {
+                try (ResultSet rs = statement.executeQuery(SQL)) {
+                    return getDataFromResultSet(rs, data);
+                }
             }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<Map<String, Object>> getAllDataWithParams(DataSource dataSource, String SQL, String... params){
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+                for(int i=1; i<=params.length; i++){
+                    preparedStatement.setString(i, params[i-1]);
+                }
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    return JdbcUtils.parseResultSet(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

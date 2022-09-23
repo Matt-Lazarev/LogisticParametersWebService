@@ -35,6 +35,7 @@ build/
 
 *.xlsx
 file.*
+*.txt
 mvnw
 mvnw.*
 .mvn

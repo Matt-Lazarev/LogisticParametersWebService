@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Repository
 public class CarRepairInfoRepositoryImpl implements CarRepairInfoRepository {
-    private static final String SQL1 =
+    private static final String SQL_CAR_REPAIR_INFO =
                     "SELECT _Code as CarNumber, _Fld2701 as NonworkingPark, " +
                     "       _Fld2702 as Refurbished, _Fld2703 as Rejected " +
                     "FROM _InfoRg2696 i2696 " +
@@ -22,8 +22,8 @@ public class CarRepairInfoRepositoryImpl implements CarRepairInfoRepository {
                     "ON r134._IDRRef =  i2696._Fld2697RRef " +
                     "WHERE i2696._Fld2698 >= ?";
 
-    private static final String SQL2 =
-                    "SELECT _Code as CarNumber, _Fld284 as ThicknessWheel " +
+    private static final String SQL_THICKNESS_INFO =
+                    "SELECT _Code as CarNumber, _Fld284 as ThicknessWheel, _Fld285 as ThicknessComb " +
                     "FROM _InfoRg281 i281 " +
                     "INNER JOIN _Reference134 r134 " +
                     "ON r134._IDRRef = i281._Fld282RRef " +
@@ -38,23 +38,15 @@ public class CarRepairInfoRepositoryImpl implements CarRepairInfoRepository {
 
     @Override
     public List<Map<String, Object>> getAllCarRepairs(String currentDate) {
-        return getData(currentDate, SQL1);
+        return getData(currentDate, SQL_CAR_REPAIR_INFO);
     }
 
+    @Override
     public List<Map<String, Object>> getAllCarWheelThicknesses(String currentDate) {
-        return getData(currentDate, SQL2);
+        return getData(currentDate, SQL_THICKNESS_INFO);
     }
 
-    private List<Map<String, Object>> getData(String currentDate, String sql2) {
-        try (Connection connection = integrationDataDataSource.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(sql2)) {
-                preparedStatement.setString(1, currentDate);
-                try (ResultSet rs = preparedStatement.executeQuery()) {
-                    return JdbcUtils.parseResultSet(rs);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    private List<Map<String, Object>> getData(String currentDate, String SQL) {
+        return JdbcUtils.getAllDataWithParams(integrationDataDataSource, SQL, currentDate);
     }
 }

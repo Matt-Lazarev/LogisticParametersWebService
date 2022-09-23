@@ -10,6 +10,7 @@ import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
 import com.uraltrans.logisticparamservice.entity.postgres.Geocode;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
+import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepositoryImpl;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
@@ -59,6 +60,8 @@ public class TestController {
 
     final CarRepairInfoRepository carRepairInfoRepository;
 
+    final RawDislocationRepository rawDislocationRepository;
+
     @GetMapping
     public List<?> getAll() {
         stationHandbookService.saveAll();
@@ -68,7 +71,9 @@ public class TestController {
         service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
         return flightAddressingService.getAll();
-       // return carRepairInfoRepository.getAllCarRepairs("4022-09-23");
+//        return carRepairInfoRepository.getAllCarRepairs("4022-09-23");
+//        String dislocationDate = LocalDate.now().plusYears(2000).toString();
+//        return rawDislocationRepository.getAllDislocations(dislocationDate);
     }
 
 

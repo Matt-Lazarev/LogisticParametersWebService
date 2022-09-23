@@ -30,4 +30,9 @@ public class AddressingResponse {
     private BigDecimal daysBeforeDatePlanRepair;
     private BigDecimal distanceFromCurrentStation;
     private BigDecimal restRun;
+    private BigDecimal thicknessWheel;
+    private BigDecimal thicknessComb;
+    private Boolean nonworkingPark;
+    private Boolean refurbished;
+    private Boolean rejected;
 }

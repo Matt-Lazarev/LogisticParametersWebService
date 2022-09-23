@@ -28,10 +28,6 @@ public class RawStationHandbookRepositoryImpl implements RawStationHandbookRepos
 
     @Override
     public List<Map<String, Object>> getAllStations() {
-        try (Connection connection = utcsrsDataSource.getConnection()){
-            return JdbcUtils.getAllData(connection, SQL);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return JdbcUtils.getAllData(utcsrsDataSource, SQL);
     }
 }

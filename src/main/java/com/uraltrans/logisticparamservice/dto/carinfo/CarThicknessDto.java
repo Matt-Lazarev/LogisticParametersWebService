@@ -12,4 +12,5 @@ import java.math.BigDecimal;
 public class CarThicknessDto {
     private String carNumber;
     private BigDecimal thicknessWheel;
+    private BigDecimal thicknessComb;
 }

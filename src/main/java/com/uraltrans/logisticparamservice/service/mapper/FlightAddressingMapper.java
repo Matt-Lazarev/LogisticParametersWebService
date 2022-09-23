@@ -126,6 +126,11 @@ public class FlightAddressingMapper {
                 .distanceFromCurrentStation(flightAddressing.getDistanceFromCurrentStation())
                 .daysBeforeDatePlanRepair(flightAddressing.getDaysBeforeDatePlanRepair())
                 .restRun(flightAddressing.getRestRun())
+                .nonworkingPark(flightAddressing.getNonworkingPark())
+                .refurbished(flightAddressing.getRefurbished())
+                .rejected(flightAddressing.getRejected())
+                .thicknessComb(flightAddressing.getThicknessComb())
+                .thicknessWheel(flightAddressing.getThicknessWheel())
                 .build();
     }
 
@@ -160,6 +165,7 @@ public class FlightAddressingMapper {
         return CarThicknessDto.builder()
                 .carNumber((String) data.get("CarNumber"))
                 .thicknessWheel((BigDecimal) data.get("ThicknessWheel"))
+                .thicknessComb((BigDecimal) data.get("ThicknessComb"))
                 .build();
     }
 }

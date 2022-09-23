@@ -3,8 +3,10 @@ package com.uraltrans.logisticparamservice.exception;
 import com.uraltrans.logisticparamservice.dto.station.StationResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -28,6 +30,15 @@ public class ApplicationExceptionHandler {
                 .build());
     }
 
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<?> handleHttpMethodNotSupportedException(Exception ex){
+        Map<String, String> errors = new LinkedHashMap<>();
+        errors.put("message", ex.getMessage() + " [использован неверный HTTP метод]");
+        errors.put("status", HttpStatus.BAD_REQUEST.name());
+        errors.put("code", Integer.toString(HttpStatus.BAD_REQUEST.value()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -35,7 +46,7 @@ public class ApplicationExceptionHandler {
         Map<String, String> errors = new LinkedHashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String errorMessage = error.getDefaultMessage();
-            errors.put("errorType", HttpStatus.BAD_REQUEST.name());
+            errors.put("status", HttpStatus.BAD_REQUEST.name());
             errors.put("message", errorMessage);
         });
         return errors;

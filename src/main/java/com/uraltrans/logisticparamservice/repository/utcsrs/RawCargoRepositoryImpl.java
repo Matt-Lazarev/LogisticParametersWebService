@@ -26,11 +26,6 @@ public class RawCargoRepositoryImpl implements RawCargoRepository {
 
     @Override
     public List<Map<String, Object>> getAllFlightProfits() {
-        try (Connection connection = utcsrsDataSource.getConnection()){
-            return JdbcUtils.getAllData(connection, SQL);
-        }
-        catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return JdbcUtils.getAllData(utcsrsDataSource, SQL);
     }
 }
