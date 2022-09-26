@@ -1,8 +1,6 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
-import com.uraltrans.logisticparamservice.repository.itr.RawFlightRepository;
-import com.uraltrans.logisticparamservice.repository.itr.RawSecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.SecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.service.itr.RawFlightService;
 import com.uraltrans.logisticparamservice.service.mapper.SecondEmptyFlightMapper;
@@ -13,9 +11,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +33,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         prepareNextSave();
 
         List<SecondEmptyFlight> secondEmptyFlights = secondEmptyFlightMapper.mapRawDataToList(
-                rawFlightService.getAllFlightsBetween(90));
+                rawFlightService.getAllFlightsBetween(30));
 
         calculatePrevEmptyFlightDates(secondEmptyFlights);
         secondEmptyFlights = filterFlights(secondEmptyFlights);
@@ -49,7 +45,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         Map<Integer, SecondEmptyFlight> groupedFlights = flights
                 .stream()
                 .collect(Collectors.toMap(
-                        SecondEmptyFlight::getAID, f -> f
+                        SecondEmptyFlight::getAID, f -> f, (a1, a2) -> a1
                 ));
 
         for(SecondEmptyFlight currentFlight : flights){
@@ -66,10 +62,10 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
 
         flights
                 .stream()
-                .filter(f -> f.getCurrEmptyFlightRegistrationDate() != null)
-                .filter(f -> f.getCurrEmptyFlightArriveAtDestStationDate() != null)
+                .filter(f -> f.getPrevEmptyFlightRegistrationDate() != null)
+                .filter(f -> f.getPrevEmptyFlightArriveAtDestStationDate() != null)
                 .forEach(f -> f.setIdleDays(
-                        calculateIdle(f.getCurrEmptyFlightRegistrationDate(), f.getCurrEmptyFlightArriveAtDestStationDate())));
+                        calculateIdle(f.getPrevEmptyFlightArriveAtDestStationDate(), f.getPrevEmptyFlightRegistrationDate())));
     }
 
     private BigDecimal calculateIdle(LocalDateTime end, LocalDateTime begin){
