@@ -23,6 +23,10 @@ public class Mapper {
         return timestamp != null ? timestamp.toLocalDateTime().toLocalDate() : null;
     }
 
+    public static LocalDateTime toLocalDateTime(Timestamp timestamp){
+        return timestamp != null ? timestamp.toLocalDateTime() : null;
+    }
+
     public static BigDecimal toBigDecimal(Double number){
         return number != null ? BigDecimal.valueOf(number) : null;
     }

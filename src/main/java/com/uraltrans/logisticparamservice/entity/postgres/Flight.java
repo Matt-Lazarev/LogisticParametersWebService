@@ -104,8 +104,8 @@ public class Flight {
                 ", destStationCode='" + destStationCode + '\'' +
                 ", loading=" + carLoadIdleDays +
                 ", unloading=" + carUnloadIdleDays +
-                ", distance =" + (distance != null ? String.format("%.2f", distance.doubleValue()) : null) +
-                ", travelTime =" + (travelTime != null ? String.format("%.2f", travelTime.doubleValue()) : null) +
+                ", distance=" + (distance != null ? String.format("%.2f", distance.doubleValue()) : null) +
+                ", travelTime=" + (travelTime != null ? String.format("%.2f", travelTime.doubleValue()) : null) +
                 '}';
     }
 }

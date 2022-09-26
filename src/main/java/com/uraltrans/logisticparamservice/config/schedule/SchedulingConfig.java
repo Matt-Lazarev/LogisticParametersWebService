@@ -28,6 +28,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
     private final ScheduleStationHandbookService scheduleStationHandbookService;
     private final ScheduleFlightAddressingService scheduleFlightAddressingService;
     private final ScheduleGeocodeService scheduleGeocodeService;
+    private final ScheduleSecondEmptyFlightService scheduleSecondEmptyFlightService;
 
     @Bean(destroyMethod = "shutdown")
     public Executor taskExecutor() {
@@ -43,14 +44,16 @@ public class SchedulingConfig implements SchedulingConfigurer {
                 scheduleStationHandbookService::loadStationHandbook
         );
 
-        for(Runnable task : triggerTasks){
-           registerTask(taskRegistrar, task, 0);
+        for (Runnable task : triggerTasks) {
+            registerTask(taskRegistrar, task, 0);
         }
 
         //registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 15);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 30);
         registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 60);
         registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 60);
+        registerTaskAt(taskRegistrar, scheduleSecondEmptyFlightService::loadSecondEmptyFlights, LocalTime.of(0, 1, 0));
+
     }
 
     private void registerTask(ScheduledTaskRegistrar taskRegistrar, Runnable task, int additionalTime){
@@ -60,6 +63,21 @@ public class SchedulingConfig implements SchedulingConfigurer {
                     Calendar nextExecutionTime = new GregorianCalendar();
                     nextExecutionTime.setTime(getNextExecution(additionalTime));
                     return nextExecutionTime.getTime();
+                }
+        );
+    }
+
+    private void registerTaskAt(ScheduledTaskRegistrar taskRegistrar, Runnable task, LocalTime time){
+        taskRegistrar.addTriggerTask(
+                task,
+                triggerContext -> {
+                    LocalTime now = LocalTime.now();
+                    if(now.isBefore(time)){
+                        System.err.println(LocalDateTime.of(LocalDate.now(), time));
+                        return java.sql.Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), time));
+                    }
+                    System.err.println(LocalDateTime.of(LocalDate.now().plusDays(1), time));
+                    return java.sql.Timestamp.valueOf(LocalDateTime.of(LocalDate.now().plusDays(1), time));
                 }
         );
     }
