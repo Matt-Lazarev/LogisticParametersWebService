@@ -33,7 +33,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         prepareNextSave();
 
         List<SecondEmptyFlight> secondEmptyFlights = secondEmptyFlightMapper.mapRawDataToList(
-                rawFlightService.getAllFlightsBetween(30));
+                rawFlightService.getAllFlightsBetween(90));
 
         calculatePrevEmptyFlightDates(secondEmptyFlights);
         secondEmptyFlights = filterFlights(secondEmptyFlights);
