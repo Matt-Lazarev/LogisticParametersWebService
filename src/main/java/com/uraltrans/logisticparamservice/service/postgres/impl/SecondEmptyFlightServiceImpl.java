@@ -65,7 +65,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 .filter(f -> f.getPrevEmptyFlightRegistrationDate() != null)
                 .filter(f -> f.getPrevEmptyFlightArriveAtDestStationDate() != null)
                 .forEach(f -> f.setIdleDays(
-                        calculateIdle(f.getPrevEmptyFlightArriveAtDestStationDate(), f.getPrevEmptyFlightRegistrationDate())));
+                        calculateIdle(f.getPrevEmptyFlightRegistrationDate(), f.getPrevEmptyFlightArriveAtDestStationDate())));
     }
 
     private BigDecimal calculateIdle(LocalDateTime end, LocalDateTime begin){
