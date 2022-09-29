@@ -23,6 +23,9 @@ public class Flight {
     @Column(name = "aid")
     private Integer aid;
 
+    @Column(name = "prev_flight_aid")
+    private Integer prevFlightAid;
+
     @Column(name = "car_number")
     private Integer carNumber;
 
@@ -94,6 +97,9 @@ public class Flight {
     private Integer carUnloadIdleDays;
 
     private String comment;
+
+    @Column(name = "is_not_first_empty")
+    private Boolean isNotFirstEmpty;
 
     @Override
     public String toString() {

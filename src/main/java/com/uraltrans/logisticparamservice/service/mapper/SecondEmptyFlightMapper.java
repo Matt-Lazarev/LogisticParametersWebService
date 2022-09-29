@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
+import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,29 @@ public class SecondEmptyFlightMapper {
                 .prevFlightId((Integer) data.get("PrevFlightID"))
                 .isNotFirstEmpty((Boolean) data.get("IsNotFirstEmpty"))
                 .loaded((String) data.get("Loaded"))
+                .build();
+    }
+
+    public List<SecondEmptyFlight> mapToSecondEmptyFlight(List<Flight> flights) {
+        return flights
+                .stream()
+                .map(this::toSecondEmptyFlightTest)
+                .collect(Collectors.toList());
+    }
+
+    private SecondEmptyFlight toSecondEmptyFlightTest(Flight flight) {
+        return SecondEmptyFlight.builder()
+                .volume(flight.getVolume())
+                .carType(flight.getCarType())
+                .carNumber(flight.getCarNumber())
+                .sourceStation(flight.getSourceStation())
+                .destStation(flight.getDestStation())
+                .currEmptyFlightRegistrationDate(Mapper.toLocalDateTime(flight.getNextFlightStartDate()))
+                .currEmptyFlightArriveAtDestStationDate(Mapper.toLocalDateTime(flight.getArriveToDestStationDate()))
+                .AID(flight.getAid())
+                .prevFlightId(flight.getPrevFlightAid())
+                //.isNotFirstEmpty((Boolean) data.get("IsNotFirstEmpty"))
+                .loaded(flight.getLoaded())
                 .build();
     }
 }

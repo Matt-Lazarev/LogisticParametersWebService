@@ -1,9 +1,11 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.repository.postgres.SecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.service.itr.RawFlightService;
 import com.uraltrans.logisticparamservice.service.mapper.SecondEmptyFlightMapper;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,11 +52,8 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
 
         for(SecondEmptyFlight currentFlight : flights){
             SecondEmptyFlight prevFlight = groupedFlights.get(currentFlight.getPrevFlightId());
-            while (prevFlight != null && "ГРУЖ".equalsIgnoreCase(prevFlight.getLoaded())){
-                prevFlight = groupedFlights.get(prevFlight.getPrevFlightId());
-            }
 
-            if(prevFlight != null){
+            if(prevFlight != null && "ПОР".equalsIgnoreCase(prevFlight.getLoaded())){
                 currentFlight.setPrevEmptyFlightRegistrationDate(prevFlight.getCurrEmptyFlightRegistrationDate());
                 currentFlight.setPrevEmptyFlightArriveAtDestStationDate(prevFlight.getCurrEmptyFlightArriveAtDestStationDate());
             }
@@ -69,11 +68,8 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     }
 
     private BigDecimal calculateIdle(LocalDateTime end, LocalDateTime begin){
-        long daysBetween = ChronoUnit.DAYS.between(begin, end);
-        double hoursBetween = ChronoUnit.HOURS.between(begin, end) / (double) Duration.ofDays(1).toHours();
-
-        return new BigDecimal(daysBetween + "." + Double.toString(hoursBetween).split("\\.")[1])
-                .setScale(2, RoundingMode.HALF_UP);
+        double daysBetween = ChronoUnit.MINUTES.between(begin, end) / (double) Duration.ofDays(1).toMinutes();
+        return new BigDecimal(daysBetween).setScale(2, RoundingMode.HALF_UP);
     }
 
     private List<SecondEmptyFlight> filterFlights(List<SecondEmptyFlight> flights){

@@ -23,6 +23,7 @@ public class FlightMapper {
     private Flight mapToFlight(Map<String, Object> flightData) {
         return new Flight()
                 .setAid((Integer) flightData.get("AID"))
+                .setPrevFlightAid((Integer) flightData.get("PrevFlightID"))
                 .setCarNumber((Integer) flightData.get("CarNumber"))
                 .setInvNumber((String) flightData.get("InvNumber"))
                 .setPrevInvNumber((String) flightData.get("PrevInvNumber"))
@@ -44,6 +45,7 @@ public class FlightMapper {
                 .setDepartureFromDestStationDate((Timestamp) flightData.get("Отправление со ст. назн."))
                 .setUnloadOnDestStationDate((Timestamp) flightData.get("Выгрузка на ст. назн."))
                 .setFlightKind((String) flightData.get("FlightKind"))
-                .setNextFlightStartDate((Timestamp) flightData.get("Дата нач. след. Рейса (дата оформления вагона порожним)"));
+                .setNextFlightStartDate((Timestamp) flightData.get("Дата нач. след. Рейса (дата оформления вагона порожним)"))
+                .setIsNotFirstEmpty((Boolean) flightData.get("IsNotFirstEmpty"));
     }
 }
