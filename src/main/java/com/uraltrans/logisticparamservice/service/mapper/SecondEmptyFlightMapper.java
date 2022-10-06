@@ -58,7 +58,7 @@ public class SecondEmptyFlightMapper {
                 .currEmptyFlightArriveAtDestStationDate(Mapper.toLocalDateTime(flight.getArriveToDestStationDate()))
                 .AID(flight.getAid())
                 .prevFlightId(flight.getPrevFlightAid())
-                //.isNotFirstEmpty((Boolean) data.get("IsNotFirstEmpty"))
+                .isNotFirstEmpty(flight.getIsNotFirstEmpty())
                 .loaded(flight.getLoaded())
                 .build();
     }

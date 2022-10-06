@@ -131,14 +131,14 @@ public class ScheduledTasksLogging {
 
     @AfterReturning("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService.saveAllSecondEmptyFlights())")
     public void successfulInvokeLoadSecondEmptyFlightsMethod() {
-        String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение вторых порожних рейсов станций");
+        String message = getSaveDataLogMessage(true, "[По расписанию] Сохранение вторых порожних рейсов");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }
 
     @AfterThrowing("execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService.saveAllSecondEmptyFlights())")
     public void failureInvokeInvokeLoadSecondEmptyFlightsMethod() {
-        String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение вторых порожних рейсов станций");
+        String message = getSaveDataLogMessage( false, "[По расписанию] Сохранение вторых порожних рейсов");
         log.info("{}", message);
         FileUtils.writeActionLog(message);
     }

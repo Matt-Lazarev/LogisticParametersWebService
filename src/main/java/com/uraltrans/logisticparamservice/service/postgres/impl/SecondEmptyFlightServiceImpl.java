@@ -22,10 +22,11 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
-    private final RawFlightService rawFlightService;
+    private final FlightService flightService;
     private final SecondEmptyFlightRepository secondEmptyFlightRepository;
     private final SecondEmptyFlightMapper secondEmptyFlightMapper;
 
+    @Override
     public List<SecondEmptyFlight> getAllSecondEmptyFlight(){
         return secondEmptyFlightRepository.findAll();
     }
@@ -34,8 +35,8 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     public void saveAllSecondEmptyFlights() {
         prepareNextSave();
 
-        List<SecondEmptyFlight> secondEmptyFlights = secondEmptyFlightMapper.mapRawDataToList(
-                rawFlightService.getAllFlightsBetween(90));
+        List<Flight> flights = flightService.getAllFlights();
+        List<SecondEmptyFlight> secondEmptyFlights = secondEmptyFlightMapper.mapToSecondEmptyFlight(flights);
 
         calculatePrevEmptyFlightDates(secondEmptyFlights);
         secondEmptyFlights = filterFlights(secondEmptyFlights);
