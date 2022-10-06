@@ -101,6 +101,17 @@ public class Flight {
     @Column(name = "is_not_first_empty")
     private Boolean isNotFirstEmpty;
 
+    @Column(name = "source_railway")
+    private String sourceRailway;
+
+    @Column(name = "dest_railway")
+    private String destRailway;
+
+    @Column(name = "source_contragent")
+    private String sourceContragent;
+
+    private String client;
+
     @Override
     public String toString() {
         return "Flight{" +

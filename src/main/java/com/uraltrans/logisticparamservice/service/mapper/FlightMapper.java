@@ -46,6 +46,10 @@ public class FlightMapper {
                 .setUnloadOnDestStationDate((Timestamp) flightData.get("Выгрузка на ст. назн."))
                 .setFlightKind((String) flightData.get("FlightKind"))
                 .setNextFlightStartDate((Timestamp) flightData.get("Дата нач. след. Рейса (дата оформления вагона порожним)"))
-                .setIsNotFirstEmpty((Boolean) flightData.get("IsNotFirstEmpty"));
+                .setIsNotFirstEmpty((Boolean) flightData.get("IsNotFirstEmpty"))
+                .setSourceContragent((String) flightData.get("SourceContragent"))
+                .setClient((String) flightData.get("Klient"))
+                .setSourceRailway((String) flightData.get("SourceRailway"))
+                .setDestRailway((String) flightData.get("DestRailway"));
     }
 }

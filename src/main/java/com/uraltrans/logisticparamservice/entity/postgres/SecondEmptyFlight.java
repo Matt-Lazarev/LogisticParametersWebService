@@ -23,6 +23,7 @@ public class SecondEmptyFlight {
     private String sourceContragent;
 
     private String client;
+
     private BigDecimal volume;
 
     @Column(name = "car_type")

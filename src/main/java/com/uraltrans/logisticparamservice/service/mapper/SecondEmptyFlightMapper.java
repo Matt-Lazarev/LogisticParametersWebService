@@ -60,6 +60,10 @@ public class SecondEmptyFlightMapper {
                 .prevFlightId(flight.getPrevFlightAid())
                 .isNotFirstEmpty(flight.getIsNotFirstEmpty())
                 .loaded(flight.getLoaded())
+                .sourceRailway(flight.getSourceRailway())
+                .destRailway(flight.getDestRailway())
+                .sourceContragent(flight.getSourceContragent())
+                .client(flight.getClient())
                 .build();
     }
 }
