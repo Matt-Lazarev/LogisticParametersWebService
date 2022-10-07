@@ -64,6 +64,7 @@ public class SecondEmptyFlightMapper {
                 .destRailway(flight.getDestRailway())
                 .sourceContragent(flight.getSourceContragent())
                 .client(flight.getClient())
+                .cargoCode(flight.getCargoCode6())
                 .build();
     }
 }

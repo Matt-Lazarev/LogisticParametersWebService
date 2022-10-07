@@ -15,6 +15,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
+    private static final List<String> FILTER_CARGO_CODES = Arrays.asList("421195", "421208");
+
     private final FlightService flightService;
     private final SecondEmptyFlightRepository secondEmptyFlightRepository;
     private final SecondEmptyFlightMapper secondEmptyFlightMapper;
@@ -79,6 +82,8 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 .filter(SecondEmptyFlight::getIsNotFirstEmpty)
                 .filter(f -> "ПОР".equalsIgnoreCase(f.getLoaded()))
                 .filter(f -> f.getIdleDays() != null && f.getIdleDays().doubleValue() >= 0)
+                .filter(f -> !f.getSourceStation().equalsIgnoreCase(f.getDestStation()))
+                .filter(f -> !FILTER_CARGO_CODES.contains(f.getCargoCode()))
                 .collect(Collectors.toList());
     }
 

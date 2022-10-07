@@ -67,4 +67,7 @@ public class SecondEmptyFlight {
     private Boolean isNotFirstEmpty;
 
     private String loaded;
+
+    @Column(name="cargo_code")
+    private String cargoCode;
 }
