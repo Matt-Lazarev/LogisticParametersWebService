@@ -65,6 +65,7 @@ public class SecondEmptyFlightMapper {
                 .sourceContragent(flight.getSourceContragent())
                 .client(flight.getClient())
                 .cargoCode(flight.getCargoCode6())
+                .tag2(flight.getTag2())
                 .build();
     }
 }

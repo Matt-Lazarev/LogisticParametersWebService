@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private static final List<String> FILTER_CARGO_CODES = Arrays.asList("421195", "421208");
+    private static final List<String> FILTER_TAG2_VALUES = Arrays.asList("аренда", "воин");
 
     private final FlightService flightService;
     private final SecondEmptyFlightRepository secondEmptyFlightRepository;
@@ -84,6 +85,10 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 .filter(f -> f.getIdleDays() != null && f.getIdleDays().doubleValue() >= 0)
                 .filter(f -> !f.getSourceStation().equalsIgnoreCase(f.getDestStation()))
                 .filter(f -> !FILTER_CARGO_CODES.contains(f.getCargoCode()))
+                .filter(f -> f.getSourceContragent() != null &&
+                        f.getSourceContragent().equalsIgnoreCase("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ"))
+                .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(0)))
+                .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(1)))
                 .collect(Collectors.toList());
     }
 

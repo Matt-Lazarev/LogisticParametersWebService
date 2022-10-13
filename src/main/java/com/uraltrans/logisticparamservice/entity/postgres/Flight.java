@@ -112,6 +112,8 @@ public class Flight {
 
     private String client;
 
+    private String tag2;
+
     @Override
     public String toString() {
         return "Flight{" +
