@@ -64,8 +64,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         loadCarInfo(addressings);
 
         flightAddressingRepository.saveAllAndFlush(addressings);
-        //sendTariffRequest(addressings);
-        //sendRateRequest(addressings);
+        sendTariffRequest(addressings);
+        sendRateRequest(addressings);
     }
 
     @Override
