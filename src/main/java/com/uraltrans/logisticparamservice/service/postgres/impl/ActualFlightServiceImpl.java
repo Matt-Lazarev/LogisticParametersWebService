@@ -91,9 +91,9 @@ public class ActualFlightServiceImpl implements ActualFlightService {
                         .stream()
                         .filter(f -> {
                             String flightRegion = stationHandbookService.getRegionByCode6(f.getDestinationStationCode());
-                            return region.equalsIgnoreCase(flightRegion);
+                            return region != null && region.equalsIgnoreCase(flightRegion);
                         })
-                        .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
+                        .filter(f -> f.getVolume() != null && f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
                         .collect(Collectors.toList()));
     }
 

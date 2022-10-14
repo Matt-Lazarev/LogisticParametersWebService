@@ -11,6 +11,5 @@ public interface LoadParameterService {
     void updateLoadParameters(LoadParameters newParameters);
     List<String> getManagers();
     LocalTime getNextDataLoadTime();
-
     void updateNextDataLoad(LocalDateTime nextExecution);
 }
