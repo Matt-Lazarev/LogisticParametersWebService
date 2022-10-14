@@ -3,6 +3,7 @@ package com.uraltrans.logisticparamservice.config.schedule;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.service.schedule.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -16,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+@Slf4j
 @Configuration
 @EnableScheduling
 @RequiredArgsConstructor
@@ -48,7 +50,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
             registerTask(taskRegistrar, task, 0);
         }
 
-        registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 15);
+        // registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 15);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 30);
         registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 60);
         registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 70);
@@ -73,10 +75,10 @@ public class SchedulingConfig implements SchedulingConfigurer {
                 triggerContext -> {
                     LocalTime now = LocalTime.now();
                     if(now.isBefore(time)){
-                        System.err.println(LocalDateTime.of(LocalDate.now(), time));
+                        log.info("Время выгрузки: {}", LocalDateTime.of(LocalDate.now(), time));
                         return java.sql.Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), time));
                     }
-                    System.err.println(LocalDateTime.of(LocalDate.now().plusDays(1), time));
+                    log.info("Время выгрузки: {}", LocalDateTime.of(LocalDate.now(), time));
                     return java.sql.Timestamp.valueOf(LocalDateTime.of(LocalDate.now().plusDays(1), time));
                 }
         );
@@ -84,7 +86,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
 
     private Date getNextExecution(int additionalTime) {
         LocalDateTime nextExecution = getExecutionTime().plusMinutes(additionalTime);
-        System.err.println(nextExecution);
+        log.info("Время выгрузки: {}", nextExecution);
         return java.sql.Timestamp.valueOf(nextExecution);
     }
 

@@ -45,6 +45,8 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         calculatePrevEmptyFlightDates(secondEmptyFlights);
         secondEmptyFlights = filterFlights(secondEmptyFlights);
 
+        secondEmptyFlights = secondEmptyFlightRepository.saveAll(secondEmptyFlights);
+        calculateCountEmptyFlights(secondEmptyFlights);
         secondEmptyFlightRepository.saveAll(secondEmptyFlights);
     }
 
@@ -90,6 +92,11 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(0)))
                 .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(1)))
                 .collect(Collectors.toList());
+    }
+
+    private void calculateCountEmptyFlights(List<SecondEmptyFlight> secondEmptyFlights) {
+        secondEmptyFlights
+                .forEach(f -> f.setSecondFlights(secondEmptyFlightRepository.countSecondEmptyFlightByCarNumber(f.getCarNumber())));
     }
 
     private void prepareNextSave(){

@@ -33,8 +33,8 @@ public class ApplicationExceptionHandler {
     public ResponseEntity<?> handleHttpMethodNotSupportedException(Exception ex){
         log.error("error: {}\n {}", ex.getMessage(), ex);
         Map<String, String> errors = new LinkedHashMap<>();
-        errors.put("message", ex.getMessage() + " [использован неверный HTTP метод]");
-        errors.put("status", HttpStatus.BAD_REQUEST.name());
+        errors.put("success", "false");
+        errors.put("errorText", ex.getMessage() + " [использован неверный HTTP метод]");
         errors.put("code", Integer.toString(HttpStatus.BAD_REQUEST.value()));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
@@ -46,8 +46,8 @@ public class ApplicationExceptionHandler {
         Map<String, String> errors = new LinkedHashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String errorMessage = error.getDefaultMessage();
-            errors.put("status", HttpStatus.BAD_REQUEST.name());
-            errors.put("message", errorMessage);
+            errors.put("success", "false");
+            errors.put("errorText", errorMessage);
         });
         return errors;
     }
@@ -57,8 +57,8 @@ public class ApplicationExceptionHandler {
     public Map<String, String> handleAllExceptions(Exception ex) {
         log.error("error: {}\n {}", ex.getMessage(), ex);
         Map<String, String> errors = new LinkedHashMap<>();
-        errors.put("message", ex.getMessage() + " [внутренняя ошибка сервера, проверьте корректность запроса]");
-        errors.put("status", HttpStatus.INTERNAL_SERVER_ERROR.name());
+        errors.put("success", "false");
+        errors.put("errorText", ex.getMessage() + " [внутренняя ошибка сервера, проверьте корректность запроса]");
         errors.put("code", Integer.toString(HttpStatus.INTERNAL_SERVER_ERROR.value()));
         return errors;
     }

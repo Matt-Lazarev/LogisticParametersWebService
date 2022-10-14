@@ -72,4 +72,7 @@ public class SecondEmptyFlight {
     private String cargoCode;
 
     private String tag2;
+
+    @Column(name="second_flights")
+    private Integer secondFlights;
 }

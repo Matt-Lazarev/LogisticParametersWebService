@@ -46,6 +46,8 @@ public class FlightRequirementMapper {
 
     private PlanFactResponse mapToPlanFactResponse(FlightRequirement requirement) {
         return PlanFactResponse.builder()
+                .success("true")
+                .errorText("")
                 .departureStation(requirement.getSourceStationCode())
                 .destinationStation(requirement.getDestinationStationCode())
                 .volumeFrom(String.valueOf(requirement.getVolumeFrom()))

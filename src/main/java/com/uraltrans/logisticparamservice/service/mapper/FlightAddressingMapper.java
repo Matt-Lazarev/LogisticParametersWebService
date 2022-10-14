@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class FlightAddressingMapper {
-    private static final String TARIFF_CALLBACK_URL = "http://10.168.1.5:8080/calc/tariff";
-    private static final String RATE_CALLBACK_URL = "http://10.168.1.5:8080/calc/rate";
+    private static final String TARIFF_CALLBACK_URL = "http://10.168.1.6:8080/calc/tariff";
+    private static final String RATE_CALLBACK_URL = "http://10.168.1.6:8080/calc/rate";
 
     public List<FlightAddressing> mapRawDataToFlightAddressingList(
             List<Map<String, Object>> data, PotentialFlight potentialFlight){
@@ -105,6 +105,8 @@ public class FlightAddressingMapper {
 
     private AddressingResponse toAddressingResponse(FlightAddressing flightAddressing) {
         return AddressingResponse.builder()
+                .success("true")
+                .errorText("")
                 .departureStation(flightAddressing.getSourceStationCode())
                 .destinationStation(flightAddressing.getDestinationStationCode())
                 .cargoId(flightAddressing.getCargoCode())

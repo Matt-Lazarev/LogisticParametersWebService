@@ -56,16 +56,19 @@ public class TestController {
 
     @GetMapping
     public List<?> getAll() {
-        stationHandbookService.saveAll();
-        clientOrderService.saveAllClientOrders();
-        service.saveAllActualFlights();
-        flightRequirementService.saveAllFlightRequirements();
-        service.saveAllPotentialFlights();
-        flightAddressingService.saveAll();
-        return flightAddressingService.getAll();
+//        stationHandbookService.saveAll();
+//        clientOrderService.saveAllClientOrders();
+//        service.saveAllActualFlights();
+//        flightRequirementService.saveAllFlightRequirements();
+//        service.saveAllPotentialFlights();
+//        flightAddressingService.saveAll();
+//        return flightAddressingService.getAll();
 
-//        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
-//        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
+//        cargoService.saveAll();
+//        return cargoService.getAllCargos();
+
+        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
+        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
 //        return carRepairInfoRepository.getAllCarRepairs("4022-09-23");
 //        String dislocationDate = LocalDate.now().plusYears(2000).toString();
 //        return rawDislocationRepository.getAllDislocations(dislocationDate);

@@ -1,6 +1,7 @@
 package com.uraltrans.logisticparamservice.entity.postgres;
 
 import lombok.*;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -20,5 +21,6 @@ public class Cargo {
 
     private String code;
 
+    @Type(type="text")
     private String name;
 }

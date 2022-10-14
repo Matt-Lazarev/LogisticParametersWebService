@@ -100,6 +100,8 @@ public class ActualFlightMapper {
 
     private DislocationResponse mapToResponse(ActualFlight actualFlight) {
         return DislocationResponse.builder()
+                .success("true")
+                .errorText("")
                 .departureStation(actualFlight.getSourceStationCode())
                 .destinationStation(actualFlight.getDestinationStationCode())
                 .dislocationStation(actualFlight.getDislocationStationCode())

@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressingResponse {
+    private String success;
+    private String errorText;
     private String departureStation;
     private String destinationStation;
     private String cargoId;

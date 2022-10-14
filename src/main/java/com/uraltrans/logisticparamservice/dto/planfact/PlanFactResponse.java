@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlanFactResponse {
+    private String success;
+    private String errorText;
     private String departureStation;
     private String destinationStation;
     private String volumeFrom;
