@@ -32,4 +32,8 @@ public class StationHandbook {
 
     private String longitude;
 
+    @Column(name = "exclude_from_second_empty_flight")
+    private Boolean ExcludeFromSecondEmptyFlight;
+
+    private Boolean lock;
 }

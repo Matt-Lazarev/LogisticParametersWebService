@@ -38,11 +38,17 @@ public class SecondEmptyFlight {
     @Column(name = "source_station")
     private String sourceStation;
 
+    @Column(name = "source_station_code")
+    private String sourceStationCode;
+
     @Column(name = "dest_railway")
     private String destRailway;
 
     @Column(name = "dest_station")
     private String destStation;
+
+    @Column(name = "dest_station_code")
+    private String destStationCode;
 
     @Column(name = "prev_empty_flight_arrive_at_dest_station_date")
     private LocalDateTime prevEmptyFlightArriveAtDestStationDate;

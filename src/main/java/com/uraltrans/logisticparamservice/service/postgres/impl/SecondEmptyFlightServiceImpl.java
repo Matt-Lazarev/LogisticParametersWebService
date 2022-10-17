@@ -2,11 +2,12 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
+import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.repository.postgres.SecondEmptyFlightRepository;
-import com.uraltrans.logisticparamservice.service.itr.RawFlightService;
 import com.uraltrans.logisticparamservice.service.mapper.SecondEmptyFlightMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private static final List<String> FILTER_TAG2_VALUES = Arrays.asList("аренда", "воин");
 
     private final FlightService flightService;
+    private final StationHandbookService stationHandbookService;
     private final SecondEmptyFlightRepository secondEmptyFlightRepository;
     private final SecondEmptyFlightMapper secondEmptyFlightMapper;
 
@@ -91,6 +93,14 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                         f.getSourceContragent().equalsIgnoreCase("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ"))
                 .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(0)))
                 .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(1)))
+                .filter(f -> {
+                    StationHandbook sourceStation = stationHandbookService.findStationByCode6(f.getSourceStationCode());
+                    return sourceStation != null && !sourceStation.getExcludeFromSecondEmptyFlight() && !sourceStation.getLock();
+                })
+                .filter(f -> {
+                    StationHandbook destStation = stationHandbookService.findStationByCode6(f.getDestStationCode());
+                    return destStation != null && !destStation.getExcludeFromSecondEmptyFlight() && !destStation.getLock();
+                })
                 .collect(Collectors.toList());
     }
 

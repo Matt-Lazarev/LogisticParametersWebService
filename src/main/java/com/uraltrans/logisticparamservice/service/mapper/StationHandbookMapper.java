@@ -26,7 +26,9 @@ public class StationHandbookMapper {
                 .setRegion((String) stationData.get("_Region"))
                 .setRoad((String) stationData.get("_Road"))
                 .setLatitude((String) stationData.get("_Latitude"))
-                .setLongitude((String) stationData.get("_Longitude"));
+                .setLongitude((String) stationData.get("_Longitude"))
+                .setExcludeFromSecondEmptyFlight(((byte[]) stationData.get("_ExcludeFromSecondEmptyFlight"))[0] == 1)
+                .setLock(((byte[]) stationData.get("_Lock"))[0] == 1);
     }
 
     public List<StationResponse> mapToListResponses(List<StationHandbook> stationHandbooks) {
