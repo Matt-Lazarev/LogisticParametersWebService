@@ -8,6 +8,7 @@ import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRep
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.service.postgres.impl.SecondEmptyFlightServiceImpl;
+import com.uraltrans.logisticparamservice.service.utcsrs.RawStationHandbookService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,21 +55,25 @@ public class TestController {
 
     final RawSecondEmptyFlightRepository rawSecondEmptyFlightRepository;
 
+    final RawStationHandbookService rawStationHandbookService;
+
     @GetMapping
     public List<?> getAll() {
-//        stationHandbookService.saveAll();
-//        clientOrderService.saveAllClientOrders();
-//        service.saveAllActualFlights();
-//        flightRequirementService.saveAllFlightRequirements();
-//        service.saveAllPotentialFlights();
-//        flightAddressingService.saveAll();
-//        return flightAddressingService.getAll();
+        stationHandbookService.saveAll();
+        clientOrderService.saveAllClientOrders();
+        service.saveAllActualFlights();
+        flightRequirementService.saveAllFlightRequirements();
+        service.saveAllPotentialFlights();
+        flightAddressingService.saveAll();
+        return flightAddressingService.getAll();
 
 //        cargoService.saveAll();
 //        return cargoService.getAllCargos();
 
-        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
-        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
+
+
+//        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
+//        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
 //        return carRepairInfoRepository.getAllCarRepairs("4022-09-23");
 //        String dislocationDate = LocalDate.now().plusYears(2000).toString();
 //        return rawDislocationRepository.getAllDislocations(dislocationDate);
@@ -77,8 +82,8 @@ public class TestController {
 
     @GetMapping("/1")
     public List<?> getAll1() {
-        clientOrderService.saveAllClientOrders();
-        return clientOrderService.getAllClientOrders();
+        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
+        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
     }
 
     @GetMapping("/yandex")

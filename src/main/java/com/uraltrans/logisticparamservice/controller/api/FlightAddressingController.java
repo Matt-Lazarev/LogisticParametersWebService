@@ -2,7 +2,6 @@ package com.uraltrans.logisticparamservice.controller.api;
 
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingRequest;
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
-import com.uraltrans.logisticparamservice.dto.dislocation.DislocationResponse;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightAddressingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ public class FlightAddressingController {
 
     @PostMapping("/result/address")
     public ResponseEntity<?> getAddressingsByRequest(@Valid @RequestBody(required = false) AddressingRequest request){
-        List<AddressingResponse> responses = flightAddressingService.getAllByRequest(request);
+        List<AddressingResponse> responses = flightAddressingService.getAllByAddressRequest(request);
         if(responses.size() == 0){
             Map<String, String> errors = new LinkedHashMap<>();
             errors.put("success", "false");

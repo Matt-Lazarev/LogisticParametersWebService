@@ -91,7 +91,8 @@ public class ActualFlightMapper {
                 .currentOrderEnd(Mapper.fix1cDate((Timestamp) data.get("EndOrderDate")))
                 .feature2((String) data.get("Feature2"))
                 .feature12((String) data.get("Feature12"))
-                .feature20((String) data.get("Feature20"))//FIXME
+                .feature20((String) data.get("Feature20"))
+                .clientNextTask((String) data.get("ClientNextTask"))
                 .daysBeforeDatePlanRepair((BigDecimal) data.get("DaysBeforeDatePlanRepair"))
                 .distanceFromCurrentStation((BigDecimal) data.get("DistanceFromCurrentStation"))
                 .restRun((BigDecimal) data.get("RestRun"))
@@ -119,7 +120,7 @@ public class ActualFlightMapper {
                 .p06(actualFlight.getFeature6())
                 .p09(actualFlight.getFeature9())
                 .p12(actualFlight.getFeature12())
-                .p20("")//FIXME
+                .p20(actualFlight.getFeature20())
                 .nextManager("")//FIXME
                 .nextStation(actualFlight.getNextStation())
                 .statusWagon(actualFlight.getCarState())

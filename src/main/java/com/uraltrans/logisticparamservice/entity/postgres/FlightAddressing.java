@@ -115,6 +115,9 @@ public class FlightAddressing {
     private String feature20;
 
     @JsonIgnore
+    private String clientNextTask;
+
+    @JsonIgnore
     @Column(name = "car_state")
     private String carState;
 
@@ -175,6 +178,7 @@ public class FlightAddressing {
         this.feature2 = addressing.feature2;
         this.feature12 = addressing.feature12;
         this.feature20 = addressing.feature20;
+        this.clientNextTask = addressing.clientNextTask;
         this.carState = addressing.carState;
 
         this.daysBeforeDatePlanRepair = addressing.daysBeforeDatePlanRepair;

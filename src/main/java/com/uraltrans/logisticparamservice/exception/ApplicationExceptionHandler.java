@@ -41,14 +41,16 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.error("error: {}\n {}", ex.getMessage(), ex);
-        Map<String, String> errors = new LinkedHashMap<>();
+        Map<String, Object> errors = new LinkedHashMap<>();
+        List<String> fieldErrors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String errorMessage = error.getDefaultMessage();
-            errors.put("success", "false");
-            errors.put("errorText", errorMessage);
+            fieldErrors.add(errorMessage);
         });
+        errors.put("success", "false");
+        errors.put("errorText", fieldErrors);
         return errors;
     }
 

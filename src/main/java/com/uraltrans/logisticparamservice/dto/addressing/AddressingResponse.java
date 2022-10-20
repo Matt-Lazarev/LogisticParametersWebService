@@ -25,7 +25,7 @@ public class AddressingResponse {
     private String tariff;
     private String rate;
     private String rateFact;
-    private String p2;
+    private String p02;
     private String p12;
     private String p20;
     private String statusWagon;

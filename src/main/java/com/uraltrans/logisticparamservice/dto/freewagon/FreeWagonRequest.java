@@ -1,0 +1,27 @@
+package com.uraltrans.logisticparamservice.dto.freewagon;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
+
+@Getter @Setter @Builder
+@AllArgsConstructor @NoArgsConstructor
+public class FreeWagonRequest {
+    @NotNull(message = "Поле 'departureStation' отсутствует")
+    private String departureStation;
+
+    private String destinationStation;
+
+    @NotNull(message = "Поле 'cargoId' отсутствует")
+    private String cargoId;
+
+    @NotNull(message = "Поле 'wagonType' отсутствует")
+    private String wagonType;
+
+    @NotNull(message = "Поле 'volume' отсутствует")
+    private String volume;
+}

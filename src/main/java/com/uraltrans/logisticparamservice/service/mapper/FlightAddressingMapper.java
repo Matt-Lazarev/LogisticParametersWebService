@@ -3,6 +3,7 @@ package com.uraltrans.logisticparamservice.service.mapper;
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.carinfo.CarRepairDto;
 import com.uraltrans.logisticparamservice.dto.carinfo.CarThicknessDto;
+import com.uraltrans.logisticparamservice.dto.freewagon.FreeWagonResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
@@ -36,6 +37,7 @@ public class FlightAddressingMapper {
                 .peek(f -> f.setFeature2(potentialFlight.getFeature2()))
                 .peek(f -> f.setFeature12(potentialFlight.getFeature12()))
                 .peek(f -> f.setFeature20(potentialFlight.getFeature20()))
+                .peek(f -> f.setClientNextTask(potentialFlight.getClientNextTask()))
                 .peek(f -> f.setCarState(potentialFlight.getCarState()))
                 .peek(f -> f.setDistanceFromCurrentStation(potentialFlight.getDistanceFromCurrentStation()))
                 .peek(f -> f.setDaysBeforeDatePlanRepair(potentialFlight.getDaysBeforeDatePlanRepair()))
@@ -120,10 +122,9 @@ public class FlightAddressingMapper {
                 .tariff(String.valueOf(flightAddressing.getTariff()))
                 .rate(String.valueOf(flightAddressing.getRate()))
                 .rateFact(String.valueOf(flightAddressing.getUtRate()))
-                .p2(flightAddressing.getFeature2())
+                .p02(flightAddressing.getFeature2())
                 .p12(flightAddressing.getFeature12())
-                //.feature20(flightAddressing.getFeature20()) FIXME
-                .p20("")
+                .p20(flightAddressing.getFeature20())
                 .statusWagon(flightAddressing.getCarState())
                 .distanceFromCurrentStation(flightAddressing.getDistanceFromCurrentStation())
                 .daysBeforeDatePlanRepair(flightAddressing.getDaysBeforeDatePlanRepair())
@@ -168,6 +169,39 @@ public class FlightAddressingMapper {
                 .carNumber((String) data.get("CarNumber"))
                 .thicknessWheel((BigDecimal) data.get("ThicknessWheel"))
                 .thicknessComb((BigDecimal) data.get("ThicknessComb"))
+                .build();
+    }
+
+    public List<FreeWagonResponse> mapToFreeWagonResponses(List<FlightAddressing> addressings){
+        return addressings
+                .stream()
+                .map(this::mapToFreeWagon)
+                .collect(Collectors.toList());
+    }
+
+    private FreeWagonResponse mapToFreeWagon(FlightAddressing flightAddressing){
+        return FreeWagonResponse.builder()
+                .success("true")
+                .errorText("")
+                .departureStation(flightAddressing.getSourceStationCode())
+                .destinationStation(flightAddressing.getDestinationStationCode())
+                .cargoId(flightAddressing.getCargoCode())
+                .wagonType("Крытый")
+                .volume(String.valueOf(flightAddressing.getVolume()))
+                .carNumber(flightAddressing.getCarNumber())
+                .destinationStationCurrentFlight(flightAddressing.getCurrentFlightDestStationCode())
+                .dislocationStationCurrentFlight(flightAddressing.getDislocationStationCode())
+                .p02(flightAddressing.getFeature2())
+                .p12(flightAddressing.getFeature12())
+                .p20(flightAddressing.getFeature20())
+                .clientNextTask(flightAddressing.getClientNextTask())
+                .statusWagon(flightAddressing.getCarState())
+                .distanceFromCurrentStation(String.valueOf(flightAddressing.getDistanceFromCurrentStation()))
+                .daysBeforeDatePlanRepair(String.valueOf(flightAddressing.getDaysBeforeDatePlanRepair()))
+                .restRun(String.valueOf(flightAddressing.getRestRun()))
+                .refurbished(flightAddressing.getRefurbished())
+                .thicknessComb(flightAddressing.getThicknessComb().toString())
+                .thicknessWheel(flightAddressing.getThicknessWheel().toString())
                 .build();
     }
 }

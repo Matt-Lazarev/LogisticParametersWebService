@@ -5,6 +5,8 @@ import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.cargo.CargoDto;
 import com.uraltrans.logisticparamservice.dto.carinfo.CarRepairDto;
 import com.uraltrans.logisticparamservice.dto.carinfo.CarThicknessDto;
+import com.uraltrans.logisticparamservice.dto.freewagon.FreeWagonRequest;
+import com.uraltrans.logisticparamservice.dto.freewagon.FreeWagonResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
@@ -20,17 +22,17 @@ import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -99,7 +101,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     }
 
     @Override
-    public List<AddressingResponse> getAllByRequest(AddressingRequest request) {
+    public List<AddressingResponse> getAllByAddressRequest(AddressingRequest request) {
         if(request == null){
             return flightAddressingMapper.mapToResponses(flightAddressingRepository.findAll());
         }
@@ -115,6 +117,36 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
                 .filter(f -> request.getCargoId().equals(f.getCargoCode()))
                 .filter(f -> request.getDestinationStation() == null || request.getDestinationStation().equals(f.getDestinationStationCode()))
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public List<FreeWagonResponse> getAllByFreeWagonRequest(FreeWagonRequest request) {
+        if(request != null && !request.getWagonType().equalsIgnoreCase("Крытый")){
+            return Collections.emptyList();
+        }
+
+        List<FlightAddressing> responses;
+        if(request == null){
+            responses = flightAddressingRepository.findAll();
+        }
+        else{
+            responses = flightAddressingRepository.findAll()
+                    .stream()
+                    .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
+                    .filter(f -> f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
+                    .filter(f -> request.getCargoId().equals(f.getCargoCode()))
+                    .filter(f -> request.getDestinationStation() == null || request.getDestinationStation().equals(f.getDestinationStationCode()))
+                    .collect(Collectors.toList());
+        }
+
+        return flightAddressingMapper.mapToFreeWagonResponses(responses
+                .stream()
+                .filter(f -> !f.getRejected())
+                .filter(f -> !f.getNonworkingPark())
+                .filter(f -> f.getFeature2() == null || f.getFeature2().isEmpty())
+                .filter(f -> f.getFeature12() == null || f.getFeature12().isEmpty())
+                .filter(f -> f.getClientNextTask() == null || f.getClientNextTask().isEmpty())
                 .collect(Collectors.toList()));
     }
 
@@ -299,6 +331,18 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                         CarThicknessDto thickness = thicknesses.get(addressing.getCarNumber());
                         addressing.setThicknessWheel(thickness.getThicknessWheel());
                         addressing.setThicknessComb(thickness.getThicknessComb());
+                    }
+
+                    if(addressing.getNonworkingPark() == null){
+                        addressing.setNonworkingPark(false);
+                    }
+
+                    if(addressing.getRejected() == null){
+                        addressing.setRejected(false);
+                    }
+
+                    if(addressing.getRefurbished() == null){
+                        addressing.setRefurbished(false);
                     }
                 });
     }
