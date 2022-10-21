@@ -59,13 +59,13 @@ public class TestController {
 
     @GetMapping
     public List<?> getAll() {
-        stationHandbookService.saveAll();
+        //stationHandbookService.saveAll();
         clientOrderService.saveAllClientOrders();
         service.saveAllActualFlights();
         flightRequirementService.saveAllFlightRequirements();
         service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
-        return flightAddressingService.getAll();
+        return service.getAllActualFlights();
 
 //        cargoService.saveAll();
 //        return cargoService.getAllCargos();
@@ -79,11 +79,9 @@ public class TestController {
 //        return rawDislocationRepository.getAllDislocations(dislocationDate);
     }
 
-
     @GetMapping("/1")
     public List<?> getAll1() {
-        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
-        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
+        return carRepairInfoRepository.getAllCarRepairs("4022-10-21");
     }
 
     @GetMapping("/yandex")

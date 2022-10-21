@@ -46,4 +46,8 @@ public class Mapper {
     public static LocalDate to1cDate(LocalDate date) {
         return date.plusYears(SHIFT_1C_YEARS);
     }
+
+    public static String toString(Object object) {
+        return object != null ? object.toString() : "";
+    }
 }

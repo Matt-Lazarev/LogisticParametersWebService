@@ -48,7 +48,7 @@ public class ActualFlightMapper {
                 .feature6((String) data.get("Feature6"))
                 .feature9((String) data.get("Feature9"))
                 .feature12((String) data.get("Feature12"))
-                .feature20((String) data.get("Feature20"))//FIXME
+                .feature20((String) data.get("Feature20"))
                 .cargo((String) data.get("Cargo"))
                 .cargoCode((String) data.get("CargoCode"))
                 .carState((String) data.get("CarState"))
@@ -57,9 +57,9 @@ public class ActualFlightMapper {
                 .wagonType((String) data.get("WagonType"))
                 .operation((String) data.get("Operation"))
                 .owner((String) data.get("Owner"))
-                .operationDateTime(null)//FIXME
+                .operationDateTime(Mapper.fix1cDate((Timestamp) data.get("OperationDateTime")))
                 .carModel((String) data.get("Model"))
-                .nextManager(null)//FIXME
+                .nextManager((String) data.get("ManagerNextTask"))
                 .nextStation((String) data.get("NextStation"))
                 .daysBeforeDatePlanRepair((BigDecimal) data.get("DaysBeforeDatePlanRepair"))
                 .distanceFromCurrentStation((BigDecimal) data.get("DistanceFromCurrentStation"))
@@ -113,7 +113,7 @@ public class ActualFlightMapper {
                 .carNumber(actualFlight.getCarNumber())
                 .owner(actualFlight.getOwner())
                 .operation(actualFlight.getOperation())
-                .operationDateTime("") //FIXME
+                .operationDateTime(Mapper.toString(actualFlight.getOperationDateTime()))
                 .flightType(actualFlight.getLoaded())
                 .featureWagon(actualFlight.getCarModel())
                 .p02(actualFlight.getFeature2())
@@ -121,7 +121,7 @@ public class ActualFlightMapper {
                 .p09(actualFlight.getFeature9())
                 .p12(actualFlight.getFeature12())
                 .p20(actualFlight.getFeature20())
-                .nextManager("")//FIXME
+                .nextManager(actualFlight.getNextManager())
                 .nextStation(actualFlight.getNextStation())
                 .statusWagon(actualFlight.getCarState())
                 .distanceFromCurrentStation(actualFlight.getDistanceFromCurrentStation())

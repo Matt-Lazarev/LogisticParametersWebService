@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder @ToString
 public class CarRepairDto {
     private String carNumber;
     private Boolean nonworkingPark;

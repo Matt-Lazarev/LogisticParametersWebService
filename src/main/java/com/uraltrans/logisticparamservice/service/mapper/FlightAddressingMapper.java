@@ -142,7 +142,8 @@ public class FlightAddressingMapper {
                 .map(this::mapToCarRepairDto)
                 .collect(Collectors.toMap(
                         CarRepairDto::getCarNumber,
-                        x -> x
+                        x -> x,
+                        (cr1, cr2) -> cr1
                 ));
     }
 
@@ -200,8 +201,8 @@ public class FlightAddressingMapper {
                 .daysBeforeDatePlanRepair(String.valueOf(flightAddressing.getDaysBeforeDatePlanRepair()))
                 .restRun(String.valueOf(flightAddressing.getRestRun()))
                 .refurbished(flightAddressing.getRefurbished())
-                .thicknessComb(flightAddressing.getThicknessComb().toString())
-                .thicknessWheel(flightAddressing.getThicknessWheel().toString())
+                .thicknessComb(String.valueOf(flightAddressing.getThicknessComb()))
+                .thicknessWheel(String.valueOf(flightAddressing.getThicknessWheel()))
                 .build();
     }
 }

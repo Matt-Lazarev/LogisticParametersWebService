@@ -21,8 +21,10 @@ public class RawDislocationRepositoryImpl implements RawDislocationRepository{
             "if47._Fld2709 as Feature6, " +
             "if47._Fld2844 as Feature9, " +
             "if47._Fld2712 as Feature12, " +
-           // "if47._Fld2712 as Feature20, " + //FIXME
+            "if47._Fld2858 as Feature20, " +
             "if47._Fld2784 as ClientNextTask, " +
+            "if47._Fld2859 as ManagerNextTask, " +
+            "if47._Fld2860 as OperationDateTime, " +
             "if47._Fld234 as CarState, " +
             "if47._Fld235 as FleetState, " +
             "if47._Fld2848 as BeginOrderDate, " +
