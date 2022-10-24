@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class LoadParameters {
     @Id
@@ -30,6 +31,7 @@ public class LoadParameters {
     private String apikeyStationList;
     private String apikeyGeocoder;
     private Integer requestsAmountInDay;
+    private String feature2;
 
     public LoadParameters(Integer daysToRetrieveData, String nextDataLoadTime,
                           Integer maxLoadIdleDays, Integer maxUnloadIdleDays,
@@ -37,7 +39,8 @@ public class LoadParameters {
                           Double maxTravelTime, Double minTravelTime,
                           Integer flightProfitDaysToRetrieveData, String status,
                           String carType, String managers, String apikeyGeocoder,
-                          String apikeyStationList, Integer requestsAmountInDay) {
+                          String apikeyStationList, Integer requestsAmountInDay,
+                          String feature2) {
         this.daysToRetrieveData = daysToRetrieveData;
         this.nextDataLoadTime = nextDataLoadTime;
         this.maxLoadIdleDays = maxLoadIdleDays;
@@ -53,5 +56,6 @@ public class LoadParameters {
         this.apikeyGeocoder = apikeyGeocoder;
         this.apikeyStationList = apikeyStationList;
         this.requestsAmountInDay = requestsAmountInDay;
+        this.feature2 = feature2;
     }
 }

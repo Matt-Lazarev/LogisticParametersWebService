@@ -19,7 +19,7 @@ public class CarRepairInfoRepositoryImpl implements CarRepairInfoRepository {
                     "WHERE i2696._Fld2698 = ?";
 
     private static final String SQL_CURRENT_CAR_REPAIR_INFO =
-                    "SELECT _Fld2701 as NonworkingPark " +
+                    "SELECT _Fld2701 as NonworkingPark, _Fld2703 as Rejected, _Fld2747 as RequiresRepair " +
                     "FROM _InfoRg2696 i2696 " +
                     "INNER JOIN _Reference134 r134 " +
                     "ON r134._IDRRef =  i2696._Fld2697RRef " +

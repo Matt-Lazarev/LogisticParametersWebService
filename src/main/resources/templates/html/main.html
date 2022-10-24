@@ -162,6 +162,14 @@
             </div>
         </div>
 
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+        <div class="row">
+            <div class="col-md-6 ">
+                <label> Признак2 для фильтрации Вторых порожних рейсов: </label>
+                <input type="text" class="form-control" th:field="*{feature2}">
+            </div>
+        </div>
+
         <div class="row">
             <div class="col box-footer mb-1 mt-3">
                 <button id="load_button" onclick="alerts()"
@@ -171,7 +179,6 @@
                 <button type="submit" class="btn btn-primary" name="action" value="update"> Обновить параметры </button>
             </div>
         </div>
-
     </form>
 </div>
 

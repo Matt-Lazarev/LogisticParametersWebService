@@ -13,33 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class SecondEmptyFlightMapper {
-
-    public List<SecondEmptyFlight> mapRawDataToList(List<Map<String, Object>> data){
-        return data.stream()
-                .map(this::toSecondEmptyFlight)
-                .collect(Collectors.toList());
-    }
-
-    private SecondEmptyFlight toSecondEmptyFlight(Map<String, Object> data){
-        return SecondEmptyFlight.builder()
-                .sourceContragent((String) data.get("SourceContragent"))
-                .client((String) data.get("Klient"))
-                .volume((BigDecimal) data.get("Volume"))
-                .carType((String) data.get("CarType"))
-                .carNumber((Integer) data.get("CarNumber"))
-                .sourceRailway((String) data.get("SourceRailway"))
-                .sourceStation((String) data.get("SourceStation"))
-                .destRailway((String) data.get("DestRailway"))
-                .destStation((String) data.get("DestStation"))
-                .currEmptyFlightRegistrationDate(Mapper.toLocalDateTime((Timestamp) data.get("Дата нач. след. Рейса (дата оформления вагона порожним)")))
-                .currEmptyFlightArriveAtDestStationDate(Mapper.toLocalDateTime((Timestamp) data.get("DateInDate")))
-                .AID((Integer) data.get("AID"))
-                .prevFlightId((Integer) data.get("PrevFlightID"))
-                .isNotFirstEmpty((Boolean) data.get("IsNotFirstEmpty"))
-                .loaded((String) data.get("Loaded"))
-                .build();
-    }
-
     public List<SecondEmptyFlight> mapToSecondEmptyFlight(List<Flight> flights) {
         return flights
                 .stream()
@@ -68,6 +41,8 @@ public class SecondEmptyFlightMapper {
                 .tag2(flight.getTag2())
                 .sourceStationCode(flight.getSourceStationCode())
                 .destStationCode(flight.getDestStationCode())
+                .departureFromSourceStation(flight.getDepartureFromSourceStationDate())
+                .arriveToDestStation(flight.getArriveToDestStationDate())
                 .build();
     }
 }

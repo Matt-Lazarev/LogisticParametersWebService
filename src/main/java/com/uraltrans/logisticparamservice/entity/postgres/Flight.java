@@ -68,7 +68,7 @@ public class Flight {
     private Timestamp arriveToSourceStationDate;
 
     @Column(name = "departure_from_source_station_date")
-    private Timestamp departureFromSourceStationDateDate;
+    private Timestamp departureFromSourceStationDate;
 
     private BigDecimal volume;
 

@@ -38,7 +38,7 @@ public class FlightMapper {
                 .setCarType((String) flightData.get("CarType"))
                 .setArriveToDestStationDate((Timestamp) flightData.get("DateInDate"))
                 .setArriveToSourceStationDate((Timestamp) flightData.get("DateIn"))
-                .setDepartureFromSourceStationDateDate((Timestamp) flightData.get("DateOut"))
+                .setDepartureFromSourceStationDate((Timestamp) flightData.get("DateOut"))
                 .setVolume((BigDecimal) flightData.get("Volume"))
                 .setDistance(Mapper.toBigDecimal((Double) flightData.get("Distance")))
                 .setLoaded((String) flightData.get("Loaded"))

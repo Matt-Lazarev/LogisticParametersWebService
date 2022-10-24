@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -89,4 +90,10 @@ public class SecondEmptyFlight {
 
     @Column(name="second_flights")
     private Integer secondFlights;
+
+    @Column(name = "departure_from_source_station")
+    private Timestamp departureFromSourceStation;
+
+    @Column(name = "arrive_to_dest_station")
+    private Timestamp arriveToDestStation;
 }

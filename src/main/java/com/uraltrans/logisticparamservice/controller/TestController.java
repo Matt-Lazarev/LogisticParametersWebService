@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -60,28 +61,28 @@ public class TestController {
     @GetMapping
     public List<?> getAll() {
         //stationHandbookService.saveAll();
-        clientOrderService.saveAllClientOrders();
-        service.saveAllActualFlights();
-        flightRequirementService.saveAllFlightRequirements();
-        service.saveAllPotentialFlights();
-        flightAddressingService.saveAll();
-        return service.getAllActualFlights();
+//        clientOrderService.saveAllClientOrders();
+//        service.saveAllActualFlights();
+//        flightRequirementService.saveAllFlightRequirements();
+//        service.saveAllPotentialFlights();
+//        flightAddressingService.saveAll();
+//        return service.getAllActualFlights();
 
 //        cargoService.saveAll();
 //        return cargoService.getAllCargos();
 
 
 
-//        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
-//        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
+        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
+        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
 //        return carRepairInfoRepository.getAllCarRepairs("4022-09-23");
 //        String dislocationDate = LocalDate.now().plusYears(2000).toString();
 //        return rawDislocationRepository.getAllDislocations(dislocationDate);
     }
 
     @GetMapping("/1")
-    public List<?> getAll1() {
-        return carRepairInfoRepository.getAllCarRepairs("4022-10-21");
+    public Map getAll1() {
+        return carRepairInfoRepository.getCarRepairByDate("4022-09-18", 52594538);
     }
 
     @GetMapping("/yandex")

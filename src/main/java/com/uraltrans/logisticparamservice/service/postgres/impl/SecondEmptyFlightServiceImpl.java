@@ -7,6 +7,7 @@ import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRe
 import com.uraltrans.logisticparamservice.repository.postgres.SecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.service.mapper.SecondEmptyFlightMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import com.uraltrans.logisticparamservice.utils.Mapper;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -38,6 +39,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private final SecondEmptyFlightRepository secondEmptyFlightRepository;
     private final SecondEmptyFlightMapper secondEmptyFlightMapper;
     private final CarRepairInfoRepository carRepairInfoRepository;
+    private final LoadParameterService loadParameterService;
 
     @Override
     public List<SecondEmptyFlight> getAllSecondEmptyFlight(){
@@ -99,8 +101,18 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 .filter(f -> !FILTER_CARGO_CODES.contains(f.getCargoCode()))
                 .filter(f -> f.getSourceContragent() != null &&
                         f.getSourceContragent().equalsIgnoreCase("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ"))
-                .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(0)))
-                .filter(f -> f.getTag2() == null || !f.getTag2().toLowerCase().contains(FILTER_TAG2_VALUES.get(1)))
+                .filter(f -> {
+                    if(f.getTag2() == null || f.getTag2().isEmpty()){
+                        return true;
+                    }
+                    String[] tag2Values = loadParameterService.getLoadParameters().getFeature2().split("[, ]+");
+                    for(String tag2Value: tag2Values){
+                        if(f.getTag2().toLowerCase().contains(tag2Value)){
+                            return false;
+                        }
+                    }
+                    return true;
+                })
                 .filter(f -> {
                     StationHandbook sourceStation = stationHandbookService.findStationByCode6(f.getSourceStationCode());
                     return sourceStation != null && !sourceStation.getExcludeFromSecondEmptyFlight() && !sourceStation.getLock();
@@ -109,11 +121,8 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                     StationHandbook destStation = stationHandbookService.findStationByCode6(f.getDestStationCode());
                     return destStation != null && !destStation.getExcludeFromSecondEmptyFlight() && !destStation.getLock();
                 })
-                .filter(f -> {
-                    Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
-                            Mapper.to1cDate(LocalDate.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), f.getCarNumber());
-                    return repairInfo == null || ((byte[]) repairInfo.get("NonworkingPark"))[0] == 0;
-                })
+                .filter(f -> notInRepair(f.getCarNumber(), f.getDepartureFromSourceStation()))
+                .filter(f -> notInRepair(f.getCarNumber(), f.getArriveToDestStation()))
                 .collect(Collectors.toList());
     }
 
@@ -130,8 +139,17 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 ));
 
         for(SecondEmptyFlight flight : secondEmptyFlights){
-            Integer prevAid = flight.getPrevFlightId();
-            groupedFlights.remove(prevAid);
+            SecondEmptyFlight previous = groupedFlights.get(flight.getPrevFlightId());
+            if(previous == null){
+                continue;
+            }
+
+            if(flight.getDestStationCode().equals(previous.getDestStationCode()) ||
+               flight.getSourceStationCode().equals(previous.getSourceStationCode()) ||
+               flight.getSourceStationCode().equals(previous.getDestStationCode()))
+            {
+                groupedFlights.remove(flight.getPrevFlightId());
+            }
         }
 
         return new ArrayList<>(groupedFlights.values());
@@ -139,5 +157,21 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
 
     private void prepareNextSave(){
         secondEmptyFlightRepository.truncate();
+    }
+
+    private boolean notInRepair(Integer carNumber, Timestamp date){
+        if(date == null){
+            return true;
+        }
+        if(carNumber.equals(52594538)){
+            System.out.println("+");
+        }
+        Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
+                Mapper.to1cDate(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
+        boolean r = repairInfo == null || (
+                ((byte[]) repairInfo.get("NonworkingPark"))[0] == 0 &&
+                ((byte[]) repairInfo.get("RequiresRepair"))[0] == 0
+        );
+        return r;
     }
 }

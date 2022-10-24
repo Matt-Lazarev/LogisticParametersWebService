@@ -87,10 +87,10 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
     private void calculateFlightDistance(List<Flight> allFlights) {
         allFlights
                 .stream()
-                .filter(f -> f.getDepartureFromSourceStationDateDate() != null)
+                .filter(f -> f.getDepartureFromSourceStationDate() != null)
                 .filter(f -> f.getArriveToDestStationDate() != null)
                 .forEach(f -> f.setTravelTime(
-                        daysBetween(f.getDepartureFromSourceStationDateDate(), f.getArriveToDestStationDate())));
+                        daysBetween(f.getDepartureFromSourceStationDate(), f.getArriveToDestStationDate())));
     }
 
     private List<Flight> filterFlights(List<Flight> flights, LoadParameters dto) {
@@ -134,7 +134,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
         return flights
                 .stream()
                 .filter(flight -> flight.getLoaded().equalsIgnoreCase(loaded))
-                .filter(flight -> flight.getDepartureFromSourceStationDateDate() != null)
+                .filter(flight -> flight.getDepartureFromSourceStationDate() != null)
                 .filter(flight -> flight.getArriveToDestStationDate() != null)
                 .collect(Collectors.groupingBy(
                         flight -> flight.getSourceStationCode() + " " + flight.getDestStationCode(),
