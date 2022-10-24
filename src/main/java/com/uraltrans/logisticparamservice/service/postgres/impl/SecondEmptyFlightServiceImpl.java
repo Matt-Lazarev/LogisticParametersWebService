@@ -161,7 +161,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
 
     private boolean notInRepair(Integer carNumber, Timestamp date){
         if(date == null){
-            return true;
+            return false;
         }
         if(carNumber.equals(52594538)){
             System.out.println("+");
