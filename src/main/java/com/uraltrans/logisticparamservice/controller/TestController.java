@@ -3,7 +3,7 @@ package com.uraltrans.logisticparamservice.controller;
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepositoryImpl;
-import com.uraltrans.logisticparamservice.repository.itr.RawSecondEmptyFlightRepository;
+import com.uraltrans.logisticparamservice.repository.utcsrs.RegisterSecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -54,9 +53,9 @@ public class TestController {
 
     final SecondEmptyFlightServiceImpl secondEmptyFlightServiceImpl;
 
-    final RawSecondEmptyFlightRepository rawSecondEmptyFlightRepository;
-
     final RawStationHandbookService rawStationHandbookService;
+
+    final RegisterSecondEmptyFlightRepository registerSecondEmptyFlightRepository;
 
     @GetMapping
     public List<?> getAll() {
@@ -65,8 +64,8 @@ public class TestController {
     }
 
     @GetMapping("/1")
-    public Map getAll1() {
-        return carRepairInfoRepository.getCarRepairByDate("4022-09-18", 28083624);
+    public boolean getAll1() {
+        return registerSecondEmptyFlightRepository.containsFlightsByCodes("760008", "769407");
     }
 
     @GetMapping("/address")

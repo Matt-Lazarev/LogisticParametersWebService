@@ -5,6 +5,7 @@ import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.SecondEmptyFlightRepository;
+import com.uraltrans.logisticparamservice.repository.utcsrs.RegisterSecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.service.mapper.SecondEmptyFlightMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
@@ -37,6 +38,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private final FlightService flightService;
     private final StationHandbookService stationHandbookService;
     private final SecondEmptyFlightRepository secondEmptyFlightRepository;
+    private final RegisterSecondEmptyFlightRepository registerSecondEmptyFlightRepository;
     private final SecondEmptyFlightMapper secondEmptyFlightMapper;
     private final CarRepairInfoRepository carRepairInfoRepository;
     private final LoadParameterService loadParameterService;
@@ -123,6 +125,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 })
                 .filter(f -> notInRepair(f.getCarNumber(), f.getDepartureFromSourceStation()))
                 .filter(f -> notInRepair(f.getCarNumber(), f.getArriveToDestStation()))
+                .filter(f -> !registerSecondEmptyFlightRepository.containsFlightsByCodes(f.getSourceStationCode(), f.getDestStationCode()))
                 .collect(Collectors.toList());
     }
 
@@ -163,15 +166,11 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         if(date == null){
             return false;
         }
-        if(carNumber.equals(52594538)){
-            System.out.println("+");
-        }
         Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
                 Mapper.to1cDate(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
-        boolean r = repairInfo == null || (
+        return repairInfo == null || (
                 ((byte[]) repairInfo.get("NonworkingPark"))[0] == 0 &&
                 ((byte[]) repairInfo.get("RequiresRepair"))[0] == 0
         );
-        return r;
     }
 }
