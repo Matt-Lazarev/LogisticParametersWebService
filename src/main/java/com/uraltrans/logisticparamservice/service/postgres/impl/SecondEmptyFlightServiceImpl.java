@@ -116,7 +116,8 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                     return destStation != null && !destStation.getExcludeFromSecondEmptyFlight() && !destStation.getLock();
                 })
                 .filter(f -> notInRepair(f.getCarNumber(), f.getDepartureFromSourceStation()))
-                .filter(f -> notInRepair(f.getCarNumber(), f.getArriveToDestStation()))
+                .filter(f -> f.getArriveToDestStation() == null && f.getNextInvNumber() == null ||
+                             notInRepair(f.getCarNumber(), f.getArriveToDestStation()))
                 .filter(f -> !registerSecondEmptyFlightRepository.containsFlightsByCodes(f.getSourceStationCode(), f.getDestStationCode()))
                 .collect(Collectors.toList());
     }

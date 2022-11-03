@@ -30,6 +30,7 @@ public class SecondEmptyFlightMapper {
                 .currEmptyFlightRegistrationDate(Mapper.toLocalDateTime(flight.getNextFlightStartDate()))
                 .currEmptyFlightArriveAtDestStationDate(Mapper.toLocalDateTime(flight.getArriveToDestStationDate()))
                 .AID(flight.getAid())
+                .nextInvNumber(flight.getNextInvNumber())
                 .prevFlightId(flight.getPrevFlightAid())
                 .isNotFirstEmpty(flight.getIsNotFirstEmpty())
                 .loaded(flight.getLoaded())
