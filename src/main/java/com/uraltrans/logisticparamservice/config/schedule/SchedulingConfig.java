@@ -52,9 +52,9 @@ public class SchedulingConfig implements SchedulingConfigurer {
 
         // registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 15);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 30);
-        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 160);
-        registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 170);
-        registerTask(taskRegistrar, scheduleSecondEmptyFlightService::loadSecondEmptyFlights, 180);
+        registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 60);
+        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 70);
+        registerTask(taskRegistrar, scheduleSecondEmptyFlightService::loadSecondEmptyFlights, 80);
 
     }
 

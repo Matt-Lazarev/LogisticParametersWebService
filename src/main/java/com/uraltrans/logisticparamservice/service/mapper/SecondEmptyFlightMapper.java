@@ -39,6 +39,7 @@ public class SecondEmptyFlightMapper {
                 .client(flight.getClient())
                 .cargoCode(flight.getCargoCode6())
                 .tag2(flight.getTag2())
+                .tag22(flight.getTag22())
                 .sourceStationCode(flight.getSourceStationCode())
                 .destStationCode(flight.getDestStationCode())
                 .departureFromSourceStation(flight.getDepartureFromSourceStationDate())

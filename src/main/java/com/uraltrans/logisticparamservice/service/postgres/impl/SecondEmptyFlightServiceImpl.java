@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private static final List<String> FILTER_CARGO_CODES = Arrays.asList(
             "421195", "421208", "421195", "421227", "421208", "391089", "421212", "421231", "421246");
-    private static final List<String> FILTER_TAG2_VALUES = Arrays.asList("аренда", "воин");
 
     private final FlightService flightService;
     private final StationHandbookService stationHandbookService;
@@ -104,16 +103,9 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 .filter(f -> f.getSourceContragent() != null &&
                         f.getSourceContragent().equalsIgnoreCase("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ"))
                 .filter(f -> {
-                    if(f.getTag2() == null || f.getTag2().isEmpty()){
-                        return true;
-                    }
                     String[] tag2Values = loadParameterService.getLoadParameters().getFeature2().split("[, ]+");
-                    for(String tag2Value: tag2Values){
-                        if(f.getTag2().toLowerCase().contains(tag2Value)){
-                            return false;
-                        }
-                    }
-                    return true;
+                    String[] tag22Values = loadParameterService.getLoadParameters().getFeature22().split("[, ]+");
+                    return notInFilterTags(tag2Values, f.getTag2()) && notInFilterTags(tag22Values, f.getTag22());
                 })
                 .filter(f -> {
                     StationHandbook sourceStation = stationHandbookService.findStationByCode6(f.getSourceStationCode());
@@ -172,5 +164,17 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                 ((byte[]) repairInfo.get("NonworkingPark"))[0] == 0 &&
                 ((byte[]) repairInfo.get("RequiresRepair"))[0] == 0
         );
+    }
+
+    private boolean notInFilterTags(String[] tagValues, String flightTag){
+        if(flightTag == null || flightTag.isEmpty()){
+            return true;
+        }
+        for(String tagValue: tagValues){
+            if(flightTag.toLowerCase().contains(tagValue)){
+                return false;
+            }
+        }
+        return true;
     }
 }

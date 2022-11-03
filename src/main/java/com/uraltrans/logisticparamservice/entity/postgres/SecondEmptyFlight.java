@@ -88,6 +88,8 @@ public class SecondEmptyFlight {
 
     private String tag2;
 
+    private String tag22;
+
     @Column(name="second_flights")
     private Integer secondFlights;
 

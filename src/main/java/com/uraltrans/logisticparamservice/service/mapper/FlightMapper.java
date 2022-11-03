@@ -51,6 +51,7 @@ public class FlightMapper {
                 .setClient((String) flightData.get("Klient"))
                 .setSourceRailway((String) flightData.get("SourceRailway"))
                 .setDestRailway((String) flightData.get("DestRailway"))
-                .setTag2((String) flightData.get("Tag2"));
+                .setTag2((String) flightData.get("Tag2"))
+                .setTag22((String) flightData.get("Tag22"));
     }
 }
