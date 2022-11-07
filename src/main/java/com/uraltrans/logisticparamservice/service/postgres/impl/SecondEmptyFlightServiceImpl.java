@@ -169,8 +169,12 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         LocalDate current = startDate;
         while(!current.isEqual(endDate)){
 
+            if (carNumber.equals(52663192)) {
+                System.out.println("+");
+            }
+
             Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
-                    startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
+                    current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
             if (repairInfo != null &&
                     (((byte[]) repairInfo.get("NonworkingPark"))[0] == 1 || ((byte[]) repairInfo.get("RequiresRepair"))[0] == 1)){
                 return false;

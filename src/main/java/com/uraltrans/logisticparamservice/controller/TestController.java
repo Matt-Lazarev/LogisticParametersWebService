@@ -64,8 +64,8 @@ public class TestController {
     }
 
     @GetMapping("/1")
-    public boolean getAll1() {
-        return registerSecondEmptyFlightRepository.containsFlightsByCodes("760008", "769407");
+    public Map<?, ?> getAll1() {
+        return carRepairInfoRepository.getCarRepairByDate("4022-09-21", 52663192);
     }
 
     @GetMapping("/address")
