@@ -176,6 +176,13 @@
         </div>
 
         <div class="row">
+            <div class="col-md-6 ">
+                <label> Количество дней для проверки нахождения вагона в ремонте: </label>
+                <input type="text" class="form-control" th:field="*{repairDaysCheck}">
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col box-footer mb-1 mt-3">
                 <button id="load_button" onclick="alerts()"
                         type="submit" class="btn btn-primary" name="action" value="save">Загрузить данные </button>

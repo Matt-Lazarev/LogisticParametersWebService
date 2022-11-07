@@ -23,7 +23,7 @@ import static java.nio.file.StandardOpenOption.*;
 public class FileUtils {
     public static final String DELIMITER = "   ";
     private static final Path DEFAULT_LOG_FILE_PATH = Paths.get("logging/action_logs.log");
-    private static final int MAX_LOGS_AMOUNT = 20;
+    private static final int MAX_LOGS_AMOUNT = 50;
 
     private static final Path DEFAULT_DISCARDED_FLIGHTS_FILE_PATH = Paths.get("logging/discarded_flights.log");
     private static final Path DEFAULT_TARIFF_RATE_ERRORS_FILE_PATH = Paths.get("logging/tariff_rate_errors.log");

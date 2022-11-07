@@ -17,7 +17,7 @@ public class ScheduleFlightsService {
     private final FlightTimeDistanceService flightTimeDistanceService;
     private final LoadParameterService loadParameterService;
 
-    public void saveDataWithDelay() {
+    public void loadDataWithDelay() {
         LoadParameters params = loadParameterService.getLoadParameters();
         flightService.saveAllFlights(params);
         flightIdleService.saveAll(params);

@@ -1,6 +1,7 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -156,15 +158,26 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     }
 
     private boolean notInRepair(Integer carNumber, Timestamp date){
+        Integer repairDaysCheck = loadParameterService.getLoadParameters().getRepairDaysCheck();
         if(date == null){
             return false;
         }
-        Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
-                Mapper.to1cDate(date).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
-        return repairInfo == null || (
-                ((byte[]) repairInfo.get("NonworkingPark"))[0] == 0 &&
-                ((byte[]) repairInfo.get("RequiresRepair"))[0] == 0
-        );
+        LocalDate initialDate = Mapper.to1cDate(date);
+        LocalDate startDate = initialDate.minusDays(repairDaysCheck);
+        LocalDate endDate = initialDate.plusDays(repairDaysCheck);
+
+        LocalDate current = startDate;
+        while(!current.isEqual(endDate)){
+
+            Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
+                    startDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
+            if (repairInfo != null &&
+                    (((byte[]) repairInfo.get("NonworkingPark"))[0] == 1 || ((byte[]) repairInfo.get("RequiresRepair"))[0] == 1)){
+                return false;
+            }
+            current = current.plusDays(1);
+        }
+        return true;
     }
 
     private boolean notInFilterTags(String[] tagValues, String flightTag){
