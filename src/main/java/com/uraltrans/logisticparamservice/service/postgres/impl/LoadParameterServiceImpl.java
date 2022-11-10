@@ -44,6 +44,7 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
         loadParameters.setFeature2(newParameters.getFeature2());
         loadParameters.setFeature22(newParameters.getFeature22());
         loadParameters.setRepairDaysCheck(newParameters.getRepairDaysCheck());
+        loadParameters.setRateTariffState(newParameters.getRateTariffState());
         loadParametersRepository.save(loadParameters);
     }
 

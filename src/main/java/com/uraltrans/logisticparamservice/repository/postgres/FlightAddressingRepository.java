@@ -24,12 +24,12 @@ public interface FlightAddressingRepository extends JpaRepository<FlightAddressi
 
     @Modifying
     @Transactional
-    @Query("update FlightAddressing fa set fa.tariff = :tariff where fa.id = :id")
+    @Query("update FlightAddressing fa set fa.tariff = :tariff where fa.tariffId = :id")
     void updateTariffById(Long id, BigDecimal tariff);
 
     @Modifying
     @Transactional
-    @Query("update FlightAddressing fa set fa.rate = :rate where fa.id = :id")
+    @Query("update FlightAddressing fa set fa.rate = :rate where fa.rateId = :id")
     void updateRateById(Long id, BigDecimal rate);
 
     @Modifying

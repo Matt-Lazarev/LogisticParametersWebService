@@ -26,6 +26,7 @@ public class ScheduledTasksLogging {
         messages.put("loadDataWithDelay", "Сохранение рейсов");
         messages.put("loadFlightProfits", "Сохранение доходности");
         messages.put("loadFlightAddressings", "Сохранение адресации");
+        messages.put("loadGeocodes", "Получение координат станций");
         messages.put("updateCoordinates", "Обновление координат станций");
         messages.put("loadSecondEmptyFlights", "Сохранение вторых порожних рейсов");
     }

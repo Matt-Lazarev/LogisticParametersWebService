@@ -46,6 +46,13 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/map}">Map</a>
                 </li>
+                <li>
+                    <a class="nav-link active" aria-current="page">Расчет ставки и тарифа
+                        <label class="switch">
+                            <input type="checkbox" name="rt_checkbox" th:checked="*{ratetariffstate}" onclick="checkRateTariff()">
+                        </label>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -314,6 +321,12 @@
 
         let element = document.getElementById('nav_bar');
         element.after(div);
+    }
+
+    function checkRateTariff(){
+        let request = new XMLHttpRequest();
+        request.open('GET', 'http://localhost:8080/ratetariff/change', false);
+        request.send(null);
     }
 </script>
 </html>

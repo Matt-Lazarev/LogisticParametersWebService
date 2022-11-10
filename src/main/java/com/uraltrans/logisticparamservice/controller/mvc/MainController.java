@@ -27,6 +27,7 @@ public class MainController {
         model.addAttribute("dto", parameters);
         model.addAttribute("url", FileUtils.getBackButtonUrl());
         model.addAttribute("logs", FileUtils.readAllLogs());
+        model.addAttribute("ratetariffstate", parameters.getRateTariffState());
         return "html/main";
     }
 }

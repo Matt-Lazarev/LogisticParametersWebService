@@ -70,13 +70,13 @@ public class TestController {
 
     @GetMapping("/address")
     public List<?> saveAllAddresses() {
-        stationHandbookService.saveAll();
-        clientOrderService.saveAllClientOrders();
-        service.saveAllActualFlights();
-        flightRequirementService.saveAllFlightRequirements();
-        service.saveAllPotentialFlights();
+//        stationHandbookService.saveAll();
+//        clientOrderService.saveAllClientOrders();
+//        service.saveAllActualFlights();
+//        flightRequirementService.saveAllFlightRequirements();
+//        service.saveAllPotentialFlights();
         flightAddressingService.saveAll();
-        return service.getAllActualFlights();
+        return flightAddressingService.getAll();
     }
 
 

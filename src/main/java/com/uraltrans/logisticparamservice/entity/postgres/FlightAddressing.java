@@ -18,6 +18,12 @@ public class FlightAddressing {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "tariff_id")
+    private Integer tariffId;
+
+    @Column(name = "rate_id")
+    private Integer rateId;
+
     @Column(name = "car_number")
     private String carNumber;
 

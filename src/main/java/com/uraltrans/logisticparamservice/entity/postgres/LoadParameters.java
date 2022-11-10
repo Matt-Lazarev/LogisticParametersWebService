@@ -34,6 +34,7 @@ public class LoadParameters {
     private String feature2;
     private String feature22;
     private Integer repairDaysCheck;
+    private Boolean rateTariffState;
 
     public LoadParameters(Integer daysToRetrieveData, String nextDataLoadTime,
                           Integer maxLoadIdleDays, Integer maxUnloadIdleDays,
@@ -61,5 +62,6 @@ public class LoadParameters {
         this.feature2 = feature2;
         this.feature22 = feature22;
         this.repairDaysCheck = repairDaysCheck;
+        this.rateTariffState = false;
     }
 }

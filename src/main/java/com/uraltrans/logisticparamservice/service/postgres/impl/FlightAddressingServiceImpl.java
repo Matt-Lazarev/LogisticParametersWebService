@@ -20,6 +20,7 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
@@ -27,14 +28,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FlightAddressingServiceImpl implements FlightAddressingService {
@@ -48,6 +46,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     private final CargoService cargoService;
     private final ClientOrderService clientOrderService;
     private final ActualFlightService actualFlightService;
+    private final LoadParameterService loadParameterService;
     private final RestTemplate restTemplate;
 
     @Override
@@ -64,10 +63,15 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         loadStationsParams(addressings);
         loadUtRate(addressings);
         loadCarInfo(addressings);
+        setTariffId(addressings);
+        setRateId(addressings);
 
-        flightAddressingRepository.saveAllAndFlush(addressings);
-        sendTariffRequest(addressings);
-        sendRateRequest(addressings);
+        flightAddressingRepository.saveAll(addressings);
+
+        if(loadParameterService.getLoadParameters().getRateTariffState()){
+            sendTariffRequest(groupForTariffRequest(addressings));
+            sendRateRequest(groupForRateRequest(addressings));
+        }
     }
 
     @Override
@@ -79,7 +83,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
             if(t.equals(BigDecimal.valueOf(0))){
                 String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                String error = "[" + time + "]" + flightAddressingRepository.findById(entityId).get() + " -> (тариф не расчитан)";
+                String error = "[" + time + "]" + flightAddressingRepository.findAllById(Collections.singletonList(entityId)).get(0) + " -> (тариф не расчитан)";
                 FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
             }
         }
@@ -94,7 +98,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
             if (r.equals(BigDecimal.valueOf(0))) {
                 String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                String error = "[" + time + "]" + flightAddressingRepository.findById(entityId).get() + " -> (ставка не расчитана)";
+                String error = "[" + time + "]" + flightAddressingRepository.findAllById(Collections.singletonList(entityId)).get(0) + " -> (ставка не расчитана)";
                 FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
             }
         }
@@ -172,12 +176,14 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     private void sendTariffRequest(List<FlightAddressing> addressings) {
         List<TariffRequest> request = flightAddressingMapper.mapToTariffRequests(addressings);
+        System.out.println(request.size());
         RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, request, RateTariffConfirmResponse[].class);
         handleRateTariffConfirmResponse(responses, true);
     }
 
     private void sendRateRequest(List<FlightAddressing> addressings) {
         List<RateRequest> request = flightAddressingMapper.mapToRateRequests(addressings);
+        System.out.println(request.size());
         RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, request, RateTariffConfirmResponse[].class);
         handleRateTariffConfirmResponse(responses, false);
     }
@@ -187,11 +193,11 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Arrays.stream(responses)
                 .forEach(response -> {
                     Long id = Long.parseLong(response.getId());
-                    Optional<FlightAddressing> entity = flightAddressingRepository.findById(id);
-                    if(entity.isPresent() && response.getSuccess().equalsIgnoreCase("false")){
+                    List<FlightAddressing> list = flightAddressingRepository.findAllById(Collections.singletonList(id));
+                    if(list.size() > 0 && response.getSuccess().equalsIgnoreCase("false")){
                         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                         String message = isTariff ?  "тарифа" : "ставки";
-                        errors.add("[" + time + "]" + entity.get() + " -> (запрос на расчет " + message + " не принят, причина: '" + response.getErrorText() +")'");
+                        errors.add("[" + time + "]" + list.get(0) + " -> (запрос на расчет " + message + " не принят, причина: '" + response.getErrorText() +")'");
                     }
                 });
         FileUtils.writeTariffRateErrors(errors, true);
@@ -345,5 +351,61 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                         addressing.setRefurbished(false);
                     }
                 });
+    }
+
+    private void setTariffId(List<FlightAddressing> addressings) {
+        Map<String, List<FlightAddressing>> uniqueAddressings = addressings
+                .stream()
+                .collect(Collectors.groupingBy(
+                        a -> a.getCurrentFlightDestStationCode() + a.getSourceStationCode() + a.getCargoCode() + a.getVolume(),
+                        Collectors.toList()
+                ));
+
+        AtomicInteger tariffCount = new AtomicInteger(1);
+        uniqueAddressings.forEach((k, v) -> {
+            for(FlightAddressing addressing : v){
+                addressing.setTariffId(tariffCount.get());
+            }
+            tariffCount.incrementAndGet();
+        });
+    }
+
+    private void setRateId(List<FlightAddressing> addressings) {
+        Map<String, List<FlightAddressing>> uniqueAddressings = addressings
+                .stream()
+                .collect(Collectors.groupingBy(
+                        a -> a.getSourceStationCode() + a.getDestinationStationCode() + a.getClientOrderCargoCode() + a.getVolume(),
+                        Collectors.toList()
+                ));
+
+        AtomicInteger rateCount = new AtomicInteger(1);
+        uniqueAddressings.forEach((k, v) -> {
+            for(FlightAddressing addressing : v){
+                addressing.setRateId(rateCount.get());
+            }
+            rateCount.incrementAndGet();
+        });
+    }
+
+    private List<FlightAddressing> groupForTariffRequest(List<FlightAddressing> addressings){
+        return new ArrayList<>(addressings
+                .stream()
+                .collect(Collectors.toMap(
+                        a -> a.getCurrentFlightDestStationCode() + a.getSourceStationCode() + a.getCargoCode() + a.getVolume(),
+                        a -> a,
+                        (a1, a2) -> a1
+                ))
+                .values());
+    }
+
+    private List<FlightAddressing> groupForRateRequest(List<FlightAddressing> addressings){
+        return new ArrayList<>(addressings
+                .stream()
+                .collect(Collectors.toMap(
+                        a -> a.getSourceStationCode() + a.getDestinationStationCode() + a.getClientOrderCargoCode() + a.getVolume(),
+                        a -> a,
+                        (a1, a2) -> a1
+                ))
+                .values());
     }
 }

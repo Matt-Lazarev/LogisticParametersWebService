@@ -49,6 +49,10 @@ public class FlightAddressingMapper {
         return flightAddressings
                 .stream()
                 .map(this::toTariffRequest)
+                .filter(t -> t.getDestinationStation() != null)
+                .filter(t -> t.getDepartureStation() != null)
+                .filter(t -> t.getCargo() != null)
+                .filter(t -> t.getVolune() != null)
                 .collect(Collectors.toList());
     }
 
@@ -56,6 +60,10 @@ public class FlightAddressingMapper {
         return flightAddressings
                 .stream()
                 .map(this::toRateRequest)
+                .filter(t -> t.getDestinationStation() != null)
+                .filter(t -> t.getDepartureStation() != null)
+                .filter(t -> t.getCargo() != null)
+                .filter(t -> t.getVolune() != null)
                 .collect(Collectors.toList());
     }
 

@@ -1,10 +1,7 @@
 package com.uraltrans.logisticparamservice.service.schedule;
 
 import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +12,7 @@ public class ScheduleFlightsService {
     private final FlightService flightService;
     private final FlightIdleService flightIdleService;
     private final FlightTimeDistanceService flightTimeDistanceService;
+    private final SecondEmptyFlightService secondEmptyFlightService;
     private final LoadParameterService loadParameterService;
 
     public void loadDataWithDelay() {
@@ -22,5 +20,6 @@ public class ScheduleFlightsService {
         flightService.saveAllFlights(params);
         flightIdleService.saveAll(params);
         flightTimeDistanceService.saveAll(params);
+        secondEmptyFlightService.saveAllSecondEmptyFlights();
     }
 }
