@@ -29,10 +29,11 @@ public class ActualFlightMapper {
                 .collect(Collectors.toList());
     }
 
-    public List<DislocationResponse> mapToResponses(List<ActualFlight> actualFlights){
+    public List<DislocationResponse> mapToResponses(List<ActualFlight> actualFlights, String requestId){
         return actualFlights
                 .stream()
                 .map(this::mapToResponse)
+                .peek(f -> f.setId(requestId))
                 .collect(Collectors.toList());
     }
 

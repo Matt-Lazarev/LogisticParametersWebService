@@ -26,26 +26,11 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
     @Override
     public void updateLoadParameters(LoadParameters newParameters) {
         LoadParameters loadParameters = loadParametersRepository.findAll().get(0);
-        loadParameters.setDaysToRetrieveData(newParameters.getDaysToRetrieveData());
-        loadParameters.setNextDataLoadTime(newParameters.getNextDataLoadTime());
-        loadParameters.setMaxLoadIdleDays(newParameters.getMaxLoadIdleDays());
-        loadParameters.setMaxUnloadIdleDays(newParameters.getMaxUnloadIdleDays());
-        loadParameters.setMinLoadIdleDays(newParameters.getMinLoadIdleDays());
-        loadParameters.setMinUnloadIdleDays(newParameters.getMinUnloadIdleDays());
-        loadParameters.setMaxTravelTime(newParameters.getMaxTravelTime());
-        loadParameters.setMinTravelTime(newParameters.getMinTravelTime());
-        loadParameters.setFlightProfitDaysToRetrieveData(newParameters.getFlightProfitDaysToRetrieveData());
-        loadParameters.setStatus(newParameters.getStatus());
-        loadParameters.setCarType(newParameters.getCarType());
-        loadParameters.setManagers(newParameters.getManagers());
-        loadParameters.setApikeyGeocoder(newParameters.getApikeyGeocoder());
-        loadParameters.setApikeyStationList(newParameters.getApikeyStationList());
-        loadParameters.setRequestsAmountInDay(newParameters.getRequestsAmountInDay());
-        loadParameters.setFeature2(newParameters.getFeature2());
-        loadParameters.setFeature22(newParameters.getFeature22());
-        loadParameters.setRepairDaysCheck(newParameters.getRepairDaysCheck());
-        loadParameters.setRateTariffState(newParameters.getRateTariffState());
-        loadParametersRepository.save(loadParameters);
+        newParameters.setId(loadParameters.getId());
+        if(newParameters.getRateTariffState() == null){
+            newParameters.setRateTariffState(loadParameters.getRateTariffState());
+        }
+        loadParametersRepository.save(newParameters);
     }
 
     @Override
@@ -83,7 +68,7 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
                 60., 1.,
                 45, "Согласован",
                 "КР", "Мельниченко Д.В., Чаброва М.С., Зырина Н.А., Холмогорова Е.А., Мелешкина Ю.В., Афанасьева А.Л., Субботин В.В., Артеменко М.Н., Коркишко В.В., Варфоломеев В.., Панов С.Н.",
-                "791b94ee-cac3-44b3-896e-d31264886a32", "d2290efc-9926-474b-ba3e-854bb0b9c7e6", 950, "воин, аренда, вояк", "воин, аренда, вояк", 7);
+                "791b94ee-cac3-44b3-896e-d31264886a32", "d2290efc-9926-474b-ba3e-854bb0b9c7e6", 950, "воин, аренда, вояк", "воин, аренда, вояк", 7, "");
         loadParametersRepository.save(parameters);
         return parameters;
     }

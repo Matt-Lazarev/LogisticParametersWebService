@@ -1,10 +1,12 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.planfact.OrdersDto;
 import com.uraltrans.logisticparamservice.dto.planfact.PlanFactRequest;
 import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
+import com.uraltrans.logisticparamservice.exception.RepeatedRequestException;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRequirementRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightRequirementMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
@@ -12,14 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FlightRequirementServiceImpl implements FlightRequirementService {
+    private static final Map<String, List<PlanFactResponse>> PLANFACT_RESPONSES_CACHE = new HashMap<>();
+
     private final FlightRequirementRepository flightRequirementRepository;
     private final FlightRequirementMapper flightRequirementMapper;
 
@@ -57,23 +59,31 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
     @Override
     public List<PlanFactResponse> getAllFlightRequirementsByRequest(PlanFactRequest request) {
         if(request == null){
-            return flightRequirementMapper.mapToResponses(flightRequirementRepository.findAll());
+            return flightRequirementMapper.mapToResponses(flightRequirementRepository.findAll(), "null");
+        }
+
+        if(PLANFACT_RESPONSES_CACHE.containsKey(request.getId())){
+            throw new RepeatedRequestException("Повторный запрос [id=" + request.getId() + "]");
         }
 
         if(!request.getWagonType().equalsIgnoreCase("Крытый")){
             return Collections.emptyList();
         }
 
-        return flightRequirementMapper.mapToResponses(
+        List<PlanFactResponse> responses = flightRequirementMapper.mapToResponses(
                 flightRequirementRepository.findAll()
                         .stream()
                         .filter(f -> request.getDepartureStation().equals(f.getSourceStationCode()))
-                        .filter(f->{
+                        .filter(f -> {
                             BigDecimal volume = new BigDecimal(request.getVolume());
                             return volume.compareTo(f.getVolumeFrom()) >= 0 && volume.compareTo(f.getVolumeTo()) <= 0;
                         })
                         .filter(f -> request.getDestinationStation() == null || request.getDestinationStation().equals(f.getDestinationStationCode()))
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()),
+                request.getId());
+
+        PLANFACT_RESPONSES_CACHE.put(request.getId(), responses);
+        return responses;
     }
 
     private void filterFlightRequirements(List<FlightRequirement> flightRequirements) {

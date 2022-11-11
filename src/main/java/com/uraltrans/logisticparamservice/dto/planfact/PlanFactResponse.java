@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlanFactResponse {
+    private String id;
     private String success;
     private String errorText;
     private String departureStation;

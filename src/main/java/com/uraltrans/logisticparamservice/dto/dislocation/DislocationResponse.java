@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DislocationResponse {
+    private String id;
     private String success;
     private String errorText;
     private String departureStation;

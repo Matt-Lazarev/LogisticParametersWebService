@@ -10,6 +10,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DislocationRequest {
+    @NotNull(message = "Поле 'id' отсутствует")
+    private String id;
+
     @NotNull(message = "Поле 'destinationStationCurrentFlight' отсутствует")
     private String destinationStationCurrentFlight;
 

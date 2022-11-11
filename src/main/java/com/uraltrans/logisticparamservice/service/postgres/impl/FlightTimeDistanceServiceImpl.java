@@ -5,6 +5,7 @@ import com.uraltrans.logisticparamservice.dto.distancetime.FlightTimeDistanceRes
 import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightTimeDistance;
+import com.uraltrans.logisticparamservice.exception.RepeatedRequestException;
 import com.uraltrans.logisticparamservice.service.mapper.FlightTimeDistanceMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightTimeDistanceRepository;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService {
+    private static final Map<String, List<FlightTimeDistanceResponse>> RESPONSES_CACHE = new HashMap<>();
+
     private final FlightRepository flightRepository;
     private final FlightTimeDistanceRepository flightTimeDistanceRepository;
     private final FlightTimeDistanceMapper mapper;
@@ -37,6 +40,10 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
 
     @Override
     public List<FlightTimeDistanceResponse> getTimeDistanceResponses(List<FlightTimeDistanceRequest> requests) {
+        if(requests.size() > 0 && RESPONSES_CACHE.containsKey(requests.get(0).getId())){
+            throw new RepeatedRequestException("Повторный запрос [id=" + requests.get(0).getId() + "]");
+        }
+
         List<FlightTimeDistanceResponse> responses = new ArrayList<>();
         requests.forEach(req -> {
                     Optional<FlightTimeDistance> timeDistance = flightTimeDistanceRepository.findByStationCodesAndFlightType(
@@ -55,6 +62,11 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                     }
                     responses.add(resp);
                 });
+
+        if(requests.size() > 0){
+            RESPONSES_CACHE.put(requests.get(0).getId(), responses);
+        }
+
         return responses;
     }
 

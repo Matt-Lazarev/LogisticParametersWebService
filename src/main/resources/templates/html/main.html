@@ -77,6 +77,14 @@
 <div class="container border border-3 border-secondary rounded">
     <form id="params_form" th:action="@{/flights/save_data}" method="post" th:object="${dto}">
         <div class="row">
+            <div class="col align-self-center">
+                <label> Токен: </label>
+                <input type="text" class="form-control" th:field="*{token}">
+            </div>
+        </div>
+
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+        <div class="row">
             <div class="col-md-6 mb-1 mt-3">
                 <label> Введите глубину поиска: </label>
                 <input type="text" class="form-control" th:field="*{daysToRetrieveData}">
@@ -87,8 +95,8 @@
                        th:field="*{nextDataLoadTime}" placeholder="Время в формате HH:mm:ss (15:00:00)">
             </div>
         </div>
-        <hr style="height:3px;border-width:0;color:black;background-color:black">
 
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
         <div class="row">
             <div class="col align-self-center">
                 <label> Введите максимальное количество дней простоя при погрузке: </label>
@@ -201,8 +209,62 @@
     </form>
 </div>
 
+<h3>Управление загрузкой данных</h3>
+<div class="container border border-3 border-secondary rounded">
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/station/load}" method="post">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Выгрузить станции </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm">
+            <form th:action="@{/api/cargos}" method="post">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Выгрузить грузы </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/api/address}" method="post">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Выгрузить адресацию вагонов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm">
+            <form th:action="@{/api/profits}" method="post">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Выгрузить доходность рейсов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/api/secondemptyflights}" method="post">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Выгрузить вторые порожние рейсы </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
-<h3>Управление</h3>
+<h3>Управление просмотром данных</h3>
 <div class="container border border-3 border-secondary rounded">
     <div class="row">
         <div class="col-sm">
@@ -280,6 +342,37 @@
             </form>
         </div>
 
+        <div class="col-sm">
+            <form th:action="@{/api/profits}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть доходность рейсов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/api/address}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть адресацию вагонов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm">
+            <form th:action="@{/api/secondemptyflights}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть вторые порожние рейсы </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

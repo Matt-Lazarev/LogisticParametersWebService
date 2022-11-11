@@ -3,6 +3,7 @@ package com.uraltrans.logisticparamservice.controller.api;
 import com.uraltrans.logisticparamservice.dto.dislocation.DislocationRequest;
 import com.uraltrans.logisticparamservice.dto.dislocation.DislocationResponse;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.ActualFlightService;
+import com.uraltrans.logisticparamservice.utils.ControllerUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,7 @@ public class DislocationController {
     public ResponseEntity<?> getAllDislocationsByRequest(@Valid @RequestBody(required = false) DislocationRequest request){
         List<DislocationResponse> responses = actualFlightService.getAllByRequest(request);
         if(responses.size() == 0){
-            Map<String, String> errors = new LinkedHashMap<>();
-            errors.put("success", "false");
-            errors.put("errorText", "рейсы не найдены");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+            return ControllerUtils.getDefaultResponse("рейсы не найдены", request == null ? null : request.getId());
         }
 
         return ResponseEntity.ok(responses);

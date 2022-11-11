@@ -10,6 +10,6 @@ import javax.transaction.Transactional;
 public interface FlightIdleRepository extends JpaRepository<FlightIdle, String> {
     @Modifying
     @Transactional
-    @Query(value = "truncate table flight_idles restart identity", nativeQuery = true)
+    @Query(value = "truncate table flight_idles", nativeQuery = true)
     void truncate();
 }

@@ -35,6 +35,7 @@ public class LoadParameters {
     private String feature22;
     private Integer repairDaysCheck;
     private Boolean rateTariffState;
+    private String token;
 
     public LoadParameters(Integer daysToRetrieveData, String nextDataLoadTime,
                           Integer maxLoadIdleDays, Integer maxUnloadIdleDays,
@@ -43,7 +44,8 @@ public class LoadParameters {
                           Integer flightProfitDaysToRetrieveData, String status,
                           String carType, String managers, String apikeyGeocoder,
                           String apikeyStationList, Integer requestsAmountInDay,
-                          String feature2, String feature22, Integer repairDaysCheck) {
+                          String feature2, String feature22, Integer repairDaysCheck,
+                          String token) {
         this.daysToRetrieveData = daysToRetrieveData;
         this.nextDataLoadTime = nextDataLoadTime;
         this.maxLoadIdleDays = maxLoadIdleDays;
@@ -63,5 +65,6 @@ public class LoadParameters {
         this.feature22 = feature22;
         this.repairDaysCheck = repairDaysCheck;
         this.rateTariffState = false;
+        this.token = token;
     }
 }

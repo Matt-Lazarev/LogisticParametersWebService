@@ -21,10 +21,11 @@ public class FlightRequirementMapper {
                 .collect(Collectors.toList());
     }
 
-    public List<PlanFactResponse> mapToResponses(List<FlightRequirement> requirements){
+    public List<PlanFactResponse> mapToResponses(List<FlightRequirement> requirements, String requestId){
         return requirements
                 .stream()
                 .map(this::mapToPlanFactResponse)
+                .peek(f -> f.setId(requestId))
                 .collect(Collectors.toList());
     }
 

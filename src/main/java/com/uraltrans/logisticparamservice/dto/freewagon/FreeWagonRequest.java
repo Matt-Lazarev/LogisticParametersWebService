@@ -11,6 +11,9 @@ import javax.validation.constraints.NotNull;
 @Getter @Setter @Builder
 @AllArgsConstructor @NoArgsConstructor
 public class FreeWagonRequest {
+    @NotNull(message = "Поле 'id' отсутствует")
+    private String id;
+
     @NotNull(message = "Поле 'departureStation' отсутствует")
     private String departureStation;
 

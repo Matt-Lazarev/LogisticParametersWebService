@@ -19,14 +19,14 @@ import java.util.*;
 @RestControllerAdvice
 public class ApplicationExceptionHandler {
 
-    @ExceptionHandler(StationsNotFoundException.class)
-    protected List<StationResponse> handleStationsNotFoundException(StationsNotFoundException ex) {
+    @ExceptionHandler({StationsNotFoundException.class, RepeatedRequestException.class})
+    protected ResponseEntity<?> handle(RuntimeException ex) {
         log.error("error: {}\n {}", ex.getMessage(), ex);
-        return Collections.singletonList(StationResponse
-                .builder()
-                .success("false")
-                .errorText(ex.getMessage())
-                .build());
+        Map<String, String> errors = new LinkedHashMap<>();
+        errors.put("success", "false");
+        errors.put("errorText", ex.getMessage());
+        errors.put("code", Integer.toString(HttpStatus.BAD_REQUEST.value()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

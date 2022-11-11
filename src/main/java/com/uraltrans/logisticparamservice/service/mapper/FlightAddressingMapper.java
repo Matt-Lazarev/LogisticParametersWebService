@@ -106,10 +106,11 @@ public class FlightAddressingMapper {
                 .build();
     }
 
-    public List<AddressingResponse> mapToResponses(List<FlightAddressing> addressings) {
+    public List<AddressingResponse> mapToResponses(List<FlightAddressing> addressings, String requestId) {
         return addressings
                 .stream()
                 .map(this::toAddressingResponse)
+                .peek(f -> f.setId(requestId))
                 .collect(Collectors.toList());
     }
 
@@ -181,10 +182,11 @@ public class FlightAddressingMapper {
                 .build();
     }
 
-    public List<FreeWagonResponse> mapToFreeWagonResponses(List<FlightAddressing> addressings){
+    public List<FreeWagonResponse> mapToFreeWagonResponses(List<FlightAddressing> addressings, String requestId){
         return addressings
                 .stream()
                 .map(this::mapToFreeWagon)
+                .peek(f -> f.setId(requestId))
                 .collect(Collectors.toList());
     }
 

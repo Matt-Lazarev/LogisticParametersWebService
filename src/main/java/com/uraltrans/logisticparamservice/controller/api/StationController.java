@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.controller.api;
 
+import com.uraltrans.logisticparamservice.dto.common.LoadDataResponse;
 import com.uraltrans.logisticparamservice.dto.station.StationResponse;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -24,9 +24,8 @@ public class StationController {
     }
 
     @PostMapping("/station/load")
-    public void loadStations(){
+    public ResponseEntity<LoadDataResponse> loadStations(){
         stationHandbookService.saveAll();
+        return ResponseEntity.ok(LoadDataResponse.builder().success("true").message("Данные выгружены").build());
     }
-
-
 }

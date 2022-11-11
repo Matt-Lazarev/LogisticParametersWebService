@@ -5,6 +5,7 @@ import com.uraltrans.logisticparamservice.dto.dislocation.DislocationResponse;
 import com.uraltrans.logisticparamservice.dto.planfact.OrdersDto;
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
+import com.uraltrans.logisticparamservice.exception.RepeatedRequestException;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.ActualFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.PotentialFlightRepository;
@@ -23,6 +24,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ActualFlightServiceImpl implements ActualFlightService {
+    private static final Map<String, List<DislocationResponse>> DISLOCATION_RESPONSES_CACHE = new HashMap<>();
+
     private static final int SHIFT_1C_YEARS = 2000;
     private static final Set<String> FILTER_VALUES = new HashSet<>(
             Arrays.asList("вывод", "аренда", "тр", "др", "ремонт", "отстой", "вывод", "в тр", "промывка"));
@@ -77,7 +80,11 @@ public class ActualFlightServiceImpl implements ActualFlightService {
     @Override
     public List<DislocationResponse> getAllByRequest(DislocationRequest request) {
         if(request == null){
-            return actualFlightMapper.mapToResponses(actualFlightRepository.findAll());
+            return actualFlightMapper.mapToResponses(actualFlightRepository.findAll(), null);
+        }
+
+        if(DISLOCATION_RESPONSES_CACHE.containsKey(request.getId())){
+            throw new RepeatedRequestException("Повторный запрос [id=" + request.getId() + "]");
         }
 
         if(!request.getWagonType().equalsIgnoreCase("Крытый")){
@@ -86,7 +93,7 @@ public class ActualFlightServiceImpl implements ActualFlightService {
 
         String region = stationHandbookService.getRegionByCode6(request.getDestinationStationCurrentFlight());
 
-        return actualFlightMapper.mapToResponses(
+        List<DislocationResponse> responses = actualFlightMapper.mapToResponses(
                 actualFlightRepository.findAll()
                         .stream()
                         .filter(f -> {
@@ -94,7 +101,12 @@ public class ActualFlightServiceImpl implements ActualFlightService {
                             return region != null && region.equalsIgnoreCase(flightRegion);
                         })
                         .filter(f -> f.getVolume() != null && f.getVolume().compareTo(new BigDecimal(request.getVolume())) == 0)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()),
+                request.getId());
+
+        DISLOCATION_RESPONSES_CACHE.put(request.getId(), responses);
+
+        return responses;
     }
 
     private void prepareNextActualFlightsSave(){

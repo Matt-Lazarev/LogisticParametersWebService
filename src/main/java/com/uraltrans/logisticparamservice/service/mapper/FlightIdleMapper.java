@@ -6,6 +6,9 @@ import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightIdle;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -15,15 +18,16 @@ import java.util.stream.Stream;
 @Service
 public class FlightIdleMapper {
     public List<FlightIdleDto> mapToListDto(List<FlightIdle> idles){
+        String responseTimestamp = String.valueOf(ZonedDateTime.now(ZoneId.of("Europe/Moscow")).toInstant().toEpochMilli());
         return idles
                 .stream()
-                .map(this::mapToDto)
+                .map(idle -> mapToDto(idle, responseTimestamp))
                 .collect(Collectors.toList());
     }
 
-    private FlightIdleDto mapToDto(FlightIdle idle) {
+    private FlightIdleDto mapToDto(FlightIdle idle, String responseTimestamp) {
         FlightIdleDto dto = new FlightIdleDto();
-        dto.setId(Long.toString(idle.getId()));
+        dto.setId(responseTimestamp);
         dto.setDepartureStation(idle.getDepartureStation());
         dto.setDepartureStationCode(idle.getDepartureStationCode());
         dto.setCargo(idle.getCargo());

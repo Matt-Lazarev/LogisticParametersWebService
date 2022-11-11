@@ -50,9 +50,9 @@ public class SchedulingConfig implements SchedulingConfigurer {
         }
 
         registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 5);
-        registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 10);
+        registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 15);
         registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 20);
-        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 120);
+        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 100);
     }
 
     private void registerTask(ScheduledTaskRegistrar taskRegistrar, Runnable task, int additionalTime){

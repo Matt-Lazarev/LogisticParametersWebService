@@ -14,6 +14,9 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressingRequest {
+    @NotNull(message = "Поле 'id' отсутствует")
+    private String id;
+
     @NotNull(message = "Поле 'departureStation' отсутствует")
     private String departureStation;
 

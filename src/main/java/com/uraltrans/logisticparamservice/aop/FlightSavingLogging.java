@@ -64,48 +64,58 @@ public class FlightSavingLogging {
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.FlightRestController.getAllFlights())")
     public Object getAllFlightsMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Object methodResult;
-        try {
-            methodResult = proceedingJoinPoint.proceed();
-        }
-        catch (Throwable e) {
-            logFlightDataGet(false, "Получение сырых данных");
-            throw e;
-        }
-        logFlightDataGet(true, "Получение сырых данных");
-        return methodResult;
+        String message = "Получение сырых данных";
+        return handleReturn(proceedingJoinPoint, message);
     }
 
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.FlightIdleController.getAllCarLoadUnloadIdles())")
     public Object getAllCarLoadIdlesMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Object methodResult;
-        try {
-            methodResult = proceedingJoinPoint.proceed();
-        }
-        catch (Throwable e) {
-            logFlightDataGet(false, "Получение сгруппированных данных о выгрузках и погрузках");
-            throw e;
-        }
-        logFlightDataGet(true, "Получение сгруппированных данных о выгрузках и погрузках");
-        return methodResult;
+        String message = "Получение сгруппированных данных о выгрузках и погрузках";
+        return handleReturn(proceedingJoinPoint, message);
     }
 
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.FlightTimeDistanceController.getAllTimeDistances())")
     public Object getAllTimeDistancesMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        Object methodResult;
-        try {
-            methodResult = proceedingJoinPoint.proceed();
-        }
-        catch (Throwable e) {
-            logFlightDataGet(false, "Получение сгруппированных данных о дистанции и времени перевозки");
-            throw e;
-        }
-        logFlightDataGet(true, "Получение сгруппированных данных о дистанции и времени перевозки");
-        return methodResult;
+        String message = "Получение сгруппированных данных о дистанции и времени перевозки";
+        return handleReturn(proceedingJoinPoint, message);
     }
 
+    @Around("execution(* com.uraltrans.logisticparamservice.controller.api.FlightProfitController.*())")
+    public Object logFlightProfitController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+                ? "Получение данных о доходности рейсов" : "Сохранение доходности рейсов";
+        return handleReturn(proceedingJoinPoint, message);
+    }
+
+    @Around("execution(* com.uraltrans.logisticparamservice.controller.api.StationController.*())")
+    public Object logStationController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+                ? "Получение данных о станциях" : "Сохранение справочника станций";
+       return handleReturn(proceedingJoinPoint, message);
+    }
+
+    @Around("execution(* com.uraltrans.logisticparamservice.controller.api.CargoController.*())")
+    public Object logCargoController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+                ? "Получение данных о грузах" : "Сохранение грузов";
+        return handleReturn(proceedingJoinPoint, message);
+    }
+
+    @Around("execution(* com.uraltrans.logisticparamservice.controller.api.FlightAddressingController.*())")
+    public Object logFlightAddressingController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = proceedingJoinPoint.getSignature().getName().contains("getAllFlightAddressings")
+                ? "Получение адресации вагонов" : "Сохранение адресации вагонов";
+        return handleReturn(proceedingJoinPoint, message);
+    }
+
+    @Around("execution(* com.uraltrans.logisticparamservice.controller.api.SecondEmptyFlightController.*())")
+    public Object logSecondEmptyFlightController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+                ? "Получение вторых порожних рейсов" : "Сохранение вторых порожних рейсов";
+        return handleReturn(proceedingJoinPoint, message);
+    }
 
     private void saveAndLogFlightLoad(JoinPoint joinPoint, boolean isSuccess) {
         Object[] args = joinPoint.getArgs();
@@ -149,5 +159,18 @@ public class FlightSavingLogging {
         message = message + FileUtils.DELIMITER + actionTime + FileUtils.DELIMITER + isSuccess;
         log.info("{}", message);
         FileUtils.writeActionLog(message);
+    }
+
+    private Object handleReturn(ProceedingJoinPoint proceedingJoinPoint, String message) throws Throwable {
+        Object methodResult;
+        try {
+            methodResult = proceedingJoinPoint.proceed();
+        }
+        catch (Throwable e) {
+            logFlightDataGet(false, message);
+            throw e;
+        }
+        logFlightDataGet(true, message);
+        return methodResult;
     }
 }
