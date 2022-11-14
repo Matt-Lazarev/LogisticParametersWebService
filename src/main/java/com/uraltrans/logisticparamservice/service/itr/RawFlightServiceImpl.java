@@ -3,7 +3,6 @@ package com.uraltrans.logisticparamservice.service.itr;
 import com.uraltrans.logisticparamservice.repository.itr.RawFlightRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

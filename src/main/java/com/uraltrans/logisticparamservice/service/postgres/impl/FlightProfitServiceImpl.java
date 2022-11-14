@@ -2,17 +2,20 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.currency.CurrencyDto;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightProfit;
+import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightProfitRepository;
+import com.uraltrans.logisticparamservice.repository.utcsrs.RawFlightProfitRepository;
 import com.uraltrans.logisticparamservice.service.currency.CbrCurrencyReader;
 import com.uraltrans.logisticparamservice.service.mapper.FlightProfitMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightProfitService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
-import com.uraltrans.logisticparamservice.service.utcsrs.RawFlightProfitService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
+import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,8 +23,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FlightProfitServiceImpl implements FlightProfitService {
-    private final RawFlightProfitService rawFlightProfitService;
+    private final LoadParameterService loadParameterService;
     private final FlightTimeDistanceService flightTimeDistanceService;
+    private final RawFlightProfitRepository rawFlightProfitRepository;
     private final FlightProfitRepository flightProfitRepository;
     private final FlightProfitMapper flightProfitMapper;
     private final CbrCurrencyReader cbrCurrencyReader;
@@ -34,7 +38,7 @@ public class FlightProfitServiceImpl implements FlightProfitService {
     @Override
     public void saveAll() {
         prepareNextSave();
-        List<FlightProfit> flightProfits = flightProfitMapper.mapToList(rawFlightProfitService.getAll());
+        List<FlightProfit> flightProfits = loadFlightProfits();
 
         calculateProfit(flightProfits);
         flightProfits = filterFlights(flightProfits);
@@ -45,6 +49,13 @@ public class FlightProfitServiceImpl implements FlightProfitService {
 
     private void prepareNextSave() {
         flightProfitRepository.truncate();
+    }
+
+    private List<FlightProfit> loadFlightProfits(){
+        LoadParameters params = loadParameterService.getLoadParameters();
+        Integer daysToRetrieve = params.getFlightProfitDaysToRetrieveData();
+        String fromDate = Mapper.to1cDate(LocalDate.now().minusDays(daysToRetrieve)).toString();
+        return flightProfitMapper.mapToList(rawFlightProfitRepository.getAllFlightProfits(fromDate));
     }
 
     private List<FlightProfit> filterFlights(List<FlightProfit> flightProfits) {

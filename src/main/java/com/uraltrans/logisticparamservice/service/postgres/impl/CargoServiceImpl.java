@@ -8,7 +8,6 @@ import com.uraltrans.logisticparamservice.service.mapper.CargoMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.CargoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;

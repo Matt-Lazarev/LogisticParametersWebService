@@ -8,7 +8,6 @@ import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRep
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.service.postgres.impl.SecondEmptyFlightServiceImpl;
-import com.uraltrans.logisticparamservice.service.utcsrs.RawStationHandbookService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,8 +51,6 @@ public class TestController {
     final RawDislocationRepository rawDislocationRepository;
 
     final SecondEmptyFlightServiceImpl secondEmptyFlightServiceImpl;
-
-    final RawStationHandbookService rawStationHandbookService;
 
     final RegisterSecondEmptyFlightRepository registerSecondEmptyFlightRepository;
 

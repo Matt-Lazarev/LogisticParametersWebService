@@ -9,10 +9,10 @@ import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.exception.StationsNotFoundException;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
+import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
 import com.uraltrans.logisticparamservice.service.mapper.StationHandbookMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.GeocodeService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
-import com.uraltrans.logisticparamservice.service.utcsrs.RawStationHandbookService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +32,7 @@ public class StationHandbookServiceImpl implements StationHandbookService {
 
     private final GeocodeService geocodeService;
     private final StationHandbookRepository stationHandbookRepository;
-    private final RawStationHandbookService rawStationHandbookService;
+    private final RawStationHandbookRepository rawStationHandbookRepository;
     private final LoadParameterService loadParameterService;
     private final StationHandbookMapper stationHandbookMapper;
 
@@ -39,7 +41,7 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     @Override
     public void saveAll() {
         prepareNextSave();
-        List<Map<String, Object>> rawData = rawStationHandbookService.getAll();
+        List<Map<String, Object>> rawData = rawStationHandbookRepository.getAllStations();
         List<StationHandbook> stationHandbook = stationHandbookMapper.mapRawStationHandbookData(rawData);
         removeDuplicates(stationHandbook);
         updateCoordinatesFromYandexStationList(stationHandbook);

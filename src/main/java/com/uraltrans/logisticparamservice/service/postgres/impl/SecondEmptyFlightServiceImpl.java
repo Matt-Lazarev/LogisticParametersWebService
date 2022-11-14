@@ -1,7 +1,6 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
-import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;

@@ -12,7 +12,6 @@ import com.uraltrans.logisticparamservice.utils.FileUtils;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.temporal.ChronoUnit;

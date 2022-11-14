@@ -6,7 +6,6 @@ import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 
-import java.util.Arrays;
 import java.util.List;
 
 public interface FlightRequirementService {

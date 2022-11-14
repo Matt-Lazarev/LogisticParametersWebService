@@ -1,7 +1,6 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
 import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
-import com.uraltrans.logisticparamservice.entity.postgres.FlightProfit;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import org.springframework.stereotype.Service;
