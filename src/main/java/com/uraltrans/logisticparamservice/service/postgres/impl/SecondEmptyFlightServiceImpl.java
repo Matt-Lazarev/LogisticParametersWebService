@@ -96,6 +96,11 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private List<SecondEmptyFlight> filterFlights(List<SecondEmptyFlight> flights){
         return flights
                 .stream()
+                .peek(f -> {
+                    if(f.getAID().equals(1457726)){
+                        System.out.println("1");
+                    }
+                })
                 .filter(SecondEmptyFlight::getIsNotFirstEmpty)
                 .filter(f -> "ПОР".equalsIgnoreCase(f.getLoaded()))
                 .filter(f -> f.getIdleDays() != null && f.getIdleDays().doubleValue() >= 0)
@@ -169,7 +174,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         while(!current.isEqual(endDate)){
             Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
                     current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
-            if (repairInfo != null &&
+            if (!repairInfo.isEmpty() &&
                     (((byte[]) repairInfo.get("NonworkingPark"))[0] == 1 || ((byte[]) repairInfo.get("RequiresRepair"))[0] == 1)){
                 return false;
             }

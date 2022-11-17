@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class CarRepairInfoRepositoryImpl implements CarRepairInfoRepository {
     @Override
     public Map<String, Object> getCarRepairByDate(String currentDate, Integer carNumber) {
         List<Map<String, Object>> result = getDataWithParams(currentDate, carNumber, SQL_CURRENT_CAR_REPAIR_INFO);
-        return result.size() != 0 ? result.get(0) : null;
+        return result.size() != 0 ? result.get(0) : Collections.emptyMap();
     }
 
     @Override

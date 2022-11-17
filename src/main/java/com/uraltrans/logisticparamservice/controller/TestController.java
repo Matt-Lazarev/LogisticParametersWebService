@@ -62,7 +62,7 @@ public class TestController {
 
     @GetMapping("/1")
     public Map<?, ?> getAll1() {
-        return carRepairInfoRepository.getCarRepairByDate("4022-09-21", 52663192);
+        return carRepairInfoRepository.getCarRepairByDate("4022-11-08", 28837029);
     }
 
     @GetMapping("/address")

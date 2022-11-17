@@ -26,11 +26,12 @@ public class ScheduledTasksLogging {
         messages.put("loadFlightAddressings", "Сохранение адресации");
         messages.put("loadGeocodes", "Получение координат станций");
         messages.put("updateCoordinates", "Обновление координат станций");
-        messages.put("loadSecondEmptyFlights", "Сохранение вторых порожних рейсов");
+        messages.put("saveAllSecondEmptyFlights", "Сохранение вторых порожних рейсов");
     }
 
 
-    @Pointcut("execution(* com.uraltrans.logisticparamservice.service.schedule..*.*(..))")
+    @Pointcut("execution(* com.uraltrans.logisticparamservice.service.schedule..*.*(..)) || " +
+            "execution(* com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService.saveAllSecondEmptyFlights())")
     public void allScheduledPackageMethods(){}
 
 

@@ -22,6 +22,8 @@ import com.uraltrans.logisticparamservice.utils.FileUtils;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,12 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -48,6 +45,9 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     private static final String TARIFF_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/emptyflight";
     private static final String RATE_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/rateflight";
+
+    public static final String TARIFF_CALLBACK_URL = "http://10.168.1.6:8080/calc/tariff";
+    public static final String RATE_CALLBACK_URL = "http://10.168.1.6:8080/calc/rate";
 
     private final FlightAddressingRepository flightAddressingRepository;
     private final CarRepairInfoRepository carRepairInfoRepository;
@@ -69,18 +69,25 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         prepareNextSave();
         List<PotentialFlight> potentialFlights = actualFlightService.getAllPotentialFlights();
         List<FlightAddressing> addressings = getAllFlightAddressings(potentialFlights);
+
         loadCargosAndDates(addressings);
         loadStationsParams(addressings);
         loadUtRate(addressings);
         loadCarInfo(addressings);
+
         setTariffId(addressings);
         setRateId(addressings);
 
         flightAddressingRepository.saveAll(addressings);
 
         if (loadParameterService.getLoadParameters().getRateTariffState()) {
-            sendTariffRequest(groupForTariffRequest(addressings));
-            sendRateRequest(groupForRateRequest(addressings));
+            String token = loadParameterService.getLoadParameters().getToken();
+
+            HttpHeaders tariffHeaders = getHeaders("tariff", UUID.randomUUID().toString(), token);
+            HttpHeaders rateHeaders = getHeaders("rate", UUID.randomUUID().toString(), token);
+
+            sendTariffRequest(groupForTariffRequest(addressings).stream().limit(3).collect(Collectors.toList()), tariffHeaders);
+            sendRateRequest(groupForRateRequest(addressings).stream().limit(3).collect(Collectors.toList()), rateHeaders);
         }
     }
 
@@ -203,18 +210,31 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 .collect(Collectors.toList());
     }
 
-    private void sendTariffRequest(List<FlightAddressing> addressings) {
+    private void sendTariffRequest(List<FlightAddressing> addressings, HttpHeaders headers) {
         List<TariffRequest> request = flightAddressingMapper.mapToTariffRequests(addressings);
-        System.out.println(request.size());
-        RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, request, RateTariffConfirmResponse[].class);
+        HttpEntity<List<TariffRequest>> entity = new HttpEntity<>(request, headers);
+        RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, RateTariffConfirmResponse[].class);
         handleRateTariffConfirmResponse(responses, true);
     }
 
-    private void sendRateRequest(List<FlightAddressing> addressings) {
+    private void sendRateRequest(List<FlightAddressing> addressings, HttpHeaders headers) {
         List<RateRequest> request = flightAddressingMapper.mapToRateRequests(addressings);
-        System.out.println(request.size());
-        RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, request, RateTariffConfirmResponse[].class);
+        HttpEntity<List<RateRequest>> entity = new HttpEntity<>(request, headers);
+        RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, entity, RateTariffConfirmResponse[].class);
         handleRateTariffConfirmResponse(responses, false);
+    }
+
+    private HttpHeaders getHeaders(String method, String uid, String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("uid", Collections.singletonList(uid));
+        headers.put("token", Collections.singletonList(token));
+        if(method.equalsIgnoreCase("tariff")){
+            headers.put("url", Collections.singletonList(TARIFF_CALLBACK_URL));
+        }
+        else {
+            headers.put("url", Collections.singletonList(RATE_CALLBACK_URL));
+        }
+        return headers;
     }
 
     private void handleRateTariffConfirmResponse(RateTariffConfirmResponse[] responses, boolean isTariff) {

@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.uraltrans.logisticparamservice.service.postgres.impl.FlightAddressingServiceImpl.RATE_CALLBACK_URL;
+import static com.uraltrans.logisticparamservice.service.postgres.impl.FlightAddressingServiceImpl.TARIFF_CALLBACK_URL;
+
 @Service
 public class FlightAddressingMapper {
-    private static final String TARIFF_CALLBACK_URL = "http://10.168.1.6:8080/calc/tariff";
-    private static final String RATE_CALLBACK_URL = "http://10.168.1.6:8080/calc/rate";
+
 
     public List<FlightAddressing> mapRawDataToFlightAddressingList(
             List<Map<String, Object>> data, PotentialFlight potentialFlight){
