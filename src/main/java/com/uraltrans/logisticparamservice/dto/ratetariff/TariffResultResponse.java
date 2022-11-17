@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.dto.ratetariff;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TariffResultResponse {
     private String id;
     private Integer distance;

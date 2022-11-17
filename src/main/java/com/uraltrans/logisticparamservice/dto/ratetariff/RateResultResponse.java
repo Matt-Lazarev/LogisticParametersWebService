@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.dto.ratetariff;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @ToString
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RateResultResponse {
     private String id;
     private Integer distance;
