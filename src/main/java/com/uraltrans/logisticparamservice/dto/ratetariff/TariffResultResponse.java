@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,9 +17,9 @@ import lombok.ToString;
 @ToString
 public class TariffResultResponse {
     private String id;
-    private String distance;
-    private String travelTime;
-    private String loadingUnloading;
-    private String tariffVat;
-    private String tariff;
+    private Integer distance;
+    private Integer travelTime;
+    private Integer loadingUnloading;
+    private Integer tariffVat;
+    private BigDecimal tariff;
 }

@@ -2,6 +2,8 @@ package com.uraltrans.logisticparamservice.dto.ratetariff;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,9 +12,9 @@ import lombok.*;
 @ToString
 public class RateResultResponse {
     private String id;
-    private String distance;
-    private String travelTime;
-    private String loadingUnloading;
-    private String rateVat;
-    private String rate;
+    private Integer distance;
+    private Integer travelTime;
+    private Integer loadingUnloading;
+    private Integer rateVat;
+    private BigDecimal rate;
 }

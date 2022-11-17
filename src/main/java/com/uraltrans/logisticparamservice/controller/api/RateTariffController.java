@@ -22,16 +22,16 @@ public class RateTariffController {
     private final FlightAddressingService flightAddressingService;
 
     @PostMapping(value = "/tariff", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
-    public void takeTariffResponse(@RequestBody String responses) {
-//       responses
-//               .forEach(resp -> flightAddressingService.updateTariff(resp.getId(), new BigDecimal(resp.getTariffVat())));
+    public void takeTariffResponse(@RequestBody List<TariffResultResponse> responses) {
+       responses
+               .forEach(resp -> flightAddressingService.updateTariff(resp.getId(), new BigDecimal(resp.getTariffVat())));
         log.info("responses tariff:\n {}", responses);
     }
 
     @PostMapping(value = "/rate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
-    public void takeRateResponse(@RequestBody String responses) {
-//        responses
-//                .forEach(resp -> flightAddressingService.updateRate(resp.getId(), new BigDecimal(resp.getRateVat())));
+    public void takeRateResponse(@RequestBody List<RateResultResponse> responses) {
+        responses
+                .forEach(resp -> flightAddressingService.updateRate(resp.getId(), new BigDecimal(resp.getRateVat())));
         log.info("responses rate:\n {}", responses);
     }
 }
