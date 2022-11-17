@@ -93,14 +93,16 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     @Override
     public void updateTariff(String id, BigDecimal tariff) {
-        Long entityId = Long.parseLong(id);
-        if (flightAddressingRepository.existsById(entityId)) {
-            BigDecimal t = tariff != null ? tariff : BigDecimal.valueOf(0);
-            flightAddressingRepository.updateTariffById(entityId, t);
+        Integer entityId = Integer.parseInt(id);
 
-            if (t.equals(BigDecimal.valueOf(0))) {
+        BigDecimal t = tariff != null ? tariff : BigDecimal.valueOf(0);
+        flightAddressingRepository.updateTariffById(entityId, t);
+
+        if (t.equals(BigDecimal.valueOf(0))) {
+            List<FlightAddressing> flights = flightAddressingRepository.findAllByTariffId(Collections.singletonList(entityId));
+            if(flights.size() > 0){
                 String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                String error = "[" + time + "]" + flightAddressingRepository.findAllById(Collections.singletonList(entityId)).get(0) + " -> (тариф не расчитан)";
+                String error = "[" + time + "]" + flights.get(0) + " -> (тариф не расчитан)";
                 FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
             }
         }
@@ -108,14 +110,16 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     @Override
     public void updateRate(String id, BigDecimal rate) {
-        Long entityId = Long.parseLong(id);
-        if (flightAddressingRepository.existsById(entityId)) {
-            BigDecimal r = rate != null ? rate : BigDecimal.valueOf(0);
-            flightAddressingRepository.updateRateById(entityId, r);
+        Integer entityId = Integer.parseInt(id);
 
-            if (r.equals(BigDecimal.valueOf(0))) {
+        BigDecimal t = rate != null ? rate : BigDecimal.valueOf(0);
+        flightAddressingRepository.updateTariffById(entityId, t);
+
+        if (t.equals(BigDecimal.valueOf(0))) {
+            List<FlightAddressing> flights = flightAddressingRepository.findAllByRateId(Collections.singletonList(entityId));
+            if(flights.size() > 0){
                 String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                String error = "[" + time + "]" + flightAddressingRepository.findAllById(Collections.singletonList(entityId)).get(0) + " -> (ставка не расчитана)";
+                String error = "[" + time + "]" + flights.get(0) + " -> (ставка не расчитана)";
                 FileUtils.writeTariffRateErrors(Collections.singletonList(error), true);
             }
         }
@@ -136,9 +140,9 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         }
 
         List<AddressingResponse> responses = flightAddressingMapper.mapToResponses(
-               filterFlightAddressingsByRequest(request.getDepartureStation(), request.getVolume(),
-                                                request.getCargoId(), request.getDestinationStation()),
-               request.getId());
+                filterFlightAddressingsByRequest(request.getDepartureStation(), request.getVolume(),
+                        request.getCargoId(), request.getDestinationStation()),
+                request.getId());
 
         ADDRESSING_RESPONSES_CACHE.put(request.getId(), responses);
         return responses;
@@ -171,16 +175,16 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                         .filter(f -> f.getFeature12() == null || f.getFeature12().isEmpty())
                         .filter(f -> f.getClientNextTask() == null || f.getClientNextTask().isEmpty())
                         .collect(Collectors.toList()),
-               request==null?"null":request.getId());
+                request == null ? "null" : request.getId());
 
-        if(request != null){
+        if (request != null) {
             FREEWAGON_RESPONSES_CACHE.put(request.getId(), freeWagonResponses);
         }
         return freeWagonResponses;
     }
 
     private List<FlightAddressing> filterFlightAddressingsByRequest(
-            String departureStation, String volume, String cargoId, String destinationStation){
+            String departureStation, String volume, String cargoId, String destinationStation) {
         return flightAddressingRepository.findAll()
                 .stream()
                 .filter(f -> departureStation.equals(f.getSourceStationCode()))
@@ -228,10 +232,9 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         HttpHeaders headers = new HttpHeaders();
         headers.put("uid", Collections.singletonList(uid));
         headers.put("token", Collections.singletonList(token));
-        if(method.equalsIgnoreCase("tariff")){
+        if (method.equalsIgnoreCase("tariff")) {
             headers.put("url", Collections.singletonList(TARIFF_CALLBACK_URL));
-        }
-        else {
+        } else {
             headers.put("url", Collections.singletonList(RATE_CALLBACK_URL));
         }
         return headers;

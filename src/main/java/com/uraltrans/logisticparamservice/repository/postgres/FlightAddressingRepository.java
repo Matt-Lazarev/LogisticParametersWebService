@@ -25,15 +25,21 @@ public interface FlightAddressingRepository extends JpaRepository<FlightAddressi
     @Modifying
     @Transactional
     @Query("update FlightAddressing fa set fa.tariff = :tariff where fa.tariffId = :id")
-    void updateTariffById(Long id, BigDecimal tariff);
+    void updateTariffById(Integer id, BigDecimal tariff);
 
     @Modifying
     @Transactional
     @Query("update FlightAddressing fa set fa.rate = :rate where fa.rateId = :id")
-    void updateRateById(Long id, BigDecimal rate);
+    void updateRateById(Integer id, BigDecimal rate);
 
     @Modifying
     @Transactional
     @Query(value = "truncate table flight_addressings restart identity", nativeQuery = true)
     void truncate();
+
+    @Query("select f from FlightAddressing f where f.tariffId in :ids")
+    List<FlightAddressing> findAllByTariffId(List<Integer> ids);
+
+    @Query("select f from FlightAddressing f where f.rateId in :ids")
+    List<FlightAddressing> findAllByRateId(List<Integer> ids);
 }
