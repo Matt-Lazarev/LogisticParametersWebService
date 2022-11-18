@@ -221,7 +221,6 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
         RateTariffConfirmResponse response = restTemplate.postForObject(TARIFF_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
         handleRateTariffConfirmResponse(response, true);
-        System.out.println(response);
     }
 
     private void sendRateRequest(List<FlightAddressing> addressings, Map<String, String> headers) {
@@ -231,7 +230,6 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
         RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
         handleRateTariffConfirmResponse(response, false);
-        System.out.println(response);
     }
 
     private Map<String, String>  getHeaders(String method, String uid, String token) {
