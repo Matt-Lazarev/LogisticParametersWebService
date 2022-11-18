@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -16,10 +17,8 @@ public class FlightTimeDistanceController {
     private final FlightTimeDistanceService flightTimeDistanceService;
 
     @PostMapping(value = "/result/flight_days", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FlightTimeDistanceResponse> getAllTimeDistancesByRequests(
-            @RequestHeader("uid") String uid,
-            @RequestBody List<FlightTimeDistanceRequest> requests){
-        return flightTimeDistanceService.getTimeDistanceResponses(requests, uid);
+    public List<FlightTimeDistanceResponse> getAllTimeDistancesByRequests(@Valid @RequestBody FlightTimeDistanceRequest request){
+        return flightTimeDistanceService.getTimeDistanceResponses(request);
     }
 
     @GetMapping("/result/flight_days")

@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface FlightTimeDistanceService {
 
     List<FlightTimeDistance> getAllTimeDistances();
-    List<FlightTimeDistanceResponse> getTimeDistanceResponses(List<FlightTimeDistanceRequest> requests, String uid);
+    List<FlightTimeDistanceResponse> getTimeDistanceResponses(FlightTimeDistanceRequest request);
     void saveAll(LoadParameters loadParameters);
     Optional<FlightTimeDistance> findByStationCodesAndFlightType(String departStation, String destStation, String flightType);
 }

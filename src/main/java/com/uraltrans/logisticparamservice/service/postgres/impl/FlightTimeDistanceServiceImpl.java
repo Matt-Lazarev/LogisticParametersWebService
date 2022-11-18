@@ -43,13 +43,14 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
     }
 
     @Override
-    public List<FlightTimeDistanceResponse> getTimeDistanceResponses(List<FlightTimeDistanceRequest> requests, String uid) {
-        if(uid != null && !uid.isEmpty() && RESPONSES_CACHE.containsKey(uid)){
-            throw new RepeatedRequestException("Повторный запрос [uid=" + uid + "]");
+    public List<FlightTimeDistanceResponse> getTimeDistanceResponses(FlightTimeDistanceRequest request) {
+        if(request.getUid() != null && !request.getUid().isEmpty() && RESPONSES_CACHE.containsKey(request.getUid())){
+            throw new RepeatedRequestException("Повторный запрос [uid=" + request.getUid() + "]");
         }
 
         List<FlightTimeDistanceResponse> responses = new ArrayList<>();
-        requests.forEach(req -> {
+        request.getDetails()
+                .forEach(req -> {
                     Optional<FlightTimeDistance> timeDistance = flightTimeDistanceRepository.findByStationCodesAndFlightType(
                             req.getDepartureStation(), req.getDestinationStation(), req.getTypeFlight());
                     FlightTimeDistanceResponse resp = new FlightTimeDistanceResponse();
@@ -67,7 +68,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                     responses.add(resp);
                 });
 
-        RESPONSES_CACHE.put(uid, responses);
+        RESPONSES_CACHE.put(request.getUid(), responses);
         return responses;
     }
 
