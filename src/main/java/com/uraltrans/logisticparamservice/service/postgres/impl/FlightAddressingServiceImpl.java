@@ -219,8 +219,11 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, List<TariffRequest>> namedRequest = Collections.singletonMap("details", request);
 
         HttpEntity<Map<String, List<TariffRequest>>> entity = new HttpEntity<>(namedRequest, headers);
-        RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, RateTariffConfirmResponse[].class);
-        handleRateTariffConfirmResponse(responses, true);
+        String responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, String.class);
+        System.out.println(responses);
+
+        //RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, RateTariffConfirmResponse[].class);
+        //handleRateTariffConfirmResponse(responses, true);
     }
 
     private void sendRateRequest(List<FlightAddressing> addressings, HttpHeaders headers) {
@@ -228,8 +231,11 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, List<RateRequest>> namedRequest = Collections.singletonMap("details", request);
 
         HttpEntity<Map<String, List<RateRequest>>>  entity = new HttpEntity<>(namedRequest, headers);
-        RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, entity, RateTariffConfirmResponse[].class);
-        handleRateTariffConfirmResponse(responses, false);
+        String responses = restTemplate.postForObject(RATE_CALC_URL, entity, String.class);
+        System.out.println(responses);
+
+        //RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, entity, RateTariffConfirmResponse[].class);
+        //handleRateTariffConfirmResponse(responses, false);
     }
 
     private HttpHeaders getHeaders(String method, String uid, String token) {
