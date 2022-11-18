@@ -113,7 +113,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Integer entityId = Integer.parseInt(id);
 
         BigDecimal t = rate != null ? rate : BigDecimal.valueOf(0);
-        flightAddressingRepository.updateTariffById(entityId, t);
+        flightAddressingRepository.updateRateById(entityId, t);
 
         if (t.equals(BigDecimal.valueOf(0))) {
             List<FlightAddressing> flights = flightAddressingRepository.findAllByRateId(Collections.singletonList(entityId));
