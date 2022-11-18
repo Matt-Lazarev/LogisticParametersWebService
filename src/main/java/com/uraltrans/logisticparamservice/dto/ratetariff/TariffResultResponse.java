@@ -9,19 +9,27 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
+@Getter @Setter @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TariffResultResponse {
-    private String id;
-    private Integer distance;
-    private Integer travelTime;
-    private Integer loadingUnloading;
-    private Integer tariffVat;
-    private BigDecimal tariff;
+    private String uid;
+    private List<Detail> details;
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter @Setter @ToString
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Detail {
+        private String id;
+        private Integer distance;
+        private Integer travelTime;
+        private Integer loadingUnloading;
+        private Integer tariffVat;
+        private BigDecimal tariff;
+    }
 }
