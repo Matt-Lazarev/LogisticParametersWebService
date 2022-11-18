@@ -17,5 +17,4 @@ public class RateRequest {
     private String volune;
     private String dateto;
     private String datefrom;
-    private String url;
 }

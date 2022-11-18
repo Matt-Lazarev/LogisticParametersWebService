@@ -11,13 +11,9 @@ import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.uraltrans.logisticparamservice.service.postgres.impl.FlightAddressingServiceImpl.RATE_CALLBACK_URL;
-import static com.uraltrans.logisticparamservice.service.postgres.impl.FlightAddressingServiceImpl.TARIFF_CALLBACK_URL;
 
 @Service
 public class FlightAddressingMapper {
@@ -90,7 +86,6 @@ public class FlightAddressingMapper {
                 .wagonType(flightAddressing.getWagonType())
                 .volune(flightAddressing.getVolume().toString())
                 .flightType("Порожний")
-                .url(TARIFF_CALLBACK_URL)
                 .build();
     }
 
@@ -104,7 +99,6 @@ public class FlightAddressingMapper {
                 .volune(flightAddressing.getVolume().toString())
                 .datefrom(flightAddressing.getDateFrom())
                 .dateto(flightAddressing.getDateTo())
-                .url(RATE_CALLBACK_URL)
                 .build();
     }
 

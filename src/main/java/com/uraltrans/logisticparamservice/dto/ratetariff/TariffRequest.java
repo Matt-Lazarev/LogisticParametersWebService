@@ -16,5 +16,4 @@ public class TariffRequest {
     private String wagonType;
     private String volune;
     private String flightType;
-    private String url;
 }
