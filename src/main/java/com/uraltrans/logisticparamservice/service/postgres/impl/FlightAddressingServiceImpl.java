@@ -216,14 +216,18 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
 
     private void sendTariffRequest(List<FlightAddressing> addressings, HttpHeaders headers) {
         List<TariffRequest> request = flightAddressingMapper.mapToTariffRequests(addressings);
-        HttpEntity<List<TariffRequest>> entity = new HttpEntity<>(request, headers);
+        Map<String, List<TariffRequest>> namedRequest = Collections.singletonMap("details", request);
+
+        HttpEntity<Map<String, List<TariffRequest>>> entity = new HttpEntity<>(namedRequest, headers);
         RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, RateTariffConfirmResponse[].class);
         handleRateTariffConfirmResponse(responses, true);
     }
 
     private void sendRateRequest(List<FlightAddressing> addressings, HttpHeaders headers) {
         List<RateRequest> request = flightAddressingMapper.mapToRateRequests(addressings);
-        HttpEntity<List<RateRequest>> entity = new HttpEntity<>(request, headers);
+        Map<String, List<RateRequest>> namedRequest = Collections.singletonMap("details", request);
+
+        HttpEntity<Map<String, List<RateRequest>>>  entity = new HttpEntity<>(namedRequest, headers);
         RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, entity, RateTariffConfirmResponse[].class);
         handleRateTariffConfirmResponse(responses, false);
     }
