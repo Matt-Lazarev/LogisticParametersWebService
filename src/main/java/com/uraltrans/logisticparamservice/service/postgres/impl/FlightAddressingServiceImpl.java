@@ -219,11 +219,9 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
-        Object responses = restTemplate.postForObject(TARIFF_CALC_URL, namedRequest, Object.class);
-        System.out.println(responses);
-
-        //RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, RateTariffConfirmResponse[].class);
-        //handleRateTariffConfirmResponse(responses, true);
+        RateTariffConfirmResponse response = restTemplate.postForObject(TARIFF_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
+        handleRateTariffConfirmResponse(response, true);
+        System.out.println(response);
     }
 
     private void sendRateRequest(List<FlightAddressing> addressings, Map<String, String> headers) {
@@ -231,11 +229,9 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
-        Object responses = restTemplate.postForObject(RATE_CALC_URL, namedRequest, Object.class);
-        System.out.println(responses);
-
-        //RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, entity, RateTariffConfirmResponse[].class);
-        //handleRateTariffConfirmResponse(responses, false);
+        RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
+        handleRateTariffConfirmResponse(response, false);
+        System.out.println(response);
     }
 
     private Map<String, String>  getHeaders(String method, String uid, String token) {
@@ -250,16 +246,19 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         return headers;
     }
 
-    private void handleRateTariffConfirmResponse(RateTariffConfirmResponse[] responses, boolean isTariff) {
+    private void handleRateTariffConfirmResponse(RateTariffConfirmResponse response, boolean isTariff) {
+        if(response == null){
+            return;
+        }
         List<String> errors = new ArrayList<>();
-        Arrays.stream(responses)
-                .forEach(response -> {
-                    Long id = Long.parseLong(response.getId());
+        response.getDetails()
+                .forEach(detail -> {
+                    Long id = Long.parseLong(detail.getId());
                     List<FlightAddressing> list = flightAddressingRepository.findAllById(Collections.singletonList(id));
-                    if (list.size() > 0 && response.getSuccess().equalsIgnoreCase("false")) {
+                    if (list.size() > 0 && detail.getSuccess().equalsIgnoreCase("false")) {
                         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                         String message = isTariff ? "тарифа" : "ставки";
-                        errors.add("[" + time + "]" + list.get(0) + " -> (запрос на расчет " + message + " не принят, причина: '" + response.getErrorText() + ")'");
+                        errors.add("[" + time + "]" + list.get(0) + " -> (запрос на расчет " + message + " не принят, причина: '" + detail.getErrorText() + ")'");
                     }
                 });
         FileUtils.writeTariffRateErrors(errors, true);
