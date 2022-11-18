@@ -79,7 +79,7 @@ public class FlightAddressingMapper {
 
     private TariffRequest toTariffRequest(FlightAddressing flightAddressing) {
         return TariffRequest.builder()
-                .id(Long.toString(flightAddressing.getId()))
+                .id(Long.toString(flightAddressing.getTariffId()))
                 .departureStation(flightAddressing.getCurrentFlightDestStationCode())
                 .destinationStation(flightAddressing.getSourceStationCode())
                 .cargo(flightAddressing.getCargoCode())
@@ -91,7 +91,7 @@ public class FlightAddressingMapper {
 
     private RateRequest toRateRequest(FlightAddressing flightAddressing){
         return RateRequest.builder()
-                .id(Long.toString(flightAddressing.getId()))
+                .id(Long.toString(flightAddressing.getRateId()))
                 .departureStation(flightAddressing.getSourceStationCode())
                 .destinationStation(flightAddressing.getDestinationStationCode())
                 .cargo(flightAddressing.getClientOrderCargoCode())
