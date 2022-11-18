@@ -219,8 +219,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, List<TariffRequest>> namedRequest = Collections.singletonMap("details", request);
 
         HttpEntity<Map<String, List<TariffRequest>>> entity = new HttpEntity<>(namedRequest, headers);
-        Object responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, Object.class);
-        System.out.println(responses);
+        //Object responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, Object.class);
+        System.out.println(entity);
 
         //RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, RateTariffConfirmResponse[].class);
         //handleRateTariffConfirmResponse(responses, true);
@@ -231,8 +231,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, List<RateRequest>> namedRequest = Collections.singletonMap("details", request);
 
         HttpEntity<Map<String, List<RateRequest>>>  entity = new HttpEntity<>(namedRequest, headers);
-        Object responses = restTemplate.postForObject(RATE_CALC_URL, entity, Object.class);
-        System.out.println(responses);
+        //Object responses = restTemplate.postForObject(RATE_CALC_URL, entity, Object.class);
+        System.out.println(entity);
 
         //RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, entity, RateTariffConfirmResponse[].class);
         //handleRateTariffConfirmResponse(responses, false);
