@@ -1,13 +1,16 @@
 package com.uraltrans.logisticparamservice.dto.ratetariff;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
 public class TariffRequest {
     private String id;
     private String departureStation;

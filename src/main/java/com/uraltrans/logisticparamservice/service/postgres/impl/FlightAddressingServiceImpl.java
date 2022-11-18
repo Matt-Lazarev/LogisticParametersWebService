@@ -83,11 +83,11 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         if (loadParameterService.getLoadParameters().getRateTariffState()) {
             String token = loadParameterService.getLoadParameters().getToken();
 
-            HttpHeaders tariffHeaders = getHeaders("tariff", UUID.randomUUID().toString(), token);
-            HttpHeaders rateHeaders = getHeaders("rate", UUID.randomUUID().toString(), token);
+            Map<String, String> tariffHeaders = getHeaders("tariff", UUID.randomUUID().toString(), token);
+            Map<String, String>  rateHeaders = getHeaders("rate", UUID.randomUUID().toString(), token);
 
-            sendTariffRequest(groupForTariffRequest(addressings).stream().limit(3).collect(Collectors.toList()), tariffHeaders);
-            sendRateRequest(groupForRateRequest(addressings).stream().limit(3).collect(Collectors.toList()), rateHeaders);
+            sendTariffRequest(groupForTariffRequest(addressings).stream().limit(2).collect(Collectors.toList()), tariffHeaders);
+            sendRateRequest(groupForRateRequest(addressings).stream().limit(2).collect(Collectors.toList()), rateHeaders);
         }
     }
 
@@ -214,38 +214,38 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 .collect(Collectors.toList());
     }
 
-    private void sendTariffRequest(List<FlightAddressing> addressings, HttpHeaders headers) {
+    private void sendTariffRequest(List<FlightAddressing> addressings, Map<String, String> headers) {
         List<TariffRequest> request = flightAddressingMapper.mapToTariffRequests(addressings);
-        Map<String, List<TariffRequest>> namedRequest = Collections.singletonMap("details", request);
+        Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
+        namedRequest.putAll(headers);
 
-        HttpEntity<Map<String, List<TariffRequest>>> entity = new HttpEntity<>(namedRequest, headers);
-        Object responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, Object.class);
+        Object responses = restTemplate.postForObject(TARIFF_CALC_URL, namedRequest, Object.class);
         System.out.println(responses);
 
         //RateTariffConfirmResponse[] responses = restTemplate.postForObject(TARIFF_CALC_URL, entity, RateTariffConfirmResponse[].class);
         //handleRateTariffConfirmResponse(responses, true);
     }
 
-    private void sendRateRequest(List<FlightAddressing> addressings, HttpHeaders headers) {
+    private void sendRateRequest(List<FlightAddressing> addressings, Map<String, String> headers) {
         List<RateRequest> request = flightAddressingMapper.mapToRateRequests(addressings);
-        Map<String, List<RateRequest>> namedRequest = Collections.singletonMap("details", request);
+        Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
+        namedRequest.putAll(headers);
 
-        HttpEntity<Map<String, List<RateRequest>>>  entity = new HttpEntity<>(namedRequest, headers);
-        Object responses = restTemplate.postForObject(RATE_CALC_URL, entity, Object.class);
+        Object responses = restTemplate.postForObject(RATE_CALC_URL, namedRequest, Object.class);
         System.out.println(responses);
 
         //RateTariffConfirmResponse[] responses = restTemplate.postForObject(RATE_CALC_URL, entity, RateTariffConfirmResponse[].class);
         //handleRateTariffConfirmResponse(responses, false);
     }
 
-    private HttpHeaders getHeaders(String method, String uid, String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.put("uid", Collections.singletonList(uid));
-        headers.put("token", Collections.singletonList(token));
+    private Map<String, String>  getHeaders(String method, String uid, String token) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("uid", uid);
+        headers.put("token", token);
         if (method.equalsIgnoreCase("tariff")) {
-            headers.put("url", Collections.singletonList(TARIFF_CALLBACK_URL));
+            headers.put("url", TARIFF_CALLBACK_URL);
         } else {
-            headers.put("url", Collections.singletonList(RATE_CALLBACK_URL));
+            headers.put("url", RATE_CALLBACK_URL);
         }
         return headers;
     }
