@@ -22,8 +22,6 @@ import com.uraltrans.logisticparamservice.utils.FileUtils;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -86,10 +84,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
             Map<String, String> tariffHeaders = getHeaders("tariff", UUID.randomUUID().toString(), token);
             Map<String, String>  rateHeaders = getHeaders("rate", UUID.randomUUID().toString(), token);
 
-            sendTariffRequest(groupForTariffRequest(addressings.stream()
-                    .peek(f -> f.setSourceStationCode("000000"))
-                    .limit(4).collect(Collectors.toList())), tariffHeaders);
-            //sendRateRequest(groupForRateRequest(addressings), rateHeaders);
+            sendTariffRequest(groupForTariffRequest(addressings), tariffHeaders);
+            sendRateRequest(groupForRateRequest(addressings), rateHeaders);
         }
     }
 
