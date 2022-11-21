@@ -97,7 +97,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         return flights
                 .stream()
                 .peek(f -> {
-                    if(f.getAID().equals(1457726)){
+                    if(f.getAID().equals(1443332)){
                         System.out.println("1");
                     }
                 })

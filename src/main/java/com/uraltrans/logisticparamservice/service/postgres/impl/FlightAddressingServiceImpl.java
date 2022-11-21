@@ -86,8 +86,10 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
             Map<String, String> tariffHeaders = getHeaders("tariff", UUID.randomUUID().toString(), token);
             Map<String, String>  rateHeaders = getHeaders("rate", UUID.randomUUID().toString(), token);
 
-            sendTariffRequest(groupForTariffRequest(addressings), tariffHeaders);
-            sendRateRequest(groupForRateRequest(addressings), rateHeaders);
+            sendTariffRequest(groupForTariffRequest(addressings.stream()
+                    .peek(f -> f.setSourceStationCode("000000"))
+                    .limit(4).collect(Collectors.toList())), tariffHeaders);
+            //sendRateRequest(groupForRateRequest(addressings), rateHeaders);
         }
     }
 
