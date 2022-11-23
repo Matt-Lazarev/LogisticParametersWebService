@@ -42,3 +42,7 @@ mvnw.*
 .mvn
 src/main/resources/application.yaml
 src/test
+
+### docker
+dockerfile
+docker-compose.yaml
