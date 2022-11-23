@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.intertrastcargo</groupId>
-    <artifactId>LogisticParametersWebService</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>log-param-service</artifactId>
+    <version>1.3</version>
     <name>LogisticParametersWebService</name>
     <description>LogisticParametersWebService</description>
     <properties>

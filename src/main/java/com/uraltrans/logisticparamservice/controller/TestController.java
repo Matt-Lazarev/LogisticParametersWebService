@@ -56,8 +56,8 @@ public class TestController {
 
     @GetMapping
     public List<?> getAll() {
-        secondEmptyFlightServiceImpl.saveAllSecondEmptyFlights();
-        return secondEmptyFlightServiceImpl.getAllSecondEmptyFlight();
+        clientOrderService.saveAllClientOrders();
+        return clientOrderService.getAllClientOrders();
     }
 
     @GetMapping("/1")

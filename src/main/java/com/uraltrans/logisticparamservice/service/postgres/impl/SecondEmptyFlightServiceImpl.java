@@ -96,11 +96,6 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private List<SecondEmptyFlight> filterFlights(List<SecondEmptyFlight> flights){
         return flights
                 .stream()
-                .peek(f -> {
-                    if(f.getAID().equals(1443332)){
-                        System.out.println("1");
-                    }
-                })
                 .filter(SecondEmptyFlight::getIsNotFirstEmpty)
                 .filter(f -> "ПОР".equalsIgnoreCase(f.getLoaded()))
                 .filter(f -> f.getIdleDays() != null && f.getIdleDays().doubleValue() >= 0)
