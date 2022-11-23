@@ -17,8 +17,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class FlightAddressingMapper {
-
-
     public List<FlightAddressing> mapRawDataToFlightAddressingList(
             List<Map<String, Object>> data, PotentialFlight potentialFlight){
         return data
