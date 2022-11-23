@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  app:
+    build: .
+    container_name: logparam-app
+    restart: always
+    ports:
+      - 8080:8080
+    volumes:
+      - /home/m.lazarev/workdir/LogisticParametersWebService/sql:/app/sql
+      - /home/m.lazarev/workdir/LogisticParametersWebService/button:/app/button
+      - /home/m.lazarev/workdir/LogisticParametersWebService/logging:/app/logging
+    environment:
+      TZ: "Europe/Moscow"
+networks:
+  default:
+    name: logisticparams-app
