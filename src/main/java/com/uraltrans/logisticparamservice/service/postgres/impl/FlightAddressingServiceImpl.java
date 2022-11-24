@@ -213,11 +213,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     }
 
     private void sendTariffRequest(List<FlightAddressing> addressings, Map<String, String> headers) {
-        List<TariffRequest> request = flightAddressingMapper.mapToTariffRequests(addressings)
-                .stream()
-                .filter(f -> f.getCargo().equalsIgnoreCase("531056") || f.getCargo().equalsIgnoreCase("303092"))
-                .limit(5)
-                .collect(Collectors.toList());
+        List<TariffRequest> request = flightAddressingMapper.mapToTariffRequests(addressings);
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
@@ -235,7 +231,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         // RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
         // handleRateTariffConfirmResponse(response, false);
 
-        log.info("Отправлен запрос на расчет тарифа, UID: {}, SIZE: {}", headers.get("uid"), request.size());
+        log.info("Отправлен запрос на расчет ставки, UID: {}, SIZE: {}", headers.get("uid"), request.size());
     }
 
     private Map<String, String>  getHeaders(String method, String uid, String token) {
