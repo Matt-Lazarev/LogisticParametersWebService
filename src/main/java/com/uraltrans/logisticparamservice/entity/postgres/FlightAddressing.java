@@ -216,8 +216,6 @@ public class FlightAddressing {
                 ", destinationStationCode='" + destinationStationCode + '\'' +
                 ", currentFlightDestStationCode='" + currentFlightDestStationCode + '\'' +
                 ", cargoCode='" + cargoCode + '\'' +
-                ", requirementOrders=" + requirementOrders +
-                ", loaded='" + loaded + '\'' +
                 ", wagonType='" + wagonType + '\'' +
                 '}';
     }

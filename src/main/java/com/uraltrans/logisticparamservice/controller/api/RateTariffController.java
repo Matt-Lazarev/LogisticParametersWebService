@@ -25,13 +25,13 @@ public class RateTariffController {
     public void takeTariffResponse(@RequestBody TariffResultResponse response) {
        response.getDetails()
                .forEach(resp -> flightAddressingService.updateTariff(resp.getId(), new BigDecimal(resp.getTariffVat())));
-        log.info("responses tariff:\n {}", response);
+        log.info("responses tariff:\n UID: {} \n body: {}", response.getUid(), response);
     }
 
     @PostMapping(value = "/rate", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public void takeRateResponse(@RequestBody RateResultResponse response) {
         response.getDetails()
                 .forEach(resp -> flightAddressingService.updateRate(resp.getId(), new BigDecimal(resp.getRateVat())));
-        log.info("responses rate:\n {}", response);
+        log.info("responses rate:\n UID: {} \n body: {}", response.getUid(), response);
     }
 }
