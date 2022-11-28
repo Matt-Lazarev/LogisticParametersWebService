@@ -75,6 +75,9 @@ public class SecondEmptyFlight {
 
     private Integer AID;
 
+    @Column(name = "inv_number")
+    private String invNumber;
+
     @Column(name = "next_inv_number")
     private String nextInvNumber;
 

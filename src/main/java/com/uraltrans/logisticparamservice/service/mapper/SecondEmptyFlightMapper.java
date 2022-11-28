@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
+import com.uraltrans.logisticparamservice.dto.secondempty.SecondEmptyFlightResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.utils.Mapper;
@@ -26,6 +27,7 @@ public class SecondEmptyFlightMapper {
                 .currEmptyFlightRegistrationDate(Mapper.toLocalDateTime(flight.getNextFlightStartDate()))
                 .currEmptyFlightArriveAtDestStationDate(Mapper.toLocalDateTime(flight.getArriveToDestStationDate()))
                 .AID(flight.getAid())
+                .invNumber(flight.getInvNumber())
                 .nextInvNumber(flight.getNextInvNumber())
                 .prevFlightId(flight.getPrevFlightAid())
                 .isNotFirstEmpty(flight.getIsNotFirstEmpty())
@@ -41,6 +43,22 @@ public class SecondEmptyFlightMapper {
                 .destStationCode(flight.getDestStationCode())
                 .departureFromSourceStation(flight.getDepartureFromSourceStationDate())
                 .arriveToDestStation(flight.getArriveToDestStationDate())
+                .build();
+    }
+
+    public List<SecondEmptyFlightResponse> mapToSecondEmptyFlightResponses(List<SecondEmptyFlight> flights) {
+        return flights
+                .stream()
+                .map(this::toSecondEmptyFlightResponse)
+                .collect(Collectors.toList());
+    }
+
+    private SecondEmptyFlightResponse toSecondEmptyFlightResponse(SecondEmptyFlight flight) {
+        return SecondEmptyFlightResponse.builder()
+                .id(String.valueOf(flight.getId()))
+                .aid(String.valueOf(flight.getAID()))
+                .docNumber(flight.getInvNumber())
+                .carNumber(String.valueOf(flight.getCarNumber()))
                 .build();
     }
 }

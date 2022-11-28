@@ -1,5 +1,6 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
+import com.uraltrans.logisticparamservice.dto.secondempty.SecondEmptyFlightResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
@@ -46,6 +47,11 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     @Override
     public List<SecondEmptyFlight> getAllSecondEmptyFlight(){
         return secondEmptyFlightRepository.findAll();
+    }
+
+    @Override
+    public List<SecondEmptyFlightResponse> getAllSecondEmptyFlightResponses() {
+        return secondEmptyFlightMapper.mapToSecondEmptyFlightResponses(secondEmptyFlightRepository.findAll());
     }
 
     @Override
