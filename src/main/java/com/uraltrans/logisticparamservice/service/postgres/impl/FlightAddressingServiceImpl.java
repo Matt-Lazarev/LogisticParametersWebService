@@ -218,12 +218,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
-        request
-                .stream().filter(f -> f.getCargo() == null || f.getCargo().isEmpty())
-                .forEach(System.out::println);
-
         RateTariffConfirmResponse response = restTemplate.postForObject(TARIFF_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
-        response.getDetails().forEach(System.out::println);
         handleRateTariffConfirmResponse(response, true);
 
         log.info("Отправлен запрос на расчет тарифа, UID: {}, SIZE: {}", headers.get("uid"), request.size());
@@ -234,8 +229,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
-//        RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
-//        handleRateTariffConfirmResponse(response, false);
+        RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
+        handleRateTariffConfirmResponse(response, false);
 
         log.info("Отправлен запрос на расчет ставки, UID: {}, SIZE: {}", headers.get("uid"), request.size());
     }
