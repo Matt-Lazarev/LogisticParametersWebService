@@ -13,7 +13,6 @@ public interface ActualFlightService {
     void saveAllActualFlights();
     List<PotentialFlight> getAllPotentialFlights();
     void saveAllPotentialFlights();
-
     ActualFlight findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
 
     List<DislocationResponse> getAllByRequest(DislocationRequest request);

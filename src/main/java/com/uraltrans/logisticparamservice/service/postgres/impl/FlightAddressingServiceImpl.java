@@ -208,6 +208,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                             .mapRawDataToFlightAddressingList(rawData, potentialFlight)
                             .stream();
                 })
+                .filter(f -> f.getCargoCode() != null && !f.getCargoCode().isEmpty())
+                .filter(f -> f.getVolume() != null && !f.getVolume().equals(new BigDecimal(0)))
                 .filter(f -> f.getRequirementOrders() > 0)
                 .collect(Collectors.toList());
     }
@@ -228,8 +230,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
-        // RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
-        // handleRateTariffConfirmResponse(response, false);
+        RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
+        handleRateTariffConfirmResponse(response, false);
 
         log.info("Отправлен запрос на расчет ставки, UID: {}, SIZE: {}", headers.get("uid"), request.size());
     }

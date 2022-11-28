@@ -39,7 +39,7 @@ public class TestController {
 
     final StationHandbookService serv;
 
-    final RawDislocationRepositoryImpl rep;
+    final RawDislocationRepositoryImpl rawDislocationRepository;
     final RawStationHandbookRepository rep2;
 
     final GeocodeService geocodeService;
@@ -48,7 +48,6 @@ public class TestController {
 
     final CarRepairInfoRepository carRepairInfoRepository;
 
-    final RawDislocationRepository rawDislocationRepository;
 
     final SecondEmptyFlightServiceImpl secondEmptyFlightServiceImpl;
 
@@ -56,8 +55,7 @@ public class TestController {
 
     @GetMapping
     public List<?> getAll() {
-        clientOrderService.saveAllClientOrders();
-        return clientOrderService.getAllClientOrders();
+        return rawDislocationRepository.getAllDislocations("4022-11-28");
     }
 
     @GetMapping("/1")

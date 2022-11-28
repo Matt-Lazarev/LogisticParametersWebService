@@ -47,8 +47,6 @@ public class FlightAddressingMapper {
                 .map(this::toTariffRequest)
                 .filter(t -> t.getDestinationStation() != null)
                 .filter(t -> t.getDepartureStation() != null)
-                .filter(t -> t.getCargo() != null)
-                .filter(t -> t.getVolune() != null)
                 .filter(t -> !t.getDepartureStation().equalsIgnoreCase(t.getDestinationStation()))
                 .collect(Collectors.toList());
     }
@@ -59,8 +57,6 @@ public class FlightAddressingMapper {
                 .map(this::toRateRequest)
                 .filter(t -> t.getDestinationStation() != null)
                 .filter(t -> t.getDepartureStation() != null)
-                .filter(t -> t.getCargo() != null)
-                .filter(t -> t.getVolune() != null)
                 .filter(t -> !t.getDepartureStation().equalsIgnoreCase(t.getDestinationStation()))
                 .collect(Collectors.toList());
     }
