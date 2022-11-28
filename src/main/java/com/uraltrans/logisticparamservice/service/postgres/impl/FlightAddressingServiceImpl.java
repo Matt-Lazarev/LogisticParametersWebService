@@ -208,7 +208,6 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                             .mapRawDataToFlightAddressingList(rawData, potentialFlight)
                             .stream();
                 })
-                .filter(f -> f.getCargoCode() != null && !f.getCargoCode().isEmpty())
                 .filter(f -> f.getVolume() != null && !f.getVolume().equals(new BigDecimal(0)))
                 .filter(f -> f.getRequirementOrders() > 0)
                 .collect(Collectors.toList());
@@ -219,7 +218,12 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
+        request
+                .stream().filter(f -> f.getCargo() == null || f.getCargo().isEmpty())
+                .forEach(System.out::println);
+
         RateTariffConfirmResponse response = restTemplate.postForObject(TARIFF_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
+        response.getDetails().forEach(System.out::println);
         handleRateTariffConfirmResponse(response, true);
 
         log.info("Отправлен запрос на расчет тарифа, UID: {}, SIZE: {}", headers.get("uid"), request.size());
@@ -230,8 +234,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
         namedRequest.putAll(headers);
 
-        RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
-        handleRateTariffConfirmResponse(response, false);
+//        RateTariffConfirmResponse response = restTemplate.postForObject(RATE_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
+//        handleRateTariffConfirmResponse(response, false);
 
         log.info("Отправлен запрос на расчет ставки, UID: {}, SIZE: {}", headers.get("uid"), request.size());
     }
@@ -450,7 +454,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         });
     }
 
-    private List<FlightAddressing> groupForTariffRequest(List<FlightAddressing> addressings) {
+    public List<FlightAddressing> groupForTariffRequest(List<FlightAddressing> addressings) {
         return new ArrayList<>(addressings
                 .stream()
                 .collect(Collectors.toMap(

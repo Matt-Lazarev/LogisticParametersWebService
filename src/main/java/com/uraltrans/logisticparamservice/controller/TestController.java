@@ -1,12 +1,15 @@
 package com.uraltrans.logisticparamservice.controller;
 
+import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepositoryImpl;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RegisterSecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
+import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
+import com.uraltrans.logisticparamservice.service.postgres.impl.FlightAddressingServiceImpl;
 import com.uraltrans.logisticparamservice.service.postgres.impl.SecondEmptyFlightServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -53,14 +56,19 @@ public class TestController {
 
     final RegisterSecondEmptyFlightRepository registerSecondEmptyFlightRepository;
 
+    private final FlightAddressingMapper flightAddressingMapper;
+    private final FlightAddressingServiceImpl flightAddressingServiceImpl;
+
     @GetMapping
     public List<?> getAll() {
         return rawDislocationRepository.getAllDislocations("4022-11-28");
     }
 
     @GetMapping("/1")
-    public Map<?, ?> getAll1() {
-        return carRepairInfoRepository.getCarRepairByDate("4022-11-08", 28837029);
+    public List<?> getAll1() {
+        return flightAddressingMapper.mapToTariffRequests(
+                flightAddressingServiceImpl.groupForTariffRequest(
+                        flightAddressingServiceImpl.getAll()));
     }
 
     @GetMapping("/address")

@@ -8,14 +8,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter @Setter @ToString
+@Data
 public class RateTariffConfirmResponse {
     private String uid;
     private List<Detail> details;
 
     @AllArgsConstructor
     @NoArgsConstructor
-    @Setter @Getter @ToString
+    @Data
     public static class Detail{
         private String id;
         private String success;
