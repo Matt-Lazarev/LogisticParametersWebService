@@ -125,8 +125,7 @@ public class Flight {
     @Override
     public String toString() {
         return "Flight{" +
-                "carNumber=" + carNumber +
-                ", invNumber='" + invNumber + '\'' +
+                "aid=" + aid +
                 ", sourceStationCode='" + sourceStationCode + '\'' +
                 ", destStationCode='" + destStationCode + '\'' +
                 ", loading=" + carLoadIdleDays +

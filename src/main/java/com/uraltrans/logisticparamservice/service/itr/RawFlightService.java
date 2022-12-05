@@ -1,8 +1,0 @@
-package com.uraltrans.logisticparamservice.service.itr;
-
-import java.util.List;
-import java.util.Map;
-
-public interface RawFlightService {
-    List<Map<String, Object>> getAllFlightsBetween(int days);
-}

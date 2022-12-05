@@ -26,5 +26,4 @@ public class CargoController {
         cargoService.saveAll();
         return ResponseEntity.ok(LoadDataResponse.builder().success("true").message("Данные выгружены").build());
     }
-
 }

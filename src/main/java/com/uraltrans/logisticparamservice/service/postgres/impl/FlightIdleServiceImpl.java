@@ -209,6 +209,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
         return flightIdles
                 .stream()
                 .filter(f -> f.getLoading() != null || f.getUnloading() != null)
+                .filter(f -> f.getVolume() != null)
                 .collect(Collectors.toList());
     }
 }

@@ -60,6 +60,7 @@ public class FlightAddressingMapper {
                 .filter(t -> t.getDepartureStation() != null)
                 .filter(t -> t.getCargo() != null && !t.getCargo().isEmpty())
                 .filter(t -> !t.getDepartureStation().equalsIgnoreCase(t.getDestinationStation()))
+                .filter(t -> !t.getDestinationStation().equals("000000"))
                 .collect(Collectors.toList());
     }
 

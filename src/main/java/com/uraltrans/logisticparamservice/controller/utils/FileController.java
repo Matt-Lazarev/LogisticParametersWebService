@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FileController {
 
     @GetMapping
-    public ResponseEntity<?> getError(){
+    public ResponseEntity<?> downloadApplicationLogs(){
         byte[] data = FileUtils.getZippedLogsFolder();
         return ResponseEntity
                 .ok()
