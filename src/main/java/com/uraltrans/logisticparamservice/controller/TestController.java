@@ -9,12 +9,14 @@ import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.service.postgres.impl.FlightAddressingServiceImpl;
 import com.uraltrans.logisticparamservice.service.postgres.impl.SecondEmptyFlightServiceImpl;
+import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -58,8 +60,11 @@ public class TestController {
     private final FlightAddressingServiceImpl flightAddressingServiceImpl;
 
     @GetMapping
-    public List<?> getAll() {
-        return rawDislocationRepository.getAllDislocations("4022-11-28");
+    public Map<?,?> getAll() {
+        Map<String, Object> carRepairByDate = carRepairInfoRepository.getCarRepairByDate("4022-12-08", 24346306);
+        System.out.println(((byte[])carRepairByDate.get("NonworkingPark"))[0] == 1);
+        System.out.println(((byte[])carRepairByDate.get("RequiresRepair"))[0] == 1);
+        return carRepairInfoRepository.getCarRepairByDate("4022-12-08", 24346306);
     }
 
     @GetMapping("/1")

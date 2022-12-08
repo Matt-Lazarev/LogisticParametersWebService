@@ -16,7 +16,6 @@ import javax.persistence.Table;
 @Table(name = "flight_times_distances")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 public class FlightTimeDistance {
     @Id
@@ -36,5 +35,13 @@ public class FlightTimeDistance {
 
     @Column(name = "travel_time")
     private String travelTime;
-
+    
+    @Override
+    public String toString() {
+        return "{" +
+                "departureStationCode='" + departureStationCode + '\'' +
+                ", destinationStationCode='" + destinationStationCode + '\'' +
+                ", typeFlight='" + typeFlight + '\'' +
+                '}';
+    }
 }

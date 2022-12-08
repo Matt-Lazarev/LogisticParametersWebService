@@ -15,10 +15,16 @@ import java.util.Map;
 @Repository
 public class RawDislocationRepositoryImpl implements RawDislocationRepository{
     private static final String SQL =
-            "SELECT if47._Fld48 as CarNumber, if47._Fld2714 as Volume, " +
+            "SELECT " +
+            "if47._Fld48 as CarNumber, " +
+            "if47._Fld2714 as Volume, " +
             "if47._Fld2845 as DislocationStationCode, " +
             "if47._Fld2846 as SourceStationCode, " +
+            "if47._Fld54 as SourceStation, " +
+            "if47._Fld232 as SourceStationRoad, " +
             "if47._FLD2847 as DestinationStationCode, " +
+            "if47._FLD56 as DestinationStation, " +
+            "if47._FLD57 as DestinationStationRoad, " +
             "if47._Fld2780 as SendDate, " +
             "if47._Fld177 as Feature2, " +
             "if47._Fld2709 as Feature6, " +
@@ -42,7 +48,8 @@ public class RawDislocationRepositoryImpl implements RawDislocationRepository{
             "if47._Fld2783 as NextStation, " +
             "if47._Fld49 as DaysBeforeDatePlanRepair, " +
             "if47._Fld2719 as DistanceFromCurrentStation, " +
-            "if47._Fld322 as RestRun " +
+            "if47._Fld322 as RestRun, " +
+            "if47._Fld2720 as IdleDislocationStation " +
             "FROM _InfoRg47 if47 " +
             "WHERE if47._Fld171 = ? and " +
             "if47._Fld176 = N'УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ' and " +

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Mapper {
-    private static final int SHIFT_1C_YEARS = 2000;
+    public static final int SHIFT_1C_YEARS = 2000;
 
     public static LocalDate fix1cDate(LocalDate date){
         return date.getYear() == SHIFT_1C_YEARS ? null : date.minusYears(SHIFT_1C_YEARS);
