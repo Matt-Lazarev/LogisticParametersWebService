@@ -1,6 +1,6 @@
 package com.uraltrans.logisticparamservice.service.mapper;
 
-import com.uraltrans.logisticparamservice.dto.nodetailswagon.NoDetailsWagon;
+import com.uraltrans.logisticparamservice.entity.postgres.NoDetailsWagon;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +21,6 @@ public class NoDetailsWagonMapper {
 
     private NoDetailsWagon mapToNoDetailsWagon(Map<String, Object> data) {
         return NoDetailsWagon.builder()
-                .success("true")
-                .errorText("")
                 .departureDate(String.valueOf(Mapper.fix1cDate((Timestamp) data.get("SendDate"))))
                 .departureStation((String) data.get("SourceStationCode"))
                 .destinationStation((String) data.get("DestinationStationCode"))

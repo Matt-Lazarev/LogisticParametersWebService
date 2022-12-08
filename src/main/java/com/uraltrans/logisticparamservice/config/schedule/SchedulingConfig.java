@@ -34,6 +34,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
     private final ScheduleStationHandbookService scheduleStationHandbookService;
     private final ScheduleFlightAddressingService scheduleFlightAddressingService;
     private final ScheduleGeocodeService scheduleGeocodeService;
+    private final ScheduleNoDetailsWagonService scheduleNoDetailsWagonService;
 
     @Bean(destroyMethod = "shutdown")
     public Executor taskExecutor() {
@@ -56,7 +57,8 @@ public class SchedulingConfig implements SchedulingConfigurer {
         registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 5);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 15);
         registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 20);
-        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 100);
+        registerTask(taskRegistrar, scheduleNoDetailsWagonService::loadNoDetailsWagons, 25);
+        registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 60);
     }
 
     private void registerTask(ScheduledTaskRegistrar taskRegistrar, Runnable task, int additionalTime){
