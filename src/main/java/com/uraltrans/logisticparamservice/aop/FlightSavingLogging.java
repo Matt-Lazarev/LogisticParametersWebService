@@ -117,6 +117,12 @@ public class FlightSavingLogging {
         return handleReturn(proceedingJoinPoint, message);
     }
 
+    @Around("execution(* com.uraltrans.logisticparamservice.controller.api.NoDetailsWagonController.*())")
+    public Object logNoDetailsWagonController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = "Получение вагонов без реквизитов";
+        return handleReturn(proceedingJoinPoint, message);
+    }
+
     private void saveAndLogFlightLoad(JoinPoint joinPoint, boolean isSuccess) {
         Object[] args = joinPoint.getArgs();
         LoadParameters arg = (LoadParameters) args[0];

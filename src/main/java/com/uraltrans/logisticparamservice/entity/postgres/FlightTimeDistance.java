@@ -35,7 +35,7 @@ public class FlightTimeDistance {
 
     @Column(name = "travel_time")
     private String travelTime;
-    
+
     @Override
     public String toString() {
         return "{" +
