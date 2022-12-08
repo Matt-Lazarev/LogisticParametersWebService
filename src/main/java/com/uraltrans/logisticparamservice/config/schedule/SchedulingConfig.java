@@ -57,8 +57,9 @@ public class SchedulingConfig implements SchedulingConfigurer {
         registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 5);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 15);
         registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 20);
-        registerTask(taskRegistrar, scheduleNoDetailsWagonService::loadNoDetailsWagons, 25);
         registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 60);
+
+        registerTaskHourly(taskRegistrar, scheduleNoDetailsWagonService::loadNoDetailsWagons);
     }
 
     private void registerTask(ScheduledTaskRegistrar taskRegistrar, Runnable task, int additionalTime){
@@ -87,6 +88,17 @@ public class SchedulingConfig implements SchedulingConfigurer {
         );
     }
 
+    private void registerTaskHourly(ScheduledTaskRegistrar taskRegistrar, Runnable task) {
+        taskRegistrar.addTriggerTask(
+                task,
+                triggerContext -> {
+                    Calendar nextExecutionTime = new GregorianCalendar();
+                    nextExecutionTime.setTime(getNextHourExecution());
+                    return nextExecutionTime.getTime();
+                }
+        );
+    }
+
     private Date getNextExecution(int additionalTime) {
         LocalDateTime nextExecution = getExecutionTime().plusMinutes(additionalTime);
         log.info("Время выгрузки: {}", nextExecution);
@@ -104,5 +116,17 @@ public class SchedulingConfig implements SchedulingConfigurer {
             nextExecution = LocalDateTime.of(LocalDate.now().plusDays(1), nextExecutionTime);
         }
         return nextExecution;
+    }
+
+    private Date getNextHourExecution(){
+        LocalDateTime nextExecution = LocalDateTime.now();
+        if(nextExecution.getHour() == 23){
+            nextExecution = LocalDateTime.of(nextExecution.toLocalDate().plusDays(1), LocalTime.of(0, 0, 0));
+        }
+        else {
+            nextExecution = LocalDateTime.of(nextExecution.toLocalDate(), LocalTime.of(nextExecution.getHour()+1, 0, 0));
+        }
+        log.info("Время выгрузки: {}", nextExecution);
+        return java.sql.Timestamp.valueOf(nextExecution);
     }
 }
