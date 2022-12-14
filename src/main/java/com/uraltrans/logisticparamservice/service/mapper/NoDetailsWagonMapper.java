@@ -32,7 +32,7 @@ public class NoDetailsWagonMapper {
 
     private NoDetailsWagon mapToNoDetailsWagon(Map<String, Object> data) {
         return NoDetailsWagon.builder()
-                .departureDate(String.valueOf(Mapper.fix1cDate((Timestamp) data.get("SendDate"))))
+                .departureDate(String.valueOf(data.get("SendDate")))
                 .departureStation(String.valueOf(data.get("SourceStationCode")))
                 .destinationStation(String.valueOf(data.get("DestinationStationCode")))
                 .departureStationName((String) data.get("SourceStation"))
