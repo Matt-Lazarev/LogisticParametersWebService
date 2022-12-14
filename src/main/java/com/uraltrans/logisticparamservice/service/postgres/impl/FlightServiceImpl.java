@@ -8,6 +8,7 @@ import com.uraltrans.logisticparamservice.repository.itr.RawFlightRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FlightServiceImpl implements FlightService {
-
+    private final LoadParameterService loadParameterService;
     private final FlightRepository flightRepository;
     private final RawFlightRepository rawFlightRepository;
     private final FlightMapper flightMapper;
@@ -92,9 +93,11 @@ public class FlightServiceImpl implements FlightService {
 
         FileUtils.writeDiscardedFlights(errorFlights, false);
 
+        LoadParameters loadParameters = loadParameterService.getLoadParameters();
         return allFlights
                 .stream()
                 .filter(f -> f.getCargo() != null)
+                //.filter(f -> f.getSourceContragent().equalsIgnoreCase(loadParameters.getSourceContragent()))
                 .collect(Collectors.toList());
     }
 }

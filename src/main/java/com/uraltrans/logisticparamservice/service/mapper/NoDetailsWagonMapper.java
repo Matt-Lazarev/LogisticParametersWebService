@@ -16,22 +16,33 @@ public class NoDetailsWagonMapper {
         return dislocations
                 .stream()
                 .map(this::mapToNoDetailsWagon)
+                .peek(f -> {
+                    if(f.getP02() == null){
+                        f.setP02("");
+                    }
+                    if(f.getP06() == null){
+                        f.setP06("");
+                    }
+                    if(f.getP20() == null){
+                        f.setP20("");
+                    }
+                })
                 .collect(Collectors.toList());
     }
 
     private NoDetailsWagon mapToNoDetailsWagon(Map<String, Object> data) {
         return NoDetailsWagon.builder()
                 .departureDate(String.valueOf(Mapper.fix1cDate((Timestamp) data.get("SendDate"))))
-                .departureStation((String) data.get("SourceStationCode"))
-                .destinationStation((String) data.get("DestinationStationCode"))
+                .departureStation(String.valueOf(data.get("SourceStationCode")))
+                .destinationStation(String.valueOf(data.get("DestinationStationCode")))
                 .departureStationName((String) data.get("SourceStation"))
                 .destinationStationName((String) data.get("DestinationStation"))
                 .departureRoadName((String) data.get("SourceStationRoad"))
                 .destinationRoadName((String) data.get("DestinationStationRoad"))
-                .cargoId((String) data.get("CargoCode"))
+                .cargoId(String.valueOf(data.get("CargoCode")))
                 .wagonType((String) data.get("WagonType"))
                 .volume(String.valueOf(data.get("Volume")))
-                .carNumber((String) data.get("CarNumber"))
+                .carNumber(String.valueOf(data.get("CarNumber")))
                 .p02((String) data.get("Feature2"))
                 .p06((String) data.get("Feature6"))
                 .p20((String) data.get("Feature20"))
@@ -39,7 +50,7 @@ public class NoDetailsWagonMapper {
                 .daysBeforeDatePlanRepair(String.valueOf(data.get("DaysBeforeDatePlanRepair")))
                 .distanceFromCurrentStation(String.valueOf(data.get("DistanceFromCurrentStation")))
                 .restRun(String.valueOf(data.get("RestRun")))
-                .idleDislocationStation((String) data.get("IdleDislocationStation"))
+                .idleDislocationStation(String.valueOf(data.get("IdleDislocationStation")))
                 .build();
     }
 }

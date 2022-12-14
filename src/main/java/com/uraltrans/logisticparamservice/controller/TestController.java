@@ -2,6 +2,7 @@ package com.uraltrans.logisticparamservice.controller;
 
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepositoryImpl;
+import com.uraltrans.logisticparamservice.repository.itr.RawItrDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RegisterSecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
@@ -59,12 +60,11 @@ public class TestController {
     private final FlightAddressingMapper flightAddressingMapper;
     private final FlightAddressingServiceImpl flightAddressingServiceImpl;
 
+    private final RawItrDislocationRepository rawItrDislocationRepository;
+
     @GetMapping
-    public Map<?,?> getAll() {
-        Map<String, Object> carRepairByDate = carRepairInfoRepository.getCarRepairByDate("4022-12-08", 24346306);
-        System.out.println(((byte[])carRepairByDate.get("NonworkingPark"))[0] == 1);
-        System.out.println(((byte[])carRepairByDate.get("RequiresRepair"))[0] == 1);
-        return carRepairInfoRepository.getCarRepairByDate("4022-12-08", 24346306);
+    public List<?> getAll() {
+        return rawItrDislocationRepository.getAllDislocations();
     }
 
     @GetMapping("/1")

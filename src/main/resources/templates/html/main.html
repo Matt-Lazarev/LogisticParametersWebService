@@ -46,13 +46,6 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/map}">Map</a>
                 </li>
-                <li>
-                    <a class="nav-link active" aria-current="page">Расчет ставки и тарифа
-                        <label class="switch">
-                            <input type="checkbox" name="rt_checkbox" th:checked="*{ratetariffstate}" onclick="checkRateTariff()">
-                        </label>
-                    </a>
-                </li>
             </ul>
         </div>
     </div>
@@ -81,16 +74,20 @@
                 <label> Токен: </label>
                 <input type="text" class="form-control" th:field="*{token}">
             </div>
+            <div class="col-md-6 mb-1 mt-3">
+                <label> В управлении: </label>
+                <input type="text" class="form-control" th:field="*{sourceContragent}">
+            </div>
         </div>
 
         <hr style="height:3px;border-width:0;color:black;background-color:black">
         <div class="row">
             <div class="col-md-6 mb-1 mt-3">
-                <label> Введите глубину поиска: </label>
+                <label> Глубина поиска (в днях): </label>
                 <input type="text" class="form-control" th:field="*{daysToRetrieveData}">
             </div>
             <div class="col-md-6 mb-1 mt-3">
-                <label> Введите время следующей выгрузки: </label>
+                <label> Время следующей выгрузки: </label>
                 <input type="text" class="form-control"
                        th:field="*{nextDataLoadTime}" placeholder="Время в формате HH:mm:ss (15:00:00)">
             </div>
@@ -99,23 +96,23 @@
         <hr style="height:3px;border-width:0;color:black;background-color:black">
         <div class="row">
             <div class="col align-self-center">
-                <label> Введите максимальное количество дней простоя при погрузке: </label>
+                <label> Максимальное количество дней простоя при погрузке: </label>
                 <input type="text" class="form-control" th:field="*{maxLoadIdleDays}">
             </div>
             <div class="col align-self-center">
-                <label> Введите максимальное количество дней простоя при выгрузке: </label>
+                <label> Максимальное количество дней простоя при выгрузке: </label>
                 <input type="text" class="form-control" th:field="*{maxUnloadIdleDays}">
             </div>
         </div>
 
         <div class="row">
             <div class="col align-self-center">
-                <label> Введите минимальное количество дней простоя при погрузке: </label>
+                <label> Минимальное количество дней простоя при погрузке: </label>
                 <input type="text" class="form-control" th:field="*{minLoadIdleDays}">
             </div>
 
             <div class="col align-self-center">
-                <label> Введите минимальное количество дней простоя при выгрузке: </label>
+                <label> Минимальное количество дней простоя при выгрузке: </label>
                 <input type="text" class="form-control" th:field="*{minUnloadIdleDays}">
             </div>
         </div>
@@ -123,19 +120,27 @@
 
         <div class="row">
             <div class="col align-self-center">
-                <label> Введите максимальное время перевозки: </label>
+                <label> Максимальное время перевозки: </label>
                 <input type="text" class="form-control" th:field="*{maxTravelTime}">
             </div>
             <div class="col align-self-center">
-                <label> Введите минимальное время перевозки: </label>
+                <label> Минимальное время перевозки: </label>
                 <input type="text" class="form-control" th:field="*{minTravelTime}">
             </div>
         </div>
         <hr style="height:3px;border-width:0;color:black;background-color:black">
         <div class="row">
             <div class="col-md-6 ">
-                <label> Введите глубину поиска для расчета доходности: </label>
+                <label> Глубина поиска для расчета доходности (в днях): </label>
                 <input type="text" class="form-control" th:field="*{flightProfitDaysToRetrieveData}">
+            </div>
+
+            <div class="col-md-6 ">
+                <label> Расчет тарифа и ставки: </label>
+                <select class="form-select" th:field="*{rateTariffState}">
+                    <option th:value="1" >Вкл</option>
+                    <option th:value="0" >Выкл</option>
+                </select>
             </div>
         </div>
 
@@ -446,12 +451,6 @@
 
         let element = document.getElementById('nav_bar');
         element.after(div);
-    }
-
-    function checkRateTariff(){
-        let request = new XMLHttpRequest();
-        request.open('GET', 'http://10.168.1.6:8080/ratetariff/change', false);
-        request.send(null);
     }
 </script>
 </html>

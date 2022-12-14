@@ -9,25 +9,21 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-@Accessors(chain = true)
 @NoArgsConstructor
 public class LoadUnloadIdleDto {
-
     private String sourceStation;
     private String sourceStationCode;
     private String destStation;
     private String destStationCode;
-    private BigDecimal volume;
     private String cargo;
     private String cargoCode6;
     private Integer carLoadIdleDays;
     private Integer carUnloadIdleDays;
 
-    public LoadUnloadIdleDto( String cargo, String cargoCode6,
+    public LoadUnloadIdleDto(String cargo, String cargoCode6,
                              String sourceStation, String sourceStationCode,
                              String destStation, String destStationCode,
                              Double carLoadIdleDays, Double carUnloadIdleDays) {
-        this.volume = volume;
         this.cargo = cargo;
         this.cargoCode6 = cargoCode6;
         this.sourceStation = sourceStation;

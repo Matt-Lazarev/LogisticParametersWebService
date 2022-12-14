@@ -1,7 +1,13 @@
 package com.uraltrans.logisticparamservice.config.schedule;
 
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
-import com.uraltrans.logisticparamservice.service.schedule.*;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleCargoService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightAddressingService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightProfitService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightsService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleGeocodeService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleNoDetailsWagonService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleStationHandbookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -121,10 +127,10 @@ public class SchedulingConfig implements SchedulingConfigurer {
     private Date getNextHourExecution(){
         LocalDateTime nextExecution = LocalDateTime.now();
         if(nextExecution.getHour() == 23){
-            nextExecution = LocalDateTime.of(nextExecution.toLocalDate().plusDays(1), LocalTime.of(0, 0, 0));
+            nextExecution = LocalDateTime.of(nextExecution.toLocalDate().plusDays(1), LocalTime.of(0, 15, 0));
         }
         else {
-            nextExecution = LocalDateTime.of(nextExecution.toLocalDate(), LocalTime.of(nextExecution.getHour()+1, 0, 0));
+            nextExecution = LocalDateTime.of(nextExecution.toLocalDate(), LocalTime.of(nextExecution.getHour()+1, 15, 0));
         }
         log.info("Время выгрузки: {}", nextExecution);
         return java.sql.Timestamp.valueOf(nextExecution);
