@@ -38,8 +38,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FlightAddressingServiceImpl implements FlightAddressingService {
-    private static final Map<String, List<AddressingResponse>> ADDRESSING_RESPONSES_CACHE = new HashMap<>();
-    private static final Map<String, List<FreeWagonResponse>> FREEWAGON_RESPONSES_CACHE = new HashMap<>();
+    private static final Set<String> ADDRESSING_RESPONSES_CACHE = new HashSet<>();
+    private static final Set<String> FREEWAGON_RESPONSES_CACHE = new HashSet<>();
 
     private static final String TARIFF_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/emptyflight";
     private static final String RATE_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/rateflight";
@@ -129,7 +129,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
             return flightAddressingMapper.mapToResponses(flightAddressingRepository.findAll(), "null");
         }
 
-        if (ADDRESSING_RESPONSES_CACHE.containsKey(request.getId())) {
+        if (ADDRESSING_RESPONSES_CACHE.contains(request.getId())) {
             throw new RepeatedRequestException("Повторный запрос [id=" + request.getId() + "]");
         }
 
@@ -142,13 +142,13 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                         request.getCargoId(), request.getDestinationStation()),
                 request.getId());
 
-        ADDRESSING_RESPONSES_CACHE.put(request.getId(), responses);
+        ADDRESSING_RESPONSES_CACHE.add(request.getId());
         return responses;
     }
 
     @Override
     public List<FreeWagonResponse> getAllByFreeWagonRequest(FreeWagonRequest request) {
-        if (request != null && FREEWAGON_RESPONSES_CACHE.containsKey(request.getId())) {
+        if (request != null && FREEWAGON_RESPONSES_CACHE.contains(request.getId())) {
             throw new RepeatedRequestException("Повторный запрос [id=" + request.getId() + "]");
         }
 
@@ -176,7 +176,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                 request == null ? "null" : request.getId());
 
         if (request != null) {
-            FREEWAGON_RESPONSES_CACHE.put(request.getId(), freeWagonResponses);
+            FREEWAGON_RESPONSES_CACHE.add(request.getId());
         }
         return freeWagonResponses;
     }

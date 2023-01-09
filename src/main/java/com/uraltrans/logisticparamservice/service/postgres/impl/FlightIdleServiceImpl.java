@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FlightIdleServiceImpl implements FlightIdleService {
-
     private final FlightIdleRepository flightIdleRepository;
     private final FlightService flightService;
     private final FlightIdleMapper mapper;

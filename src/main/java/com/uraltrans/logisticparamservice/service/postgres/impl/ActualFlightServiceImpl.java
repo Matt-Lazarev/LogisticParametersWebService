@@ -13,6 +13,7 @@ import com.uraltrans.logisticparamservice.service.mapper.ActualFlightMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.ActualFlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
+import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +28,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.uraltrans.logisticparamservice.utils.Mapper.SHIFT_1C_YEARS;
+
 @Service
 @RequiredArgsConstructor
 public class ActualFlightServiceImpl implements ActualFlightService {
-    private static final Map<String, List<DislocationResponse>> DISLOCATION_RESPONSES_CACHE = new HashMap<>();
+    private static final Set<String> DISLOCATION_RESPONSES_CACHE = new HashSet<>();
 
-    private static final int SHIFT_1C_YEARS = 2000;
     private static final Set<String> FILTER_VALUES = new HashSet<>(
             Arrays.asList("вывод", "аренда", "тр", "др", "ремонт", "отстой", "вывод", "в тр", "промывка"));
     private static final String FILTER_VALUE = "ремонт";
@@ -89,7 +91,7 @@ public class ActualFlightServiceImpl implements ActualFlightService {
             return actualFlightMapper.mapToResponses(actualFlightRepository.findAll(), null);
         }
 
-        if(DISLOCATION_RESPONSES_CACHE.containsKey(request.getId())){
+        if(DISLOCATION_RESPONSES_CACHE.contains(request.getId())){
             throw new RepeatedRequestException("Повторный запрос [id=" + request.getId() + "]");
         }
 
@@ -110,7 +112,7 @@ public class ActualFlightServiceImpl implements ActualFlightService {
                         .collect(Collectors.toList()),
                 request.getId());
 
-        DISLOCATION_RESPONSES_CACHE.put(request.getId(), responses);
+        DISLOCATION_RESPONSES_CACHE.add(request.getId());
 
         return responses;
     }

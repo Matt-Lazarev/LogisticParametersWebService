@@ -13,17 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FlightRequirementServiceImpl implements FlightRequirementService {
-    private static final Map<String, List<PlanFactResponse>> PLANFACT_RESPONSES_CACHE = new HashMap<>();
+    private static final Set<String> PLANFACT_RESPONSES_CACHE = new HashSet<>();
 
     private final FlightRequirementRepository flightRequirementRepository;
     private final FlightRequirementMapper flightRequirementMapper;
@@ -65,7 +61,7 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
             return flightRequirementMapper.mapToResponses(flightRequirementRepository.findAll(), "null");
         }
 
-        if(PLANFACT_RESPONSES_CACHE.containsKey(request.getId())){
+        if(PLANFACT_RESPONSES_CACHE.contains(request.getId())){
             throw new RepeatedRequestException("Повторный запрос [id=" + request.getId() + "]");
         }
 
@@ -85,7 +81,7 @@ public class FlightRequirementServiceImpl implements FlightRequirementService {
                         .collect(Collectors.toList()),
                 request.getId());
 
-        PLANFACT_RESPONSES_CACHE.put(request.getId(), responses);
+        PLANFACT_RESPONSES_CACHE.add(request.getId());
         return responses;
     }
 

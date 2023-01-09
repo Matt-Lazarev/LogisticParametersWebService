@@ -20,18 +20,13 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService {
-    private static final Map<String, List<FlightTimeDistanceResponse>> RESPONSES_CACHE = new HashMap<>();
+    private static final Set<String> RESPONSES_CACHE = new HashSet<>();
 
     private final FlightRepository flightRepository;
     private final FlightTimeDistanceRepository flightTimeDistanceRepository;
@@ -44,7 +39,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
 
     @Override
     public List<FlightTimeDistanceResponse> getTimeDistanceResponses(FlightTimeDistanceRequest request) {
-        if(request.getUid() != null && !request.getUid().isEmpty() && RESPONSES_CACHE.containsKey(request.getUid())){
+        if(request.getUid() != null && !request.getUid().isEmpty() && RESPONSES_CACHE.contains(request.getUid())){
             throw new RepeatedRequestException("Повторный запрос [uid=" + request.getUid() + "]");
         }
 
@@ -68,7 +63,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                     responses.add(resp);
                 });
 
-        RESPONSES_CACHE.put(request.getUid(), responses);
+        RESPONSES_CACHE.add(request.getUid());
         return responses;
     }
 
