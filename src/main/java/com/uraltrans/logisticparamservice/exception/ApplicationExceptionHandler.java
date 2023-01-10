@@ -1,6 +1,7 @@
 package com.uraltrans.logisticparamservice.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Order(1)
 @Slf4j
@@ -31,7 +33,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<?> handleHttpMethodNotSupportedException(Exception ex){
+    public ResponseEntity<?> handleHttpMethodNotSupportedException(Exception ex) {
         log.error("error: {}\n {}", ex.getMessage(), ex);
         Map<String, String> errors = new LinkedHashMap<>();
         errors.put("success", "false");
@@ -44,12 +46,12 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.error("error: {}\n {}", ex.getMessage(), ex);
+        List<String> fieldErrors = ex.getBindingResult().getAllErrors()
+                .stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
+
         Map<String, Object> errors = new LinkedHashMap<>();
-        List<String> fieldErrors = new ArrayList<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String errorMessage = error.getDefaultMessage();
-            fieldErrors.add(errorMessage);
-        });
         errors.put("success", "false");
         errors.put("errorText", fieldErrors);
         return errors;

@@ -6,7 +6,6 @@ import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import java.util.List;
 
 public interface FlightIdleService {
-
     List<FlightIdleDto> getAllLoadingUnloadingIdles();
     void saveAll(LoadParameters dto);
 }

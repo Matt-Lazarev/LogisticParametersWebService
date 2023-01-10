@@ -3,8 +3,7 @@
 
     <property name="LOGS" value="./logging"/>
 
-    <appender name="Console"
-              class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
                 %green(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%logger{36}): %msg%n
@@ -12,8 +11,7 @@
         </layout>
     </appender>
 
-    <appender name="RollingFile"
-              class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOGS}/spring-boot-logger.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>
@@ -35,20 +33,5 @@
             <appender-ref ref="RollingFile"/>
             <appender-ref ref="Console"/>
         </root>
-
-        <logger name="com.uraltrans.logisticparamservice" level="info" additivity="false">
-            <appender-ref ref="RollingFile"/>
-            <appender-ref ref="Console"/>
-        </logger>
-    </springProfile>
-
-    <springProfile name="dev">
-        <root level="info">
-            <appender-ref ref="RollingFile"/>
-        </root>
-
-        <logger name="com.uraltrans.logisticparamservice" level="info" additivity="false">
-            <appender-ref ref="RollingFile"/>
-        </logger>
     </springProfile>
 </configuration>

@@ -185,22 +185,55 @@
         <hr style="height:3px;border-width:0;color:black;background-color:black">
 
         <div class="row">
-            <div class="col-md-6 ">
+            <div class="col-md-6">
                 <label> Признак2 для фильтрации вторых порожних рейсов: </label>
                 <input type="text" class="form-control" th:field="*{feature2}">
             </div>
-            <div class="col-md-6 ">
+            <div class="col-md-6">
                 <label> Признак22 для фильтрации вторых порожних рейсов: </label>
                 <input type="text" class="form-control" th:field="*{feature22}">
             </div>
         </div>
 
         <div class="row">
-            <div class="col-md-6 ">
+            <div class="col-md-6">
                 <label> Количество дней для проверки нахождения вагона в ремонте: </label>
                 <input type="text" class="form-control" th:field="*{repairDaysCheck}">
             </div>
         </div>
+
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label> [Сегментация] Дата загрузки данных: </label>
+                <input type="text" class="form-control" th:field="*{loadDateT14}">
+            </div>
+            <div class="col-md-6">
+                <label> [Сегментация] Источник данных: </label>
+                <input type="text" class="form-control" th:field="*{sourceDataT14}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label> [Сегментация] Маска КРЫТЫЕ ГРУЖЕННЫЕ: </label>
+                <input type="text" class="form-control" th:field="*{loadedMaskT14}">
+            </div>
+            <div class="col-md-6">
+                <label> [Сегментация]  Маска КРЫТЫЕ ПОРОЖНИЕ: </label>
+                <input type="text" class="form-control" th:field="*{unloadedMaskT14}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label> [Сегментация] Пороговое значение фильтрации: </label>
+                <input type="text" class="form-control" th:field="*{daysThresholdT14}">
+            </div>
+        </div>
+
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
 
         <div class="row">
             <div class="col box-footer mb-1 mt-3">
@@ -271,6 +304,17 @@
             <form th:action="@{/api/noDetailsWagons}" method="post">
                 <div class="box-footer mb-1 mt-3">
                     <label style="text-align: center"> Выгрузить вагоны без реквизитов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/api/segmentation/analysis}" method="post">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Выгрузить анализ сегментации (t14) </label>
                     <br>
                     <button type="submit" class="btn btn-primary">Загрузить</button>
                 </div>
@@ -405,6 +449,18 @@
             <form th:action="@{/result/noDetailsWagon}" method="get">
                 <div class="box-footer mb-1 mt-3">
                     <label style="text-align: center"> Просмотреть вагоны без реквизитов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/api/segmentation/analysis}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть анализ сегментации (t14) </label>
                     <br>
                     <button type="submit" class="btn btn-primary">Показать</button>
                 </div>

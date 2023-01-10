@@ -5,8 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class RepeatedRequestException extends RuntimeException {
-    public RepeatedRequestException() {
-    }
+    public RepeatedRequestException() {super();}
 
     public RepeatedRequestException(String message) {
         super(message);

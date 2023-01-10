@@ -21,7 +21,8 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = {"com.uraltrans.logisticparamservice.repository.utcsrs"}
+        basePackages = {"com.uraltrans.logisticparamservice.repository.utcsrs"},
+        entityManagerFactoryRef = "utcsrsEntityManagerFactory"
 )
 public class UtcsrsDataSourceConfig {
 

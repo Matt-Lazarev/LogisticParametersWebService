@@ -20,7 +20,8 @@ import java.util.Map;
 @Configuration
 @EnableTransactionManagement
 @EnableJpaRepositories(
-        basePackages = {"com.uraltrans.logisticparamservice.repository.itr"}
+        basePackages = {"com.uraltrans.logisticparamservice.repository.itr"},
+        entityManagerFactoryRef = "itrEntityManagerFactory"
 )
 public class ItrDataSourceConfig {
 

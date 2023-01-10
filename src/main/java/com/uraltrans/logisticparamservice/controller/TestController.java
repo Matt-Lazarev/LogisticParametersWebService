@@ -3,6 +3,7 @@ package com.uraltrans.logisticparamservice.controller;
 import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
 import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepositoryImpl;
 import com.uraltrans.logisticparamservice.repository.itr.RawItrDislocationRepository;
+import com.uraltrans.logisticparamservice.repository.rjd.SegmentationAnalysisT13Repository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RegisterSecondEmptyFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
 import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
@@ -10,14 +11,12 @@ import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.service.postgres.impl.FlightAddressingServiceImpl;
 import com.uraltrans.logisticparamservice.service.postgres.impl.SecondEmptyFlightServiceImpl;
-import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -62,9 +61,11 @@ public class TestController {
 
     private final RawItrDislocationRepository rawItrDislocationRepository;
 
+    private final SegmentationAnalysisT14Service segmentationAnalysisT14Service;
+
     @GetMapping
-    public List<?> getAll() {
-        return rawItrDislocationRepository.getAllDislocations();
+    public void getAll() {
+        segmentationAnalysisT14Service.saveAllSegmentsT14();
     }
 
     @GetMapping("/1")

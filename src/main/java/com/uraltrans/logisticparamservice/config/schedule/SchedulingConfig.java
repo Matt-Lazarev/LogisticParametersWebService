@@ -1,13 +1,7 @@
 package com.uraltrans.logisticparamservice.config.schedule;
 
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleCargoService;
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightAddressingService;
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightProfitService;
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightsService;
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleGeocodeService;
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleNoDetailsWagonService;
-import com.uraltrans.logisticparamservice.service.schedule.ScheduleStationHandbookService;
+import com.uraltrans.logisticparamservice.service.schedule.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -41,6 +35,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
     private final ScheduleFlightAddressingService scheduleFlightAddressingService;
     private final ScheduleGeocodeService scheduleGeocodeService;
     private final ScheduleNoDetailsWagonService scheduleNoDetailsWagonService;
+    private final ScheduleSegmentationT14 scheduleSegmentationT14;
 
     @Bean(destroyMethod = "shutdown")
     public Executor taskExecutor() {
@@ -60,9 +55,10 @@ public class SchedulingConfig implements SchedulingConfigurer {
             registerTask(taskRegistrar, task, 0);
         }
 
-        registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 5);
-        registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 15);
-        registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 20);
+        registerTask(taskRegistrar, scheduleSegmentationT14::loadSegmentsT14, 5);
+        registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 20);
+        registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 25);
+        registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 30);
         registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 60);
 
         registerTaskHourly(taskRegistrar, scheduleNoDetailsWagonService::loadNoDetailsWagons);

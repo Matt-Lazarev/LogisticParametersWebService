@@ -28,6 +28,7 @@ public class ScheduledTasksLogging {
         messages.put("loadNoDetailsWagons", "Сохранение вагонов без реквизитов");
         messages.put("updateCoordinates", "Обновление координат станций");
         messages.put("saveAllSecondEmptyFlights", "Сохранение вторых порожних рейсов");
+        messages.put("loadSegmentsT14", "Сохранение анализа сегментации (t14)");
     }
 
 

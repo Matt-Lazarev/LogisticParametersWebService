@@ -1,7 +1,9 @@
 package com.uraltrans.logisticparamservice.config.datasource;
 
+import com.uraltrans.logisticparamservice.entity.rjd.SegmentationAnalysisT13;
 import org.hibernate.cfg.Environment;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
@@ -20,32 +22,33 @@ import java.util.Map;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = { "com.uraltrans.logisticparamservice.repository.postgres" })
-public class PostgresDataSourceConfig {
+@EnableJpaRepositories(basePackages = { "com.uraltrans.logisticparamservice.repository.rjd" },
+                       entityManagerFactoryRef = "rjdEntityManagerFactory")
+public class RjdDataSourceConfig {
 
     @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.postgres")
-    public DataSource postgresDataSource() {
+    @ConfigurationProperties(prefix = "spring.datasource.rjd")
+    public DataSource rjdDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean(name = "entityManagerFactory")
+    @Bean(name = "rjdEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
-            EntityManagerFactoryBuilder builder, @Qualifier("postgresDataSource") DataSource dataSource) {
+            EntityManagerFactoryBuilder builder, @Qualifier("rjdDataSource") DataSource dataSource) {
 
         Map<String, String> properties = new HashMap<>();
         properties.put(Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect");
-        properties.put(Environment.HBM2DDL_AUTO, "update");
+        properties.put(Environment.HBM2DDL_AUTO, "none");
         return builder
                 .dataSource(dataSource)
                 .properties(properties)
-                .packages("com.uraltrans.logisticparamservice.entity.postgres")
+                .packages("com.uraltrans.logisticparamservice.entity.rjd")
                 .build();
     }
 
-    @Bean(name = "transactionManager")
+    @Bean(name = "rjdTransactionManager")
     public PlatformTransactionManager transactionManager(
-            @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
+            @Qualifier("rjdEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 }

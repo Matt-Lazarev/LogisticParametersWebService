@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 @Aspect
 @Slf4j
 @Component
-public class FlightSavingLogging {
+public class FlightApiOperationsLogging {
     @Around("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.FlightServiceImpl.saveAllFlights(..))")
     public Object saveLoadedDataMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Object methodResult;
@@ -84,43 +84,50 @@ public class FlightSavingLogging {
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.FlightProfitController.*())")
     public Object logFlightProfitController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("get")
                 ? "Получение данных о доходности рейсов" : "Сохранение доходности рейсов";
         return handleReturn(proceedingJoinPoint, message);
     }
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.StationController.*())")
     public Object logStationController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("get")
                 ? "Получение данных о станциях" : "Сохранение справочника станций";
        return handleReturn(proceedingJoinPoint, message);
     }
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.CargoController.*())")
     public Object logCargoController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("get")
                 ? "Получение данных о грузах" : "Сохранение грузов";
         return handleReturn(proceedingJoinPoint, message);
     }
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.FlightAddressingController.*())")
     public Object logFlightAddressingController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String message = proceedingJoinPoint.getSignature().getName().contains("getAllFlightAddressings")
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("getAllFlightAddressings")
                 ? "Получение адресации вагонов" : "Сохранение адресации вагонов";
         return handleReturn(proceedingJoinPoint, message);
     }
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.SecondEmptyFlightController.*())")
     public Object logSecondEmptyFlightController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("get")
                 ? "Получение вторых порожних рейсов" : "Сохранение вторых порожних рейсов";
         return handleReturn(proceedingJoinPoint, message);
     }
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.NoDetailsWagonController.*())")
     public Object logNoDetailsWagonController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        String message = proceedingJoinPoint.getSignature().getName().contains("get")
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("get")
                 ? "Получение вагонов без реквизитов" : "Сохранение вагонов без реквизитов";
+        return handleReturn(proceedingJoinPoint, message);
+    }
+
+    @Around("execution(* com.uraltrans.logisticparamservice.controller.api.SegmentationController.*())")
+    public Object logSegmentationControllerController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("get")
+                ? "Получение анализа сегментации (t14)" : "Сохранение анализа сегментации (t14)";
         return handleReturn(proceedingJoinPoint, message);
     }
 
