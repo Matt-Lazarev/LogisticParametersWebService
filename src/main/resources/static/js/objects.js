@@ -80,11 +80,11 @@ function getCluster() {
 
 function getMapObjects() {
     let stationsRequest = new XMLHttpRequest();
-    stationsRequest.open('GET', 'http://10.168.1.6:8080/result/station', false);
+    stationsRequest.open('GET', 'http://10.168.1.5:8080/result/station', false);
     stationsRequest.send(null);
 
     let planfactRequest = new XMLHttpRequest();
-    planfactRequest.open('POST', 'http://10.168.1.6:8080/result/planfact', false);
+    planfactRequest.open('POST', 'http://10.168.1.5:8080/result/planfact', false);
     planfactRequest.send(null);
 
     if (stationsRequest.status === 200 && planfactRequest.status === 200) {
