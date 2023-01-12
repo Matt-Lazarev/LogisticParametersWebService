@@ -42,6 +42,12 @@ public class FlightController {
         return "html/discarded_flights";
     }
 
+    @GetMapping("/discarded/secondempty")
+    public String getDiscardedSecondEmpttyFlights(Model model){
+        model.addAttribute("discarded_flights", FileUtils.readDiscardedSecondEmptyFlights());
+        return "html/discarded_flights";
+    }
+
     @GetMapping("/rate-tariff-errors")
     public String getRateTariffErrors(Model model){
         model.addAttribute("errors", FileUtils.readTariffRateErrors());

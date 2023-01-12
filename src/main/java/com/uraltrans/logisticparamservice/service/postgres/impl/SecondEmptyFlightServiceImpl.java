@@ -12,6 +12,7 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
+import com.uraltrans.logisticparamservice.utils.FileUtils;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -100,33 +101,99 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     }
 
     private List<SecondEmptyFlight> filterFlights(List<SecondEmptyFlight> flights){
-        return flights
+        List<String> discardedFlights = new ArrayList<>();
+        flights = flights
                 .stream()
                 .filter(SecondEmptyFlight::getIsNotFirstEmpty)
-                .filter(f -> "ПОР".equalsIgnoreCase(f.getLoaded()))
-                .filter(f -> f.getIdleDays() != null && f.getIdleDays().doubleValue() >= 0)
-                .filter(f -> !f.getSourceStation().equalsIgnoreCase(f.getDestStation()))
-                .filter(f -> !FILTER_CARGO_CODES.contains(f.getCargoCode()))
-                .filter(f -> f.getSourceContragent() != null &&
-                        f.getSourceContragent().equalsIgnoreCase("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ"))
+                .filter(f -> {
+                    boolean result = "ПОР".equalsIgnoreCase(f.getLoaded());
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - не порожний рейс");
+                    }
+                    return result;
+                })
+                .filter(f -> {
+                    boolean result = f.getIdleDays() != null && f.getIdleDays().doubleValue() >= 0;
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - idleDays (простой) не рассчитан или меньше нуля");
+                    }
+                    return result;
+                })
+                .filter(f -> {
+                    boolean result = !f.getSourceStation().equalsIgnoreCase(f.getDestStation());
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - ст. оправления равна ст. назначения");
+                    }
+                    return result;
+                })
+                .filter(f -> {
+                    boolean result = !FILTER_CARGO_CODES.contains(f.getCargoCode());
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - недопустимый код груза " + f.getCargoCode());
+                    }
+                    return result;
+                })
+                .filter(f -> {
+                    boolean result = f.getSourceContragent() != null &&
+                            f.getSourceContragent().equalsIgnoreCase("УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ");
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - недопустимый контрагент " + f.getSourceContragent());
+                    }
+                    return result;
+                })
                 .filter(f -> {
                     String[] tag2Values = loadParameterService.getLoadParameters().getFeature2().split("[, ]+");
                     String[] tag22Values = loadParameterService.getLoadParameters().getFeature22().split("[, ]+");
-                    return notInFilterTags(tag2Values, f.getTag2()) && notInFilterTags(tag22Values, f.getTag22());
+
+                    boolean result = notInFilterTags(tag2Values, f.getTag2()) && notInFilterTags(tag22Values, f.getTag22());
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - недопустимое значение Признак2 или Признак22");
+                    }
+                    return result;
                 })
                 .filter(f -> {
                     StationHandbook sourceStation = stationHandbookService.findStationByCode6(f.getSourceStationCode());
-                    return sourceStation != null && !sourceStation.getExcludeFromSecondEmptyFlight() && !sourceStation.getLock();
+                    boolean result = sourceStation != null && !sourceStation.getExcludeFromSecondEmptyFlight() && !sourceStation.getLock();
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - ст. отправления исключена из расчетов");
+                    }
+                    return result;
                 })
                 .filter(f -> {
                     StationHandbook destStation = stationHandbookService.findStationByCode6(f.getDestStationCode());
-                    return destStation != null && !destStation.getExcludeFromSecondEmptyFlight() && !destStation.getLock();
+
+                    boolean result = destStation != null && !destStation.getExcludeFromSecondEmptyFlight() && !destStation.getLock();
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - ст. назначения исключена из расчетов");
+                    }
+                    return result;
                 })
-                .filter(f -> !registerSecondEmptyFlightRepository.containsFlightsByCodes(f.getSourceStationCode(), f.getDestStationCode()))
-                .filter(f -> notInRepair(f.getCarNumber(), f.getDepartureFromSourceStation()))
-                .filter(f -> f.getArriveToDestStation() == null && f.getNextInvNumber() == null ||
-                             notInRepair(f.getCarNumber(), f.getArriveToDestStation()))
+                .filter(f -> {
+                    boolean result = !registerSecondEmptyFlightRepository.containsFlightsByCodes(f.getSourceStationCode(), f.getDestStationCode());
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - маршрут исключен (реестр)");
+                    }
+                    return result;
+
+                })
+                .filter(f -> {
+                    boolean result = notInRepair(f.getCarNumber(), f.getDepartureFromSourceStation());
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - вагон находился в ремонте (относительно даты отправления с ст. отправления)");
+                    }
+                    return result;
+                })
+                .filter(f -> {
+                    boolean result = f.getArriveToDestStation() == null && f.getNextInvNumber() == null ||
+                            notInRepair(f.getCarNumber(), f.getArriveToDestStation());
+                    if(!result){
+                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - вагон находился в ремонте (относительно даты прибытия на ст. назначения)");
+                    }
+                    return result;
+                })
                 .collect(Collectors.toList());
+        FileUtils.writeDiscardedSecondEmptyFlights(discardedFlights, false);
+        return flights;
     }
 
     private void calculateCountEmptyFlights(List<SecondEmptyFlight> secondEmptyFlights) {
@@ -141,6 +208,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                         SecondEmptyFlight::getAID, f -> f, (a1, a2) -> a1
                 ));
 
+        List<String> discardedFlights = new ArrayList<>();
         for(SecondEmptyFlight flight : secondEmptyFlights){
             SecondEmptyFlight previous = groupedFlights.get(flight.getPrevFlightId());
             if(previous == null){
@@ -151,10 +219,13 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                flight.getSourceStationCode().equals(previous.getSourceStationCode()) ||
                flight.getSourceStationCode().equals(previous.getDestStationCode()))
             {
-                groupedFlights.remove(flight.getPrevFlightId());
+                SecondEmptyFlight duplicate = groupedFlights.get(flight.getPrevFlightId());
+                discardedFlights.add("AID: " + duplicate.getAID() + ", CarNumber: " + duplicate.getCarNumber() + " - перестановка");
+                groupedFlights.remove(duplicate.getPrevFlightId());
             }
         }
 
+        FileUtils.writeDiscardedSecondEmptyFlights(discardedFlights, true);
         return new ArrayList<>(groupedFlights.values());
     }
 

@@ -444,11 +444,10 @@
                 </div>
             </form>
         </div>
-
         <div class="col-sm">
-            <form th:action="@{/result/noDetailsWagon}" method="get">
+            <form th:action="@{/flights/discarded/secondempty}" method="get">
                 <div class="box-footer mb-1 mt-3">
-                    <label style="text-align: center"> Просмотреть вагоны без реквизитов </label>
+                    <label style="text-align: center"> Просмотреть отброшенные вторые порожние рейсы рейсы</label>
                     <br>
                     <button type="submit" class="btn btn-primary">Показать</button>
                 </div>
@@ -461,6 +460,15 @@
             <form th:action="@{/api/segmentation/analysis}" method="get">
                 <div class="box-footer mb-1 mt-3">
                     <label style="text-align: center"> Просмотреть анализ сегментации (t14) </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm">
+            <form th:action="@{/result/noDetailsWagon}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Просмотреть вагоны без реквизитов </label>
                     <br>
                     <button type="submit" class="btn btn-primary">Показать</button>
                 </div>

@@ -61,6 +61,14 @@ public class SegmentationAnalysisT14ServiceImpl implements SegmentationAnalysisT
         File[] loadedFiles = findFiles(loadParameters.getLoadedMaskT14(), daysToCheck, files);
         File[] unloadedFiles = findFiles(loadParameters.getUnloadedMaskT14(), daysToCheck, files);
 
+        if(loadedFiles.length == 0){
+            return;
+        }
+
+        if(unloadedFiles.length == 0){
+            return;
+        }
+
         Map<String, Integer> loadedFlightInfo = groupedFlightInfos(loadedFiles);
         Map<String, Integer> unloadedFlightInfo = groupedFlightInfos(unloadedFiles);
 
@@ -90,16 +98,13 @@ public class SegmentationAnalysisT14ServiceImpl implements SegmentationAnalysisT
     }
 
     private Map<String, Integer> groupedFlightInfos(File[] files){
-        List<List<List<String>>> rows = Arrays.stream(files)
-                .map(f -> ExcelUtils.read(f.getAbsolutePath()))
+        List<String> headers = ExcelUtils.extractHeaders(files[0].getAbsolutePath());
+        Set<Integer> headerIndexes = new HashSet<>(formHeadersIndexes(headers).values());
+        List<List<String>> rows = Arrays.stream(files)
+                .flatMap(f -> ExcelUtils.read(f.getAbsolutePath(), headerIndexes).stream().skip(1))
                 .collect(Collectors.toList());
 
-        List<String> headerRow = rows.get(0).get(0);
-        Map<String, Integer> headers = formHeadersIndexes(headerRow);
-
         List<FlightInfo> flightInfos = rows.stream()
-                .flatMap(lists -> lists.stream().skip(1))
-                .map(row -> reduceRow(row, headers))
                 .map(row -> new FlightInfo(row.get(0), row.get(1), row.get(2), row.get(3)))
                 .collect(Collectors.toList());
 
@@ -136,12 +141,6 @@ public class SegmentationAnalysisT14ServiceImpl implements SegmentationAnalysisT
             }
         }
         return headers;
-    }
-
-    private List<String> reduceRow(List<String> row, Map<String, Integer> headers) {
-        List<String> reducedRow = new ArrayList<>();
-        headers.values().forEach(index -> reducedRow.add(row.get(index)));
-        return reducedRow;
     }
 
     private Map<String, Integer> groupFlightInfos(List<FlightInfo> flightInfos) {

@@ -24,6 +24,9 @@ public class FileUtils {
     private static final Path DEFAULT_ACTION_LOGS_FILE_PATH = Paths.get("logging/action_logs.log");
     private static final Path DEFAULT_LOGS_FILE_PATH = Paths.get("logging");
 
+    private static final Path DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH = Paths
+            .get("logging/discarded_second_empty_flights.log");
+
     private static final Path DEFAULT_DISCARDED_FLIGHTS_FILE_PATH = Paths.get("logging/discarded_flights.log");
     private static final Path DEFAULT_TARIFF_RATE_ERRORS_FILE_PATH = Paths.get("logging/tariff_rate_errors.log");
     private static final Path DEFAULT_BACK_BUTTON_FILE_PATH = Paths.get("button/button-url.txt");
@@ -37,6 +40,9 @@ public class FileUtils {
             }
             if (!Files.exists(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH)) {
                 Files.createFile(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH);
+            }
+            if (!Files.exists(DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH)) {
+                Files.createFile(DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH);
             }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -72,6 +78,10 @@ public class FileUtils {
         writeList(discardedFlights, append, DEFAULT_DISCARDED_FLIGHTS_FILE_PATH);
     }
 
+    public static void writeDiscardedSecondEmptyFlights(List<String> discardedFlights, boolean append) {
+        writeList(discardedFlights, append, DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH);
+    }
+
     public static void writeTariffRateErrors(List<String> tariffRateErrors, boolean append) {
         writeList(tariffRateErrors, append, DEFAULT_TARIFF_RATE_ERRORS_FILE_PATH);
     }
@@ -93,6 +103,15 @@ public class FileUtils {
     public static List<String> readDiscardedFlights() {
         try {
             return Files.readAllLines(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH);
+        } catch (IOException e) {
+            log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
+        }
+        return new ArrayList<>();
+    }
+
+    public static List<String> readDiscardedSecondEmptyFlights() {
+        try {
+            return Files.readAllLines(DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH);
         } catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
         }

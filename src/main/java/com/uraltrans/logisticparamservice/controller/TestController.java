@@ -64,8 +64,8 @@ public class TestController {
     private final SegmentationAnalysisT14Service segmentationAnalysisT14Service;
 
     @GetMapping
-    public void getAll() {
-        segmentationAnalysisT14Service.saveAllSegmentsT14();
+    public Object getAll() {
+        return carRepairInfoRepository.getCarRepairByDate("", 28838043);
     }
 
     @GetMapping("/1")
