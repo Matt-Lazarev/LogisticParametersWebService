@@ -44,7 +44,6 @@ function getCluster() {
 
     let getPointData = function (planfact) {
         let ut_rate = planfact.rateFact !== "null" ? 'Ставка согласована: ' + planfact.rateFact : 'Ставка не задана';
-        //        let ut_rate = planfact.rateFact !== "null" ? 'Ставка согласована' : 'Ставка не задана';
         return {
             balloonContentBody:
                 '<p>Станция: ' + planfact.station + '</p>' +
@@ -79,12 +78,14 @@ function getCluster() {
 }
 
 function getMapObjects() {
+    let address = document.getElementById("application.host");
+
     let stationsRequest = new XMLHttpRequest();
-    stationsRequest.open('GET', 'http://10.168.1.6:8080/result/station', false);
+    stationsRequest.open('GET', address + '/result/station', false);
     stationsRequest.send(null);
 
     let planfactRequest = new XMLHttpRequest();
-    planfactRequest.open('POST', 'http://10.168.1.6:8080/result/planfact', false);
+    planfactRequest.open('POST', address + '/result/station', false);
     planfactRequest.send(null);
 
     if (stationsRequest.status === 200 && planfactRequest.status === 200) {

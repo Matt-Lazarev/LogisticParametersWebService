@@ -1,4 +1,13 @@
 spring:
+  profiles:
+    active: 'dev'
+
+---
+spring:
+  config:
+    activate:
+      on-profile: 'dev'
+
   datasource:
     itr:
       jdbc-url: jdbc:sqlserver://dbsrv:1433;database=ITR;trustServerCertificate=true
@@ -24,11 +33,11 @@ spring:
       jdbc-url: jdbc:postgresql://10.168.1.6:5432/rjd
       username: admin
       password: 123456
-      driver-class-name:  org.postgresql.Driver
+      driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
 
-  profiles:
-    active: 'dev'
+application:
+  address: "http://10.168.1.6:8080"

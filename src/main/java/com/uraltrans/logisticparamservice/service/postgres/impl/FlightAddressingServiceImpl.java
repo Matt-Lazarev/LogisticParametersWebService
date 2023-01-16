@@ -22,6 +22,7 @@ import com.uraltrans.logisticparamservice.utils.FileUtils;
 import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,8 +45,11 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     private static final String TARIFF_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/emptyflight";
     private static final String RATE_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/rateflight";
 
-    public static final String TARIFF_CALLBACK_URL = "http://10.168.1.6:8080/calc/tariff";
-    public static final String RATE_CALLBACK_URL = "http://10.168.1.6:8080/calc/rate";
+    @Value("${application.address}/calc/tariff")
+    public String TARIFF_CALLBACK_URL;
+
+    @Value("${application.address}/calc/rate")
+    public String RATE_CALLBACK_URL;
 
     private final FlightAddressingRepository flightAddressingRepository;
     private final CarRepairInfoRepository carRepairInfoRepository;
