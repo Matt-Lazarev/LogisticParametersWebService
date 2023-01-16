@@ -55,7 +55,9 @@ public class SchedulingConfig implements SchedulingConfigurer {
             registerTask(taskRegistrar, task, 0);
         }
 
-        registerTask(taskRegistrar, scheduleSegmentationT14::loadSegmentsT14, -60);
+        String loadTimeT14 = loadParameterService.getLoadParameters().getLoadTimeT14();
+        registerTaskAt(taskRegistrar, scheduleSegmentationT14::loadSegmentsT14, LocalTime.parse(loadTimeT14));
+
         registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 20);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 25);
         registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 30);
@@ -79,13 +81,13 @@ public class SchedulingConfig implements SchedulingConfigurer {
         taskRegistrar.addTriggerTask(
                 task,
                 triggerContext -> {
+                    LocalDateTime nextLoadTime = LocalDateTime.of(LocalDate.now(), time);
                     LocalTime now = LocalTime.now();
-                    if(now.isBefore(time)){
-                        log.info("Время выгрузки: {}", LocalDateTime.of(LocalDate.now(), time));
-                        return java.sql.Timestamp.valueOf(LocalDateTime.of(LocalDate.now(), time));
+                    if(now.isAfter(time)){
+                        nextLoadTime = nextLoadTime.plusDays(1);
                     }
-                    log.info("Время выгрузки: {}", LocalDateTime.of(LocalDate.now(), time));
-                    return java.sql.Timestamp.valueOf(LocalDateTime.of(LocalDate.now().plusDays(1), time));
+                    log.info("Время выгрузки: {}", nextLoadTime);
+                    return java.sql.Timestamp.valueOf(nextLoadTime);
                 }
         );
     }

@@ -62,14 +62,17 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
         }
 
         LoadParameters parameters = new LoadParameters(
+                null,
                 90, "03:00:00",
                 30, 30,
                 0, 0,
                 60., 1.,
                 45, "Согласован",
                 "КР", "Мельниченко Д.В., Чаброва М.С., Зырина Н.А., Холмогорова Е.А., Мелешкина Ю.В., Афанасьева А.Л., Субботин В.В., Артеменко М.Н., Коркишко В.В., Варфоломеев В.., Панов С.Н.",
-                "791b94ee-cac3-44b3-896e-d31264886a32", "d2290efc-9926-474b-ba3e-854bb0b9c7e6", 950, "воин, аренда, вояк", "воин, аренда, вояк", 7, "", "УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ",
-                "01.12.22", "//fssrv/QProject/Prod/SourceData/MarketAnalysis", "КРЫТЫЕ ГРУЖЕННЫЕ", "Крытые порожние", 60);
+                "791b94ee-cac3-44b3-896e-d31264886a32", "d2290efc-9926-474b-ba3e-854bb0b9c7e6",
+                0, "воин, аренда, вояк", "воин, аренда, вояк", 7, false,
+                "", "УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ",
+                "02:00:00", "//fssrv/QProject/Prod/SourceData/MarketAnalysis", "КРЫТЫЕ ГРУЖЕННЫЕ", "Крытые порожние", 60);
         loadParametersRepository.save(parameters);
         return parameters;
     }

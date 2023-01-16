@@ -44,8 +44,8 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     private static final String TARIFF_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/emptyflight";
     private static final String RATE_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/rateflight";
 
-    public static final String TARIFF_CALLBACK_URL = "http://10.168.1.5:8080/calc/tariff";
-    public static final String RATE_CALLBACK_URL = "http://10.168.1.5:8080/calc/rate";
+    public static final String TARIFF_CALLBACK_URL = "http://10.168.1.6:8080/calc/tariff";
+    public static final String RATE_CALLBACK_URL = "http://10.168.1.6:8080/calc/rate";
 
     private final FlightAddressingRepository flightAddressingRepository;
     private final CarRepairInfoRepository carRepairInfoRepository;

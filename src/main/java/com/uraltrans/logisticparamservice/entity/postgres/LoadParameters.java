@@ -14,11 +14,9 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "load_parameters")
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class LoadParameters {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,50 +44,9 @@ public class LoadParameters {
     private String token;
     private String sourceContragent;
 
-    private String loadDateT14;
+    private String loadTimeT14;
     private String sourceDataT14;
     private String loadedMaskT14;
     private String unloadedMaskT14;
     private Integer daysThresholdT14;
-
-
-    public LoadParameters(Integer daysToRetrieveData, String nextDataLoadTime,
-                          Integer maxLoadIdleDays, Integer maxUnloadIdleDays,
-                          Integer minLoadIdleDays, Integer minUnloadIdleDays,
-                          Double maxTravelTime, Double minTravelTime,
-                          Integer flightProfitDaysToRetrieveData, String status,
-                          String carType, String managers, String apikeyGeocoder,
-                          String apikeyStationList, Integer requestsAmountInDay,
-                          String feature2, String feature22, Integer repairDaysCheck,
-                          String token, String sourceContragent,
-                          String loadDateT14, String sourceDataT14, String loadedMaskT14,
-                          String unloadedMaskT14, Integer daysThresholdT14) {
-        this.daysToRetrieveData = daysToRetrieveData;
-        this.nextDataLoadTime = nextDataLoadTime;
-        this.maxLoadIdleDays = maxLoadIdleDays;
-        this.maxUnloadIdleDays = maxUnloadIdleDays;
-        this.minLoadIdleDays = minLoadIdleDays;
-        this.minUnloadIdleDays = minUnloadIdleDays;
-        this.maxTravelTime = maxTravelTime;
-        this.minTravelTime = minTravelTime;
-        this.flightProfitDaysToRetrieveData = flightProfitDaysToRetrieveData;
-        this.status = status;
-        this.carType = carType;
-        this.managers = managers;
-        this.apikeyGeocoder = apikeyGeocoder;
-        this.apikeyStationList = apikeyStationList;
-        this.requestsAmountInDay = requestsAmountInDay;
-        this.feature2 = feature2;
-        this.feature22 = feature22;
-        this.repairDaysCheck = repairDaysCheck;
-        this.rateTariffState = false;
-        this.token = token;
-        this.sourceContragent = sourceContragent;
-
-        this.loadDateT14 = loadDateT14;
-        this.sourceDataT14 = sourceDataT14;
-        this.loadedMaskT14 = loadedMaskT14;
-        this.unloadedMaskT14 = unloadedMaskT14;
-        this.daysThresholdT14 = daysThresholdT14;
-    }
 }
