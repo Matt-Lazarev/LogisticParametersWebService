@@ -16,7 +16,7 @@ public class MapController {
 
     @GetMapping("/map")
     public String getMap(Model model){
-        model.addAttribute("application.address", applicationAddress);
+        model.addAttribute("applicationAddress", applicationAddress);
         return "html/map";
     }
 }

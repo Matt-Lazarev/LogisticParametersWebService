@@ -78,7 +78,7 @@ function getCluster() {
 }
 
 function getMapObjects() {
-    let address = document.getElementById("application.host");
+    let address = document.getElementById("application.address").textContent
 
     let stationsRequest = new XMLHttpRequest();
     stationsRequest.open('GET', address + '/result/station', false);
