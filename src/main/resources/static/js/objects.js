@@ -85,7 +85,7 @@ function getMapObjects() {
     stationsRequest.send(null);
 
     let planfactRequest = new XMLHttpRequest();
-    planfactRequest.open('POST', address + '/result/station', false);
+    planfactRequest.open('POST', address + '/result/planfact', false);
     planfactRequest.send(null);
 
     if (stationsRequest.status === 200 && planfactRequest.status === 200) {
