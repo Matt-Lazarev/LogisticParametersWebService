@@ -14,4 +14,5 @@ public class SecondEmptyFlightResponse {
     private String carNumber;
     private String docNumber;
     private String aid;
+    private String resultDay;
 }

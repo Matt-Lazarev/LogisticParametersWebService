@@ -53,6 +53,9 @@ public class NoDetailsWagon {
     @Column(name="wagon_type")
     private String wagonType;
 
+    @Column(name="flight_type")
+    private String flightType;
+
     private String volume;
 
     @Column(name="car_number")

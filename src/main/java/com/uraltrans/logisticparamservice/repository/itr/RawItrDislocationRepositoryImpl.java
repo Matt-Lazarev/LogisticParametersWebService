@@ -30,6 +30,7 @@ public class RawItrDislocationRepositoryImpl implements RawItrDislocationReposit
                     "disl.Пр20 as Feature20, " +
                     "disl.CarStatus_State as CarState, " +
                     "disl.ROsOwners_CarTypeName as WagonType, " +
+                    "disl.Dislocation_IsFullText as FlightType, " +
                     "disl.Dislocation_CodeCargo as CargoCode, " +
                     "disl.CarPassport_DaysBeforeDatePlanRepair as DaysBeforeDatePlanRepair, " +
                     "disl.Dislocation_DistanceFromCurrentStation as DistanceFromCurrentStation, " +

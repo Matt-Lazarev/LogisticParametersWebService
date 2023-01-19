@@ -59,6 +59,7 @@ public class SecondEmptyFlightMapper {
                 .aid(String.valueOf(flight.getAID()))
                 .docNumber(flight.getInvNumber())
                 .carNumber(String.valueOf(flight.getCarNumber()))
+                .resultDay(String.valueOf(flight.getIdleDays() != null && flight.getIdleDays().doubleValue() > 0.0))
                 .build();
     }
 }

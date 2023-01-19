@@ -113,13 +113,6 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                     return result;
                 })
                 .filter(f -> {
-                    boolean result = f.getIdleDays() != null && f.getIdleDays().doubleValue() >= 0;
-                    if(!result){
-                        discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - idleDays (простой) не рассчитан или меньше нуля");
-                    }
-                    return result;
-                })
-                .filter(f -> {
                     boolean result = !f.getSourceStation().equalsIgnoreCase(f.getDestStation());
                     if(!result){
                         discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - ст. оправления равна ст. назначения");

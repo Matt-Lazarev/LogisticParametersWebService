@@ -41,6 +41,7 @@ public class NoDetailsWagonMapper {
                 .destinationRoadName((String) data.get("DestinationStationRoad"))
                 .cargoId(String.valueOf(data.get("CargoCode")))
                 .wagonType((String) data.get("WagonType"))
+                .flightType((String) data.get("FlightType"))
                 .volume(String.valueOf(data.get("Volume")))
                 .carNumber(String.valueOf(data.get("CarNumber")))
                 .p02((String) data.get("Feature2"))
