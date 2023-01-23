@@ -46,3 +46,6 @@ src/test
 ### docker
 dockerfile
 docker-compose.yaml
+
+#confidential
+application.yaml
