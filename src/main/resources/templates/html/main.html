@@ -14,7 +14,11 @@
         margin-top: 20px;
     }
 
-    h3 {
+    h1 {
+        margin-bottom: 20px;
+    }
+
+    h1,h3 {
         margin-top: 15px;
         text-align: center
     }
@@ -46,6 +50,9 @@
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" th:href="@{/map}">Map</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" th:href="@{/segmentation}">Сегментация по регионам</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -65,6 +72,7 @@
 </div>
 
 
+<h1>Логистические параметры станций</h1>
 <h3>Базовые настройки</h3>
 
 <div class="container border border-3 border-secondary rounded">

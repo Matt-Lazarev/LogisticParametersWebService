@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +48,18 @@ public class FlightIdleServiceImpl implements FlightIdleService {
                 flightService.getGroupedCarLoadIdle(), flightService.getGroupCarUnloadIdle());
         data = filterFlightIdles(data);
         flightIdleRepository.saveAll(data);
+    }
+
+    @Override
+    public Optional<Double> getLoadIdleByStationCode(String stationCode) {
+        Optional<String> idleOptional = flightIdleRepository.findLoadIdleByStationCode(stationCode);
+        return idleOptional.map(Double::parseDouble);
+    }
+
+    @Override
+    public Optional<Double> getUnloadIdleByStationCode(String stationCode) {
+        Optional<String> idleOptional = flightIdleRepository.findUnloadIdleByStationCode(stationCode);
+        return idleOptional.map(Double::parseDouble);
     }
 
     private void prepareNextSave() {

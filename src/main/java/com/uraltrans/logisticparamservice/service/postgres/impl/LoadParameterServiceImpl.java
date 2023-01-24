@@ -25,10 +25,13 @@ public class LoadParameterServiceImpl implements LoadParameterService  {
 
     @Override
     public void updateLoadParameters(LoadParameters newParameters) {
-        LoadParameters loadParameters = loadParametersRepository.findAll().get(0);
-        newParameters.setId(loadParameters.getId());
-        if(newParameters.getRateTariffState() == null){
-            newParameters.setRateTariffState(loadParameters.getRateTariffState());
+        List<LoadParameters> list = loadParametersRepository.findAll();
+        if(list.size() != 0){
+            LoadParameters loadParameters = list.get(0);
+            newParameters.setId(loadParameters.getId());
+            if(newParameters.getRateTariffState() == null){
+                newParameters.setRateTariffState(loadParameters.getRateTariffState());
+            }
         }
         loadParametersRepository.save(newParameters);
     }

@@ -19,6 +19,11 @@ public class MvcControllerExceptionHandler {
         log.error("error: {}\n {}", ex.getMessage(), ex);
         ex.printStackTrace();
         redirectAttrs.addFlashAttribute("message", "error");
-        return "redirect:/home";
+        if(redirectAttrs.getAttribute("service").equals("log-parameters")){
+            return "redirect:/home";
+        }
+        else {
+            return "redirect:/segmentation";
+        }
     }
 }

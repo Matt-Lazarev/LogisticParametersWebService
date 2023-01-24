@@ -39,17 +39,17 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class FlightAddressingServiceImpl implements FlightAddressingService {
+    public static final String TARIFF_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/emptyflight";
+    public static final String RATE_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/rateflight";
+
     private static final Set<String> ADDRESSING_RESPONSES_CACHE = new HashSet<>();
     private static final Set<String> FREEWAGON_RESPONSES_CACHE = new HashSet<>();
 
-    private static final String TARIFF_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/emptyflight";
-    private static final String RATE_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/rateflight";
-
     @Value("${application.address}/calc/tariff")
-    public String TARIFF_CALLBACK_URL;
+    private String tariffCallbackUrl;
 
     @Value("${application.address}/calc/rate")
-    public String RATE_CALLBACK_URL;
+    private String rateCallbackUrl;
 
     private final FlightAddressingRepository flightAddressingRepository;
     private final CarRepairInfoRepository carRepairInfoRepository;
@@ -244,9 +244,9 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         headers.put("uid", uid);
         headers.put("token", token);
         if (method.equalsIgnoreCase("tariff")) {
-            headers.put("url", TARIFF_CALLBACK_URL);
+            headers.put("url", tariffCallbackUrl);
         } else {
-            headers.put("url", RATE_CALLBACK_URL);
+            headers.put("url", rateCallbackUrl);
         }
         return headers;
     }
@@ -263,7 +263,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
                     if (list.size() > 0 && detail.getSuccess().equalsIgnoreCase("false")) {
                         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                         String message = isTariff ? "тарифа" : "ставки";
-                        errors.add("[" + time + "]" + list.get(0) + " -> (запрос на расчет " + message + " не принят, причина: '" + detail.getErrorText() + ")'");
+                        errors.add("[" + time + "]" + list.get(0) + " -> (запрос на расчет " + message + " не принят, причина: '" + detail.getErrorText() + "')");
                     }
                 });
         FileUtils.writeTariffRateErrors(errors, true);

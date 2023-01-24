@@ -33,6 +33,7 @@ public class FlightController {
         loadParameterService.updateLoadParameters(dto);
         redirectAttrs.addFlashAttribute("dto", dto);
         redirectAttrs.addFlashAttribute("message", "success");
+        redirectAttrs.addFlashAttribute("service", "log-parameters");
         return "redirect:/home";
     }
 

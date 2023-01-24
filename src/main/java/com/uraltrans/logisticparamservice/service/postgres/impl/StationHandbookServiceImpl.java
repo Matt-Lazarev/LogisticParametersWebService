@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,6 +78,20 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     @Override
     public StationHandbook findStationByCode6(String code) {
         return stationHandbookRepository.findStationByCode6(code);
+    }
+
+    @Override
+    public String getRegionByStation(String station) {
+        return stationHandbookRepository.findRegionByStation(station);
+    }
+
+    @Override
+    public Optional<StationHandbook> getStationByName(String station) {
+        List<StationHandbook> stations = stationHandbookRepository.findStationByName(station);
+        if(stations.size() == 1){
+            return Optional.of(stations.get(0));
+        }
+        return Optional.empty();
     }
 
     private void prepareNextSave() {
