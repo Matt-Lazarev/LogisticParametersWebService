@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,8 +41,7 @@ public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Se
     private final FlightTimeDistanceService flightTimeDistanceService;
     private final FlightIdleService flightIdleService;
     private final TariffMapper tariffMapper;
-
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
 
     public void saveAllRegionSegmentationsT15() {
         RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
