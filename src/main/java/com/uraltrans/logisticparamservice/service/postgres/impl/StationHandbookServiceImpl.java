@@ -86,12 +86,8 @@ public class StationHandbookServiceImpl implements StationHandbookService {
     }
 
     @Override
-    public Optional<StationHandbook> getStationByName(String station) {
-        List<StationHandbook> stations = stationHandbookRepository.findStationByName(station);
-        if(stations.size() == 1){
-            return Optional.of(stations.get(0));
-        }
-        return Optional.empty();
+    public List<StationHandbook> getStationByName(String station) {
+        return stationHandbookRepository.findStationByName(station);
     }
 
     private void prepareNextSave() {

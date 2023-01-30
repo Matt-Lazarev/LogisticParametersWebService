@@ -1,282 +1,282 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
-import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
-import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
-import com.uraltrans.logisticparamservice.dto.regionsegmentation.EmptyFlight;
-import com.uraltrans.logisticparamservice.dto.regionsegmentation.FlightGroupKey;
-import com.uraltrans.logisticparamservice.dto.regionsegmentation.LoadedFlight;
-import com.uraltrans.logisticparamservice.entity.postgres.FlightTimeDistance;
-import com.uraltrans.logisticparamservice.entity.postgres.RegionSegmentationParameters;
-import com.uraltrans.logisticparamservice.service.mapper.mapstruct.TariffMapper;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
+import com.uraltrans.logisticparamservice.entity.postgres.*;
+import com.uraltrans.logisticparamservice.repository.postgres.ProfitThresholdT7Repository;
+import com.uraltrans.logisticparamservice.repository.postgres.RegionSegmentationT15Repository;
+import com.uraltrans.logisticparamservice.repository.postgres.SegmentationResultT15Repository;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionFlightSegmentationAnalysisT15Service;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationLogService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationParametersService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationT15Service;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
-import com.uraltrans.logisticparamservice.utils.CsvUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.math.RoundingMode;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Service {
-    public static final String TARIFF_CALC_URL = "http://10.168.0.8/utc_srs/hs/calc/emptyflight";
-
-    @Value("${application.address}/segmentation/tariff")
-    private String tariffCallbackUrl;
-
+    private final RegionSegmentationT15Repository regionSegmentationT15Repository;
+    private final ProfitThresholdT7Repository profitThresholdT7Repository;
+    private final SegmentationResultT15Repository segmentationResultT15Repository;
+    private final RegionFlightSegmentationAnalysisT15Service regionFlightSegmentationAnalysisT15Service;
     private final RegionSegmentationParametersService regionSegmentationParametersService;
-    private final StationHandbookService stationHandbookService;
-    private final FlightTimeDistanceService flightTimeDistanceService;
-    private final FlightIdleService flightIdleService;
-    private final TariffMapper tariffMapper;
-    private final RestTemplate restTemplate;
+    private final RegionSegmentationLogService regionSegmentationLogService;
 
-    public void saveAllRegionSegmentationsT15() {
+    @Override
+    public void saveAllSegments(String logId) {
+        prepareNextSave();
+
         RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
+        Integer maxSegments = parameters.getMaxSegments();
 
-        Map<FlightGroupKey, List<LoadedFlight>> loadedFlights = CsvUtils.readCsvFile("t2.csv", ";")
+        List<RegionFlightSegmentationAnalysisT15> flights = regionFlightSegmentationAnalysisT15Service.getAllT15Analyses();
+
+        Map<Integer, RegionFlightSegmentationAnalysisT15> loadedFlights = getFlightsByType(flights, "Груженый");
+        Map<Integer, RegionFlightSegmentationAnalysisT15> emptyFlights = getFlightsByType(flights, "Порожний");
+
+        Map<String, List<RegionFlightSegmentationAnalysisT15>> emptyFlightsGroupedBySourceRegion = groupBySourceRegion(emptyFlights.values());
+        Map<String, List<RegionFlightSegmentationAnalysisT15>> loadedFlightsGroupedBySourceRegion = groupBySourceRegion(loadedFlights.values());
+
+        List<List<RegionFlightSegmentationAnalysisT15>> segmentations = getFirstSegmentation(loadedFlights, emptyFlightsGroupedBySourceRegion, logId);
+
+        String message = String.format("[Расчет сегментации]: Найдено %d сегментов уровня 1", segmentations.size());
+        regionSegmentationLogService.updateLogMessageById(logId, message);
+
+
+        for (int i = 1; i < maxSegments; i++) {
+            fillNextSegmentPart(segmentations, loadedFlightsGroupedBySourceRegion, logId);
+            fillNextSegmentPart(segmentations, emptyFlightsGroupedBySourceRegion, logId);
+
+            message = String.format("[Расчет сегментации]: Найдено %d сегментов уровня %d", segmentations.size(), i+1);
+            regionSegmentationLogService.updateLogMessageById(logId, message);
+        }
+
+        List<RegionSegmentationT15> finalSegmentations = mapSegmentsListToSegmentation(segmentations);
+        regionSegmentationT15Repository.saveAll(finalSegmentations);
+
+        List<SegmentationResultT15> segmentationResult = mapToSegmentationResult(finalSegmentations);
+        segmentationResultT15Repository.saveAll(segmentationResult);
+
+        regionSegmentationLogService.updateLogMessageById(logId, "Сегментация завершена");
+    }
+
+    @Override
+    public List<SegmentationResultT15> getAllSegmentations(){
+        return segmentationResultT15Repository.findAll();
+    }
+
+    private void prepareNextSave() {
+        regionSegmentationT15Repository.truncateT15Table();
+        segmentationResultT15Repository.truncate();
+    }
+
+    private Map<Integer, RegionFlightSegmentationAnalysisT15> getFlightsByType(List<RegionFlightSegmentationAnalysisT15> flights, String type) {
+        return flights
                 .stream()
-                .skip(1)
-                .map(row -> new LoadedFlight(row[0], row[1], row[2], row[3], row[4], row[7], row[8]))
-                .filter(f -> f.getDepartureDate() != null && f.getDepartureDate().isAfter(LocalDate.now().minusDays(parameters.getDaysToRetrieveLoadedFlights())))
-                .collect(Collectors.groupingBy(f -> new FlightGroupKey(f.getVolume(), f.getSourceStation(), f.getDestStation())));
+                .filter(f -> f.getType().equals(type))
+                .collect(Collectors.toMap(RegionFlightSegmentationAnalysisT15::getId, Function.identity()));
+    }
 
-        Map<FlightGroupKey, List<EmptyFlight>> emptyFlights = CsvUtils.readCsvFile("t3.csv", ";")
+    private Map<String, List<RegionFlightSegmentationAnalysisT15>> groupBySourceRegion(Collection<RegionFlightSegmentationAnalysisT15> flights){
+        return flights
                 .stream()
-                .skip(1)
-                .map(row -> new EmptyFlight(row[0], row[1], row[2], row[3], row[4], row[5]))
-                .filter(f -> f.getDepartureDate() != null && f.getDepartureDate().isAfter(LocalDate.now().minusDays(parameters.getDaysToRetrieveEmptyFlights())))
-                .collect(Collectors.groupingBy(f -> new FlightGroupKey(f.getVolume(), f.getSourceStation(), f.getDestStation())));
-
-//        List<LoadedFlight> loadedFlightsGrouped = loadedFlights
-//                .entrySet()
-//                .stream()
-//                .collect(ArrayList::new,
-//                        (resultList, e) ->
-//                                new LoadedFlight(e.getKey().getVolume(), e.getKey().getSourceStation(), e.getKey().getDestStation(),
-//                                BigDecimal.valueOf(e.getValue().stream().mapToDouble(f -> f.getRate().doubleValue()).sum()),
-//                                e.getValue().stream().mapToInt(LoadedFlight::getFlightsAmount).sum()),
-//                        ArrayList::addAll);
-//
-//        List<EmptyFlight> emptyFlightsGrouped = emptyFlights
-//                .entrySet()
-//                .stream()
-//                .collect(ArrayList::new,
-//                        (resultList, e) ->
-//                                new EmptyFlight(e.getKey().getVolume(), e.getKey().getSourceStation(), e.getKey().getDestStation(),
-//                                        BigDecimal.valueOf(e.getValue().stream().mapToDouble(f -> f.getTariff().doubleValue()).sum()),
-//                                        e.getValue().stream().mapToInt(EmptyFlight::getFlightsAmount).sum()),
-//                        ArrayList::addAll);
-
-        List<LoadedFlight> loadedFlightsGrouped = new ArrayList<>();
-        loadedFlights
-                .forEach((key, value) -> loadedFlightsGrouped.add(
-                        new LoadedFlight(key.getVolume(), key.getSourceStation(), key.getDestStation(),
-                                BigDecimal.valueOf(value.stream().mapToDouble(f -> f.getRate().doubleValue()).sum()),
-                                value.stream().mapToInt(LoadedFlight::getFlightsAmount).sum())));
-
-        List<EmptyFlight> emptyFlightsGrouped = new ArrayList<>();
-        emptyFlights
-                .forEach((key, value) -> emptyFlightsGrouped.add(
-                        new EmptyFlight(key.getVolume(), key.getSourceStation(), key.getDestStation(),
-                                BigDecimal.valueOf(value.stream().mapToDouble(f -> f.getTariff().doubleValue()).sum()),
-                                value.stream().mapToInt(EmptyFlight::getFlightsAmount).sum())));
-
-        List<LoadedFlight> filteredLoadedFlights = loadedFlightsGrouped
-                .stream()
-                .filter(f -> f.getFlightsAmount() >= parameters.getMinLoadedFlightsAmount())
-                .collect(Collectors.toList());
-
-        List<EmptyFlight>  filteredEmptyFlights = emptyFlightsGrouped
-                .stream()
-                .filter(f -> f.getFlightsAmount() >= parameters.getMinEmptyFlightsAmount())
-                .collect(Collectors.toList());
-
-        loadRegionByStations(filteredLoadedFlights, filteredEmptyFlights);
-        loadTravelDays(filteredLoadedFlights, filteredEmptyFlights);
-        loadIdleDays(filteredLoadedFlights, filteredEmptyFlights);
-
-        filteredLoadedFlights
-                .subList(0, 20)
-                .forEach(System.out::println);
-
-        filteredEmptyFlights
-                .subList(0, 20)
-                .forEach(System.out::println);
+                .filter(f -> !f.getSourceRegion().equals(f.getDestRegion()))
+                .collect(Collectors.groupingBy(rf -> rf.getSourceRegion() + rf.getVolume(), Collectors.toList()));
     }
 
-    private void loadRegionByStations(List<LoadedFlight> loadedFlights, List<EmptyFlight> emptyFlights){
-        loadedFlights
-                .forEach(f -> {
-                    stationHandbookService.getStationByName(f.getSourceStation())
-                            .ifPresent(source -> {
-                                f.setSourceRegion(source.getRegion());
-                                f.setSourceStationCode(source.getCode6());
-                            });
-
-                   stationHandbookService.getStationByName(f.getDestStation())
-                           .ifPresent(dest -> {
-                               f.setDestRegion(dest.getRegion());
-                               f.setDestStationCode(dest.getCode6());
-                           });
-                });
-
-        emptyFlights
-                .forEach(f -> {
-                    stationHandbookService.getStationByName(f.getSourceStation())
-                            .ifPresent(source -> {
-                                f.setSourceRegion(source.getRegion());
-                                f.setSourceStationCode(source.getCode6());
-                            });
-
-                    stationHandbookService.getStationByName(f.getDestStation())
-                            .ifPresent(dest -> {
-                                f.setDestRegion(dest.getRegion());
-                                f.setDestStationCode(dest.getCode6());
-                            });
-                });
+    private List<List<RegionFlightSegmentationAnalysisT15>> getFirstSegmentation(
+            Map<Integer, RegionFlightSegmentationAnalysisT15> loadedFlights,
+            Map<String, List<RegionFlightSegmentationAnalysisT15>> emptyFlightsGroupedBySourceRegion, String logId) {
+        List<List<RegionFlightSegmentationAnalysisT15>> currentSegmentation = new ArrayList<>();
+        for (RegionFlightSegmentationAnalysisT15 loaded : loadedFlights.values()) {
+            List<RegionFlightSegmentationAnalysisT15> empties = emptyFlightsGroupedBySourceRegion.get(loaded.getDestRegion() + loaded.getVolume());
+            if (empties != null) {
+                for (RegionFlightSegmentationAnalysisT15 empty : empties) {
+                    List<RegionFlightSegmentationAnalysisT15> segment = new ArrayList<>(Arrays.asList(loaded, empty));
+                    currentSegmentation.add(segment);
+                }
+            } else {
+                String message = String.format("[Расчет сегментации]: Не удалось найти порожние рейсы от станции: = %s", loaded.getDestRegion());
+                regionSegmentationLogService.updateLogMessageById(logId, message);
+            }
+        }
+        return currentSegmentation;
     }
 
-    private void loadTravelDays(List<LoadedFlight> loadedFlights, List<EmptyFlight> emptyFlights){
-        List<String[]> notFoundFlightTimeDistances = new ArrayList<>();
-        loadedFlights
-                .forEach(f -> {
-                    Optional<FlightTimeDistance> timeDistanceOptional = flightTimeDistanceService.findByStationCodesAndFlightType(f.getSourceStationCode(), f.getDestStationCode(), f.getType());
-                    if(timeDistanceOptional.isPresent()){
-                        f.setTravelDays((int) Math.ceil(Double.parseDouble(timeDistanceOptional.get().getTravelTime())));
-                    }
-                    else {
-                        notFoundFlightTimeDistances.add(new String[]{f.getSourceStationCode(), f.getDestStationCode(), String.valueOf(f.getVolume()), f.getType()});
-                    }
-                });
+    private void fillNextSegmentPart(
+            List<List<RegionFlightSegmentationAnalysisT15>> segmentations,
+            Map<String, List<RegionFlightSegmentationAnalysisT15>> flightsGroupedBySourceRegion, String logId) {
 
-        emptyFlights
-                .forEach(f -> {
-                    Optional<FlightTimeDistance> timeDistanceOptional = flightTimeDistanceService.findByStationCodesAndFlightType(f.getSourceStationCode(), f.getDestStationCode(), f.getType());
-                    if(timeDistanceOptional.isPresent()){
-                        f.setTravelDays((int) Math.ceil(Double.parseDouble(timeDistanceOptional.get().getTravelTime())));
-                    }
-                    else {
-                        notFoundFlightTimeDistances.add(new String[]{f.getSourceStationCode(), f.getDestStationCode(), String.valueOf(f.getVolume()), f.getType()});
-                    }
-                });
+        List<List<RegionFlightSegmentationAnalysisT15>> newSegmentations = new ArrayList<>();
+        for (List<RegionFlightSegmentationAnalysisT15> segmentation : segmentations) {
+            RegionFlightSegmentationAnalysisT15 lastSegmentPart = segmentation.get(segmentation.size() - 1);
 
-        String token = regionSegmentationParametersService.getParameters().getToken();
-        Map<String, String> tariffHeaders = getHeaders(UUID.randomUUID().toString(), token);
-        sendTariffRequest(notFoundFlightTimeDistances, tariffHeaders);
+            if (segmentation.size() % 2 == 0 && lastSegmentPart.getIsNextSegmentNofFound() != null && lastSegmentPart.getIsNextSegmentNofFound()) {
+                continue;
+            }
+
+            List<RegionFlightSegmentationAnalysisT15> nextSegmentPartFlights = flightsGroupedBySourceRegion.get(lastSegmentPart.getDestRegion() + lastSegmentPart.getVolume());
+            if (nextSegmentPartFlights != null) {
+                List<RegionFlightSegmentationAnalysisT15> segmentationCopy = new ArrayList<>(segmentation);
+
+                RegionFlightSegmentationAnalysisT15 firstFlight = nextSegmentPartFlights.get(0);
+                segmentation.add(firstFlight);
+
+                for (int i = 1; i < nextSegmentPartFlights.size(); i++) {
+                    RegionFlightSegmentationAnalysisT15 nextSegmentPart = nextSegmentPartFlights.get(i);
+                    List<RegionFlightSegmentationAnalysisT15> newSegmentation = new ArrayList<>(segmentationCopy);
+                    newSegmentation.add(nextSegmentPart);
+                    newSegmentations.add(newSegmentation);
+                }
+            } else {
+                String message;
+                if (segmentation.size() % 2 == 1) {
+                    segmentation.remove(segmentation.size() - 1);
+                    segmentation.get(segmentation.size() - 1).setIsNextSegmentNofFound(true);
+                    message = "[Расчет сегментации]: Не удалось найти порожние рейсы от станции: %s";
+                } else {
+                    lastSegmentPart.setIsNextSegmentNofFound(true);
+                    message = "[Расчет сегментации]: Не удалось найти груженые рейсы от станции: %s";
+                }
+
+                regionSegmentationLogService.updateLogMessageById(logId, String.format(message, lastSegmentPart.getDestRegion()));
+            }
+        }
+        segmentations.addAll(newSegmentations);
     }
 
-    private Map<String, String>  getHeaders(String uid, String token) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("uid", uid);
-        headers.put("token", token);
-        headers.put("url", tariffCallbackUrl);
-        return headers;
+    public List<RegionSegmentationT15> mapSegmentsListToSegmentation(List<List<RegionFlightSegmentationAnalysisT15>> segmentList) {
+        List<RegionSegmentationT15> segmentations = new ArrayList<>();
+        for (List<RegionFlightSegmentationAnalysisT15> segmentationAnalysis : segmentList) {
+            RegionSegmentationT15 finalSegmentation = new RegionSegmentationT15();
+            List<RegionSegment> segments = new ArrayList<>();
+            for (int i = 0; i < segmentationAnalysis.size(); i += 2) {
+                RegionFlightSegmentationAnalysisT15 loaded = segmentationAnalysis.get(i);
+                RegionFlightSegmentationAnalysisT15 empty = segmentationAnalysis.get(i + 1);
+
+                List<RegionFlightSegmentationAnalysisT15> segmentation = Arrays.asList(loaded, empty);
+                BigDecimal profit = calculateProfit(segmentation);
+                Integer travelDays = loaded.getTravelDays() + empty.getTravelDays();
+                Integer loadDays = loaded.getSourceRegionLoadIdleDays();
+                Integer unloadDays = loaded.getDestRegionUnloadIdleDays();
+
+                RegionSegment segment = new RegionSegment(loaded.getSourceRegion(), loaded.getDestRegion(),
+                        empty.getSourceRegion(), empty.getDestRegion(), profit, travelDays, loadDays, unloadDays);
+                segments.add(segment);
+            }
+
+            finalSegmentation.setVolume(segmentationAnalysis.get(0).getVolume());
+            finalSegmentation.setSegments(segments);
+            setSegmentType(finalSegmentation);
+
+            segmentations.add(finalSegmentation);
+        }
+        return segmentations;
     }
 
-    private void sendTariffRequest(List<String[]> flights, Map<String, String> headers) {
-        List<TariffRequest> request = tariffMapper.mapToTariffRequests(flights);
-        Map<String, Object> namedRequest = new HashMap<>(Collections.singletonMap("details", request));
-        namedRequest.putAll(headers);
+    private BigDecimal calculateProfit(List<RegionFlightSegmentationAnalysisT15> segmentation) {
+        RegionFlightSegmentationAnalysisT15 loaded = segmentation.get(0);
+        RegionFlightSegmentationAnalysisT15 empty = segmentation.get(1);
 
-        RateTariffConfirmResponse response = restTemplate.postForObject(TARIFF_CALC_URL, namedRequest, RateTariffConfirmResponse.class);
-        handleTariffConfirmResponse(response);
+        BigDecimal loadedAverageRate = loaded.getRateTariff().divide(new BigDecimal(loaded.getFlightsAmount()), 2, RoundingMode.HALF_UP);
+        BigDecimal emptyAverageTariff = empty.getRateTariff().divide(new BigDecimal(empty.getFlightsAmount()), 2, RoundingMode.HALF_UP);
+        int totalSegmentDays = loaded.getSourceRegionLoadIdleDays() + loaded.getDestRegionUnloadIdleDays() + loaded.getTravelDays() + empty.getTravelDays();
 
-        log.info("Отправлен запрос на расчет тарифа, UID: {}, SIZE: {}", headers.get("uid"), request.size());
+        return (loadedAverageRate.subtract(emptyAverageTariff))
+                .divide(new BigDecimal(totalSegmentDays), 2, RoundingMode.HALF_UP);
     }
 
-    private void handleTariffConfirmResponse(RateTariffConfirmResponse response) {
-        if(response == null){
+    private void setSegmentType(RegionSegmentationT15 segmentation) {
+        RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
+        int maxSegments = parameters.getMaxSegments();
+
+        List<RegionSegment> segments = segmentation.getSegments();
+        boolean isCyclicSegmentation = isCyclicSegmentation(segments);
+        if (isCyclicSegmentation) {
+            segmentation.setSegmentType("Цикл");
             return;
         }
-        List<String> errors = new ArrayList<>();
-        response.getDetails()
-                .forEach(detail -> {
-                    if (detail.getSuccess().equalsIgnoreCase("false")) {
-                        String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-                        errors.add("[" + time + "] -> (запрос на расчет тарифа не принят, причина: '" + detail.getErrorText() + ")'");
-                        log.error("[{}] -> (запрос на расчет тарифа не принят, причина: '{}')", time, detail.getErrorText());
-                    }
-                });
-        //FileUtils.writeTariffRateErrors(errors, true);
+
+        ProfitThresholdT7 profitThreshold = profitThresholdT7Repository.findByVolume(segmentation.getVolume().intValue());
+
+        boolean containsProfitable = false;
+        boolean containsOptimization = false;
+
+        for (int i = 0; i < segments.size(); i++) {
+            if (segments.get(i).getProfit().doubleValue() >= profitThreshold.getCost()) {
+                containsProfitable = true;
+            } else {
+                containsOptimization = true;
+            }
+
+            if (containsProfitable && containsOptimization) {
+                segmentation.setSegments(segments.subList(0, i+1));
+                segmentation.setSegmentType("Смена доходный / оптимизационный");
+                return;
+            }
+        }
+
+        if (!containsOptimization && segments.size() == maxSegments) {
+            segmentation.setSegmentType("Доходный");
+        }
+        else if (!containsProfitable && segments.size() == maxSegments) {
+            segmentation.setSegmentType("Оптимизационный");
+        }
+        else {
+            segmentation.setSegmentType("Продолжение не найдено");
+        }
     }
 
-    private void loadIdleDays(List<LoadedFlight> loadedFlights, List<EmptyFlight> emptyFlights){
-        RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
-
-        loadedFlights
-                .forEach(f -> {
-                    int sourceLoadDays = flightIdleService.getLoadIdleByStationCode(f.getSourceStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getLoadDays);
-
-                    int sourceUnloadDays = flightIdleService.getUnloadIdleByStationCode(f.getSourceStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getUnloadDays);
-
-                    f.setSourceStationLoadIdleDays(sourceLoadDays);
-                    f.setSourceStationUnloadIdleDays(sourceUnloadDays);
-
-                    int destLoadDays = flightIdleService.getLoadIdleByStationCode(f.getDestStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getLoadDays);
-
-                    int destUnloadDays = flightIdleService.getUnloadIdleByStationCode(f.getDestStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getUnloadDays);
-
-                    f.setDestStationLoadIdleDays(destLoadDays);
-                    f.setDestStationUnloadIdleDays(destUnloadDays);
-                });
-
-        emptyFlights
-                .forEach(f -> {
-                    int sourceLoadDays = flightIdleService.getLoadIdleByStationCode(f.getSourceStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getLoadDays);
-
-                    int sourceUnloadDays = flightIdleService.getUnloadIdleByStationCode(f.getSourceStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getUnloadDays);
-
-                    f.setSourceStationLoadIdleDays(sourceLoadDays);
-                    f.setSourceStationUnloadIdleDays(sourceUnloadDays);
-
-                    int destLoadDays = flightIdleService.getLoadIdleByStationCode(f.getDestStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getLoadDays);
-
-                    int destUnloadDays = flightIdleService.getUnloadIdleByStationCode(f.getDestStationCode())
-                            .map(idle -> (int) Math.ceil(idle))
-                            .orElseGet(parameters::getUnloadDays);
-
-                    f.setDestStationLoadIdleDays(destLoadDays);
-                    f.setDestStationUnloadIdleDays(destUnloadDays);
-                });
+    private boolean isCyclicSegmentation(List<RegionSegment> segments) {
+        RegionSegment firstPart = segments.get(0);
+        RegionSegment lastPart = segments.get(segments.size() - 1);
+        return firstPart.getLoadedSourceRegion().equals(lastPart.getEmptyDestRegion());
     }
 
+    private List<SegmentationResultT15> mapToSegmentationResult(List<RegionSegmentationT15> segmentations){
+        List<SegmentationResultT15> segmentationResults = new ArrayList<>();
+        for (RegionSegmentationT15 segmentation : segmentations){
+            List<RegionSegment> segments = segmentation.getSegments();
+            SegmentationResultT15 segmentationResult = new SegmentationResultT15();
+            Integer wholeDays = segments.stream().mapToInt(s -> s.getLoadIdleDays() + s.getUnloadIdleDays() + s.getSegmentTravelDays()).sum();
+            Integer wholeTravelDays = segments.stream().mapToInt(RegionSegment::getSegmentTravelDays).sum();
+            Integer wholeLoadDays = segments.stream().mapToInt(RegionSegment::getLoadIdleDays).sum();
+            Integer wholeUnloadDays = segments.stream().mapToInt(RegionSegment::getUnloadIdleDays).sum();
+            BigDecimal wholeProfit = segments.stream().map(RegionSegment::getProfit).reduce(new BigDecimal(1), BigDecimal::add);
+            String path = segments.stream().map(RegionSegment::getPath).collect(Collectors.joining());
 
+            segmentationResult.setSourceRegion(segments.get(0).getLoadedSourceRegion());
+            segmentationResult.setDestRegion(segments.get(segments.size()-1).getEmptyDestRegion());
+            segmentationResult.setVolume(segmentation.getVolume());
+            segmentationResult.setSegmentType(segmentation.getSegmentType());
+            segmentationResult.setPath(path);
+            segmentationResult.setTotalDays(wholeDays);
+            segmentationResult.setTotalTravelDays(wholeTravelDays);
+            segmentationResult.setTotalLoadDays(wholeLoadDays);
+            segmentationResult.setTotalUnloadDays(wholeUnloadDays);
+            segmentationResult.setTotalProfit(wholeProfit);
 
+            segmentationResult.setFirstSegment(segments.get(0).getPath());
+            segmentationResult.setFirstProfit(segments.get(0).getProfit());
 
+            if(segments.size() > 1){
+                segmentationResult.setSecondSegment(segments.get(1).getPath());
+                segmentationResult.setSecondProfit(segments.get(1).getProfit());
+            }
 
-//        List<LoadedFlight> loadedFlightsGrouped = new ArrayList<>();
-//
-//        loadedFlights
-//                .entrySet()
-//                .forEach(e -> loadedFlightsGrouped.add(
-//                        new LoadedFlight(e.getKey().getVolume(), e.getKey().getSourceStation(), e.getKey().getDestStation(),
-//                                BigDecimal.valueOf(e.getValue().stream().mapToDouble(f -> f.getRate().doubleValue()).sum()),
-//                                e.getValue().stream().mapToInt(LoadedFlight::getFlightsAmount).sum())));
+            if(segments.size() > 2){
+                segmentationResult.setThirdSegment(segments.get(2).getPath());
+                segmentationResult.setThirdProfit(segments.get(2).getProfit());
+            }
+
+            segmentationResults.add(segmentationResult);
+        }
+
+        return segmentationResults;
+    }
 }

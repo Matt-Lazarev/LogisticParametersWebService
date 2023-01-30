@@ -140,36 +140,48 @@
     </form>
 </div>
 
-<h3>Управление загрузкой данных</h3>
-<div class="container border border-3 border-secondary rounded">
-
-</div>
+<!--<h3>Управление загрузкой данных</h3>-->
+<!--<div class="container border border-3 border-secondary rounded">-->
+<!--</div>-->
 
 <h3>Управление просмотром данных</h3>
 <div class="container border border-3 border-secondary rounded">
-
+    <div class="col-sm">
+        <form th:action="@{/api/segmentation}" method="get">
+            <div class="box-footer mb-1 mt-3">
+                <label style="text-align: center"> Просмотреть сегментацию по регионам </label>
+                <br>
+                <button type="submit" class="btn btn-primary">Показать</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 
 <h3>История работы с сегментацией по регионам</h3>
 <div class="container border border-3 border-secondary rounded table-container">
     <table class="table table-striped">
-        <col style="width:60%">
+        <col style="width:30%">
         <col style="width:20%">
         <col style="width:20%">
+        <col style="width:30%">
         <thead>
         <tr>
             <th scope="col">Действие</th>
             <th scope="col">Дата</th>
             <th scope="col">Успешность</th>
+            <th scope="col">Информация</th>
         </tr>
         </thead>
         <tbody>
-<!--        <tr th:each="log: ${logs}">-->
-<!--            <td th:text="${log.action}">Action</td>-->
-<!--            <td th:text="${log.date}">Date</td>-->
-<!--            <td th:text="${log.success}">Success</td>-->
-<!--        </tr>-->
+        <tr th:each="log: ${logs}">
+            <td th:text="${log.action}"></td>
+            <td th:text="${log.date}"></td>
+            <td th:text="${log.success}"></td>
+            <td>
+                <a th:href="@{/segmentation/logs/{logId}(logId=${log.id})}">Просмотреть</a>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>

@@ -8,10 +8,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ActionLog {
-
+    private String id;
     private String action;
-
     private String date;
-
     private String success;
 }

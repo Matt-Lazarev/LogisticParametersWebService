@@ -20,5 +20,5 @@ public interface StationHandbookService {
 
     String getRegionByStation(String station);
 
-    Optional<StationHandbook> getStationByName(String station);
+    List<StationHandbook> getStationByName(String station);
 }

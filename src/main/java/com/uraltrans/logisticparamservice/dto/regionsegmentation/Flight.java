@@ -1,22 +1,23 @@
 package com.uraltrans.logisticparamservice.dto.regionsegmentation;
 
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Data
-public class EmptyFlight {
+public class Flight {
     private LocalDate departureDate;
     private BigDecimal volume;
     private String sourceStation;
     private String destStation;
+    private BigDecimal rateTariff;
     private Integer flightsAmount;
-    private BigDecimal tariff;
     private String sourceRegion;
+    private String destRegion;
     private String sourceStationCode;
     private String destStationCode;
-    private String destRegion;
     private String type;
     private Integer travelDays;
     private Integer sourceStationLoadIdleDays;
@@ -24,22 +25,24 @@ public class EmptyFlight {
     private Integer destStationLoadIdleDays;
     private Integer destStationUnloadIdleDays;
 
-    public EmptyFlight(String departureDate, String volume, String sourceStation, String destStation, String flightsAmount, String tariff) {
+    public Flight(String departureDate, String volume, String sourceStation, String destStation,
+                  String rateTariff, String flightsAmount, String type) {
         this.departureDate = LocalDate.parse(departureDate, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         this.volume = new BigDecimal(volume.replace(",", "."));
         this.sourceStation = sourceStation;
         this.destStation = destStation;
-        this.flightsAmount =Integer.parseInt(flightsAmount);
-        this.tariff = new BigDecimal(tariff.replace(",", ".").replace(" ", ""));
-        this.type = "Порожний";
+        this.rateTariff = new BigDecimal(rateTariff.replace(",", ".").replace(" ", ""));
+        this.flightsAmount = Integer.parseInt(flightsAmount);
+        this.type = type;
     }
 
-    public EmptyFlight(BigDecimal volume, String sourceStation, String destStation, BigDecimal tariff, Integer flightsAmount) {
+    public Flight(BigDecimal volume, String sourceStation, String destStation,
+                  String type, BigDecimal rateTariff, Integer flightsAmount) {
         this.volume = volume;
         this.sourceStation = sourceStation;
         this.destStation = destStation;
-        this.tariff = tariff;
+        this.type = type;
+        this.rateTariff = rateTariff;
         this.flightsAmount = flightsAmount;
-        this.type = "Порожний";
     }
 }

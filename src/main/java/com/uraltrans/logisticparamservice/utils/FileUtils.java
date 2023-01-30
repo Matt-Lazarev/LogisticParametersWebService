@@ -22,6 +22,7 @@ public class FileUtils {
     public static final String DELIMITER = "   ";
     private static final int MAX_ACTION_LOGS_AMOUNT = 50;
     private static final Path DEFAULT_ACTION_LOGS_FILE_PATH = Paths.get("logging/action_logs.log");
+    private static final Path DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH = Paths.get("logging/region_segmentation_action_logs.log");
     private static final Path DEFAULT_LOGS_FILE_PATH = Paths.get("logging");
 
     private static final Path DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH = Paths
@@ -44,6 +45,9 @@ public class FileUtils {
             if (!Files.exists(DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH)) {
                 Files.createFile(DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH);
             }
+            if (!Files.exists(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH)) {
+                Files.createFile(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH);
+            }
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -59,13 +63,38 @@ public class FileUtils {
         }
     }
 
+    public static void writeRegionSegmentationActionLog(String message) {
+        try {
+            synchronized (FileUtils.class) {
+                Files.write(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH, Collections.singletonList(message), CREATE, APPEND);
+            }
+        } catch (IOException e) {
+            log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());
+        }
+    }
+
     public static List<ActionLog> readAllLogs() {
         List<ActionLog> logs = new ArrayList<>();
         try {
             Files.readAllLines(DEFAULT_ACTION_LOGS_FILE_PATH)
                     .stream()
                     .map(str -> str.split(DELIMITER))
-                    .map(arr -> new ActionLog(arr[0], arr[1], arr[2]))
+                    .map(arr -> new ActionLog(null, arr[0], arr[1], arr[2]))
+                    .forEach(logs::add);
+        } catch (IOException e) {
+            log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
+        }
+        Collections.reverse(logs);
+        return logs.size() <= MAX_ACTION_LOGS_AMOUNT ? logs : logs.subList(0, MAX_ACTION_LOGS_AMOUNT);
+    }
+
+    public static List<ActionLog> readAllRegionSegmentationLogs() {
+        List<ActionLog> logs = new ArrayList<>();
+        try {
+            Files.readAllLines(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH)
+                    .stream()
+                    .map(str -> str.split(DELIMITER))
+                    .map(arr -> new ActionLog(arr[0], arr[1], arr[2], arr[3]))
                     .forEach(logs::add);
         } catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());

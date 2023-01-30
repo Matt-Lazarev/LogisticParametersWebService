@@ -125,11 +125,20 @@ public class FlightApiOperationsLogging {
     }
 
     @Around("execution(* com.uraltrans.logisticparamservice.controller.api.SegmentationController.*())")
-    public Object logSegmentationControllerController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object logSegmentationController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String message = proceedingJoinPoint.getSignature().getName().startsWith("get")
                 ? "Получение анализа сегментации (t14)" : "Сохранение анализа сегментации (t14)";
         return handleReturn(proceedingJoinPoint, message);
     }
+
+    @Around("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.RegionSegmentationT15ServiceImpl.saveAllSegments(..))")
+    public Object logRegionSegmentationController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String message = proceedingJoinPoint.getSignature().getName().startsWith("save")
+                ? "Сохранение сегментации по регионам" : "";
+        String logId = (String) proceedingJoinPoint.getArgs()[0];
+        return handleSegmentationReturn(proceedingJoinPoint, message, logId);
+    }
+
 
     private void saveAndLogFlightLoad(JoinPoint joinPoint, boolean isSuccess) {
         Object[] args = joinPoint.getArgs();
@@ -168,13 +177,6 @@ public class FlightApiOperationsLogging {
         FileUtils.writeActionLog(message);
     }
 
-    private void logFlightDataGet(boolean isSuccess, String message) {
-        String actionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        message = message + FileUtils.DELIMITER + actionTime + FileUtils.DELIMITER + isSuccess;
-        log.info("{}", message);
-        FileUtils.writeActionLog(message);
-    }
-
     private Object handleReturn(ProceedingJoinPoint proceedingJoinPoint, String message) throws Throwable {
         Object methodResult;
         try {
@@ -186,5 +188,32 @@ public class FlightApiOperationsLogging {
         }
         logFlightDataGet(true, message);
         return methodResult;
+    }
+
+    private void logFlightDataGet(boolean isSuccess, String message) {
+        String actionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        message = message + FileUtils.DELIMITER + actionTime + FileUtils.DELIMITER + isSuccess;
+        log.info("{}", message);
+        FileUtils.writeActionLog(message);
+    }
+
+    private Object handleSegmentationReturn(ProceedingJoinPoint proceedingJoinPoint, String message, String logId) throws Throwable {
+        Object methodResult;
+        try {
+            methodResult = proceedingJoinPoint.proceed();
+        }
+        catch (Throwable e) {
+            logSegmentationController(false, message, logId);
+            throw e;
+        }
+        logSegmentationController(true, message, logId);
+        return methodResult;
+    }
+
+    private void logSegmentationController(boolean isSuccess, String message, String logId) {
+        String actionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        message = logId + FileUtils.DELIMITER +  message + FileUtils.DELIMITER + actionTime + FileUtils.DELIMITER + isSuccess;
+        log.info("{}", message);
+        FileUtils.writeRegionSegmentationActionLog(message);
     }
 }

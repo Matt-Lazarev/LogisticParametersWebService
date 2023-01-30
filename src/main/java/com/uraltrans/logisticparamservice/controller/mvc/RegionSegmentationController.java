@@ -1,17 +1,26 @@
 package com.uraltrans.logisticparamservice.controller.mvc;
 
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffResultResponse;
+import com.uraltrans.logisticparamservice.entity.postgres.RegionSegmentationLog;
 import com.uraltrans.logisticparamservice.entity.postgres.RegionSegmentationParameters;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationParametersService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationT15Service;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.TariffResponseService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
+import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Optional;
 
 
 @Slf4j
@@ -20,8 +29,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 public class RegionSegmentationController {
     private final RegionSegmentationParametersService regionSegmentationParametersService;
+    private final RegionFlightSegmentationAnalysisT15Service regionFlightSegmentationAnalysisT15Service;
     private final RegionSegmentationT15Service regionSegmentationT15Service;
-    private final TariffResponseService tariffResponseService;
+    private final RegionFlightService regionFlightService;
+    private final RegionSegmentationLogService regionSegmentationLogService;
 
     @GetMapping
     public String getSegmentationPage(Model model){
@@ -31,15 +42,29 @@ public class RegionSegmentationController {
 
         RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
         model.addAttribute("dto", parameters);
+        model.addAttribute("logs", FileUtils.readAllRegionSegmentationLogs());
         return "html/region-segmentation-main";
     }
 
+    @GetMapping("/logs/{logId}")
+    public String getLogInfo(@PathVariable String logId, Model model){
+        Optional<RegionSegmentationLog> logOptional = regionSegmentationLogService.getLogById(logId);
+        String text = logOptional.isPresent() ? logOptional.get().getMessage() : "";
+        model.addAttribute("text", text);
+        return "html/region-segmentation-log";
+    }
     @PostMapping
     public String saveSegmentation(@ModelAttribute("dto") RegionSegmentationParameters dto,
                                    @RequestParam String action, RedirectAttributes redirectAttrs){
 
         if(action.equals("save")){
-            regionSegmentationT15Service.saveAllRegionSegmentationsT15();
+            String logId = regionSegmentationLogService.saveLog();
+            regionFlightService.saveAllRegionFlights(logId);
+
+//            //TODO remove
+//            regionFlightSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+//            //TODO remove
+//            regionSegmentationT15Service.saveAllSegments(logId);
         }
 
         regionSegmentationParametersService.updateParameters(dto);
@@ -49,9 +74,17 @@ public class RegionSegmentationController {
         return "redirect:/segmentation";
     }
 
+    @ResponseBody
     @PostMapping(value = "/tariff", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public void takeTariffResponse(@RequestBody TariffResultResponse response){
-        tariffResponseService.saveAllTariffResponses(response);
-        log.info("responses rate:\n UID: {} \n body: {}", response.getUid(), response);
+        log.info("responses tariff:\n UID: {} \n body: {}", response.getUid(), response);
+
+        String logId = response.getUid();
+        String message = String.format("[Расчет времени в пути]: Получена информация от 1С по %d рейсам", response.getDetails().size());
+        regionSegmentationLogService.updateLogMessageById(logId, message);
+
+        regionFlightService.updateTravelTime(response);
+        regionFlightSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+        regionSegmentationT15Service.saveAllSegments(logId);
     }
 }

@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
-public class FlightGroupKey {
+public class RegionFlightGroupKey {
     private BigDecimal volume;
-    private String sourceStation;
-    private String destStation;
+    private String sourceRegion;
+    private String destRegion;
     private String type;
 }
