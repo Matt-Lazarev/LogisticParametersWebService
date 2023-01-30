@@ -246,7 +246,7 @@ public class RegionFlightServiceImpl implements RegionFlightService {
         regionSegmentationLogService.updateLogMessageById(logId, Arrays.asList(message1, message2));
 
         String token = regionSegmentationParametersService.getParameters().getToken();
-        Map<String, String> tariffHeaders = getHeaders(UUID.randomUUID().toString(), token);
+        Map<String, String> tariffHeaders = getHeaders(logId, token);
         sendTariffRequest(notFoundFlightTimeDistances, tariffHeaders, logId);
     }
 
