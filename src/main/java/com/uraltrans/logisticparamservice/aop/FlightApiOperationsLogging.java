@@ -131,7 +131,7 @@ public class FlightApiOperationsLogging {
         return handleReturn(proceedingJoinPoint, message);
     }
 
-    @Around("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.RegionSegmentationT15ServiceImpl.saveAllSegments(..))")
+    @Around("execution(* com.uraltrans.logisticparamservice.service.postgres.impl.RegionFlightServiceImpl.saveAllRegionFlights(..))")
     public Object logRegionSegmentationController(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String message = proceedingJoinPoint.getSignature().getName().startsWith("save")
                 ? "Сохранение сегментации по регионам" : "";
