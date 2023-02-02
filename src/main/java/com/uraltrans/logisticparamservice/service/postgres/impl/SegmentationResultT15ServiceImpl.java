@@ -4,10 +4,10 @@ import com.uraltrans.logisticparamservice.entity.postgres.*;
 import com.uraltrans.logisticparamservice.repository.postgres.ProfitThresholdT7Repository;
 import com.uraltrans.logisticparamservice.repository.postgres.RegionSegmentationT15Repository;
 import com.uraltrans.logisticparamservice.repository.postgres.SegmentationResultT15Repository;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionFlightSegmentationAnalysisT15Service;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationAnalysisT15Service;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationLogService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationParametersService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationT15Service;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.SegmentationResultT15Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Service {
+public class SegmentationResultT15ServiceImpl implements SegmentationResultT15Service {
     private final RegionSegmentationT15Repository regionSegmentationT15Repository;
     private final ProfitThresholdT7Repository profitThresholdT7Repository;
     private final SegmentationResultT15Repository segmentationResultT15Repository;
-    private final RegionFlightSegmentationAnalysisT15Service regionFlightSegmentationAnalysisT15Service;
+    private final RegionSegmentationAnalysisT15Service regionSegmentationAnalysisT15Service;
     private final RegionSegmentationParametersService regionSegmentationParametersService;
     private final RegionSegmentationLogService regionSegmentationLogService;
 
@@ -34,15 +34,15 @@ public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Se
         RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
         Integer maxSegments = parameters.getMaxSegments();
 
-        List<RegionFlightSegmentationAnalysisT15> flights = regionFlightSegmentationAnalysisT15Service.getAllT15Analyses();
+        List<RegionSegmentationAnalysisT15> flights = regionSegmentationAnalysisT15Service.getAllT15Analyses();
 
-        Map<Integer, RegionFlightSegmentationAnalysisT15> loadedFlights = getFlightsByType(flights, "Груженый");
-        Map<Integer, RegionFlightSegmentationAnalysisT15> emptyFlights = getFlightsByType(flights, "Порожний");
+        Map<Integer, RegionSegmentationAnalysisT15> loadedFlights = getFlightsByType(flights, "Груженый");
+        Map<Integer, RegionSegmentationAnalysisT15> emptyFlights = getFlightsByType(flights, "Порожний");
 
-        Map<String, List<RegionFlightSegmentationAnalysisT15>> emptyFlightsGroupedBySourceRegion = groupBySourceRegion(emptyFlights.values());
-        Map<String, List<RegionFlightSegmentationAnalysisT15>> loadedFlightsGroupedBySourceRegion = groupBySourceRegion(loadedFlights.values());
+        Map<String, List<RegionSegmentationAnalysisT15>> emptyFlightsGroupedBySourceRegion = groupBySourceRegion(emptyFlights.values());
+        Map<String, List<RegionSegmentationAnalysisT15>> loadedFlightsGroupedBySourceRegion = groupBySourceRegion(loadedFlights.values());
 
-        List<List<RegionFlightSegmentationAnalysisT15>> segmentations = getFirstSegmentation(loadedFlights, emptyFlightsGroupedBySourceRegion, logId);
+        List<List<RegionSegmentationAnalysisT15>> segmentations = getFirstSegmentation(loadedFlights, emptyFlightsGroupedBySourceRegion, logId);
 
         String message = String.format("[Расчет сегментации]: Найдено %d сегментов уровня 1", segmentations.size());
         regionSegmentationLogService.updateLogMessageById(logId, message);
@@ -75,33 +75,33 @@ public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Se
         segmentationResultT15Repository.truncate();
     }
 
-    private Map<Integer, RegionFlightSegmentationAnalysisT15> getFlightsByType(List<RegionFlightSegmentationAnalysisT15> flights, String type) {
+    private Map<Integer, RegionSegmentationAnalysisT15> getFlightsByType(List<RegionSegmentationAnalysisT15> flights, String type) {
         return flights
                 .stream()
                 .filter(f -> f.getType().equals(type))
-                .collect(Collectors.toMap(RegionFlightSegmentationAnalysisT15::getId, Function.identity()));
+                .collect(Collectors.toMap(RegionSegmentationAnalysisT15::getId, Function.identity()));
     }
 
-    private Map<String, List<RegionFlightSegmentationAnalysisT15>> groupBySourceRegion(Collection<RegionFlightSegmentationAnalysisT15> flights){
+    private Map<String, List<RegionSegmentationAnalysisT15>> groupBySourceRegion(Collection<RegionSegmentationAnalysisT15> flights){
         return flights
                 .stream()
                 .filter(f -> !f.getSourceRegion().equals(f.getDestRegion()))
                 .collect(Collectors.groupingBy(rf -> rf.getSourceRegion() + rf.getVolume(), Collectors.toList()));
     }
 
-    private List<List<RegionFlightSegmentationAnalysisT15>> getFirstSegmentation(
-            Map<Integer, RegionFlightSegmentationAnalysisT15> loadedFlights,
-            Map<String, List<RegionFlightSegmentationAnalysisT15>> emptyFlightsGroupedBySourceRegion, String logId) {
-        List<List<RegionFlightSegmentationAnalysisT15>> currentSegmentation = new ArrayList<>();
-        for (RegionFlightSegmentationAnalysisT15 loaded : loadedFlights.values()) {
-            List<RegionFlightSegmentationAnalysisT15> empties = emptyFlightsGroupedBySourceRegion.get(loaded.getDestRegion() + loaded.getVolume());
+    private List<List<RegionSegmentationAnalysisT15>> getFirstSegmentation(
+            Map<Integer, RegionSegmentationAnalysisT15> loadedFlights,
+            Map<String, List<RegionSegmentationAnalysisT15>> emptyFlightsGroupedBySourceRegion, String logId) {
+        List<List<RegionSegmentationAnalysisT15>> currentSegmentation = new ArrayList<>();
+        for (RegionSegmentationAnalysisT15 loaded : loadedFlights.values()) {
+            List<RegionSegmentationAnalysisT15> empties = emptyFlightsGroupedBySourceRegion.get(loaded.getDestRegion() + loaded.getVolume());
             if (empties != null) {
-                for (RegionFlightSegmentationAnalysisT15 empty : empties) {
-                    List<RegionFlightSegmentationAnalysisT15> segment = new ArrayList<>(Arrays.asList(loaded, empty));
+                for (RegionSegmentationAnalysisT15 empty : empties) {
+                    List<RegionSegmentationAnalysisT15> segment = new ArrayList<>(Arrays.asList(loaded, empty));
                     currentSegmentation.add(segment);
                 }
             } else {
-                String message = String.format("[Расчет сегментации]: Не удалось найти порожние рейсы от станции: = %s", loaded.getDestRegion());
+                String message = String.format("[Расчет сегментации]: Не удалось найти порожние рейсы от региона: = %s", loaded.getDestRegion());
                 regionSegmentationLogService.updateLogMessageById(logId, message);
             }
         }
@@ -109,27 +109,27 @@ public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Se
     }
 
     private void fillNextSegmentPart(
-            List<List<RegionFlightSegmentationAnalysisT15>> segmentations,
-            Map<String, List<RegionFlightSegmentationAnalysisT15>> flightsGroupedBySourceRegion, String logId) {
+            List<List<RegionSegmentationAnalysisT15>> segmentations,
+            Map<String, List<RegionSegmentationAnalysisT15>> flightsGroupedBySourceRegion, String logId) {
 
-        List<List<RegionFlightSegmentationAnalysisT15>> newSegmentations = new ArrayList<>();
-        for (List<RegionFlightSegmentationAnalysisT15> segmentation : segmentations) {
-            RegionFlightSegmentationAnalysisT15 lastSegmentPart = segmentation.get(segmentation.size() - 1);
+        List<List<RegionSegmentationAnalysisT15>> newSegmentations = new ArrayList<>();
+        for (List<RegionSegmentationAnalysisT15> segmentation : segmentations) {
+            RegionSegmentationAnalysisT15 lastSegmentPart = segmentation.get(segmentation.size() - 1);
 
             if (segmentation.size() % 2 == 0 && lastSegmentPart.getIsNextSegmentNofFound() != null && lastSegmentPart.getIsNextSegmentNofFound()) {
                 continue;
             }
 
-            List<RegionFlightSegmentationAnalysisT15> nextSegmentPartFlights = flightsGroupedBySourceRegion.get(lastSegmentPart.getDestRegion() + lastSegmentPart.getVolume());
+            List<RegionSegmentationAnalysisT15> nextSegmentPartFlights = flightsGroupedBySourceRegion.get(lastSegmentPart.getDestRegion() + lastSegmentPart.getVolume());
             if (nextSegmentPartFlights != null) {
-                List<RegionFlightSegmentationAnalysisT15> segmentationCopy = new ArrayList<>(segmentation);
+                List<RegionSegmentationAnalysisT15> segmentationCopy = new ArrayList<>(segmentation);
 
-                RegionFlightSegmentationAnalysisT15 firstFlight = nextSegmentPartFlights.get(0);
+                RegionSegmentationAnalysisT15 firstFlight = nextSegmentPartFlights.get(0);
                 segmentation.add(firstFlight);
 
                 for (int i = 1; i < nextSegmentPartFlights.size(); i++) {
-                    RegionFlightSegmentationAnalysisT15 nextSegmentPart = nextSegmentPartFlights.get(i);
-                    List<RegionFlightSegmentationAnalysisT15> newSegmentation = new ArrayList<>(segmentationCopy);
+                    RegionSegmentationAnalysisT15 nextSegmentPart = nextSegmentPartFlights.get(i);
+                    List<RegionSegmentationAnalysisT15> newSegmentation = new ArrayList<>(segmentationCopy);
                     newSegmentation.add(nextSegmentPart);
                     newSegmentations.add(newSegmentation);
                 }
@@ -138,10 +138,10 @@ public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Se
                 if (segmentation.size() % 2 == 1) {
                     segmentation.remove(segmentation.size() - 1);
                     segmentation.get(segmentation.size() - 1).setIsNextSegmentNofFound(true);
-                    message = "[Расчет сегментации]: Не удалось найти порожние рейсы от станции: %s";
+                    message = "[Расчет сегментации]: Не удалось найти порожние рейсы от региона: %s";
                 } else {
                     lastSegmentPart.setIsNextSegmentNofFound(true);
-                    message = "[Расчет сегментации]: Не удалось найти груженые рейсы от станции: %s";
+                    message = "[Расчет сегментации]: Не удалось найти груженые рейсы от региона: %s";
                 }
 
                 regionSegmentationLogService.updateLogMessageById(logId, String.format(message, lastSegmentPart.getDestRegion()));
@@ -150,16 +150,16 @@ public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Se
         segmentations.addAll(newSegmentations);
     }
 
-    public List<RegionSegmentationT15> mapSegmentsListToSegmentation(List<List<RegionFlightSegmentationAnalysisT15>> segmentList) {
+    public List<RegionSegmentationT15> mapSegmentsListToSegmentation(List<List<RegionSegmentationAnalysisT15>> segmentList) {
         List<RegionSegmentationT15> segmentations = new ArrayList<>();
-        for (List<RegionFlightSegmentationAnalysisT15> segmentationAnalysis : segmentList) {
+        for (List<RegionSegmentationAnalysisT15> segmentationAnalysis : segmentList) {
             RegionSegmentationT15 finalSegmentation = new RegionSegmentationT15();
             List<RegionSegment> segments = new ArrayList<>();
             for (int i = 0; i < segmentationAnalysis.size(); i += 2) {
-                RegionFlightSegmentationAnalysisT15 loaded = segmentationAnalysis.get(i);
-                RegionFlightSegmentationAnalysisT15 empty = segmentationAnalysis.get(i + 1);
+                RegionSegmentationAnalysisT15 loaded = segmentationAnalysis.get(i);
+                RegionSegmentationAnalysisT15 empty = segmentationAnalysis.get(i + 1);
 
-                List<RegionFlightSegmentationAnalysisT15> segmentation = Arrays.asList(loaded, empty);
+                List<RegionSegmentationAnalysisT15> segmentation = Arrays.asList(loaded, empty);
                 BigDecimal profit = calculateProfit(segmentation);
                 Integer travelDays = loaded.getTravelDays() + empty.getTravelDays();
                 Integer loadDays = loaded.getSourceRegionLoadIdleDays();
@@ -179,9 +179,9 @@ public class RegionSegmentationT15ServiceImpl implements RegionSegmentationT15Se
         return segmentations;
     }
 
-    private BigDecimal calculateProfit(List<RegionFlightSegmentationAnalysisT15> segmentation) {
-        RegionFlightSegmentationAnalysisT15 loaded = segmentation.get(0);
-        RegionFlightSegmentationAnalysisT15 empty = segmentation.get(1);
+    private BigDecimal calculateProfit(List<RegionSegmentationAnalysisT15> segmentation) {
+        RegionSegmentationAnalysisT15 loaded = segmentation.get(0);
+        RegionSegmentationAnalysisT15 empty = segmentation.get(1);
 
         BigDecimal loadedAverageRate = loaded.getRateTariff().divide(new BigDecimal(loaded.getFlightsAmount()), 2, RoundingMode.HALF_UP);
         BigDecimal emptyAverageTariff = empty.getRateTariff().divide(new BigDecimal(empty.getFlightsAmount()), 2, RoundingMode.HALF_UP);

@@ -1,6 +1,7 @@
 package com.uraltrans.logisticparamservice.config.schedule;
 
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationParametersService;
 import com.uraltrans.logisticparamservice.service.schedule.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class SchedulingConfig implements SchedulingConfigurer {
     private final LoadParameterService loadParameterService;
+    private final RegionSegmentationParametersService regionSegmentationParametersService;
 
     private final ScheduleFlightsService scheduleFlightsService;
     private final ScheduleCargoService scheduleCargoService;
@@ -36,6 +38,7 @@ public class SchedulingConfig implements SchedulingConfigurer {
     private final ScheduleGeocodeService scheduleGeocodeService;
     private final ScheduleNoDetailsWagonService scheduleNoDetailsWagonService;
     private final ScheduleSegmentationT14 scheduleSegmentationT14;
+    private final ScheduleRegionSegmentationT15 scheduleRegionSegmentationT15;
 
     @Bean(destroyMethod = "shutdown")
     public Executor taskExecutor() {
@@ -57,6 +60,9 @@ public class SchedulingConfig implements SchedulingConfigurer {
 
         String loadTimeT14 = loadParameterService.getLoadParameters().getLoadTimeT14();
         registerTaskAt(taskRegistrar, scheduleSegmentationT14::loadSegmentsT14, LocalTime.parse(loadTimeT14));
+
+        String loadTimeT15 = regionSegmentationParametersService.getParameters().getLoadTime();
+        registerTaskAt(taskRegistrar, scheduleRegionSegmentationT15::loadRegionSegmentationT15, LocalTime.parse(loadTimeT15));
 
         registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 20);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 25);

@@ -6,7 +6,7 @@ import com.uraltrans.logisticparamservice.entity.postgres.RegionFlight;
 import java.util.List;
 
 public interface RegionFlightService {
-    void saveAllRegionFlights(String logId);
+    void saveAllRegionFlights(String logId,  boolean scheduled);
 
     List<RegionFlight> getAllRegionFlights();
 

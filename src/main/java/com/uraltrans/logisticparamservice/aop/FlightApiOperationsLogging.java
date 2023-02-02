@@ -136,7 +136,8 @@ public class FlightApiOperationsLogging {
         String message = proceedingJoinPoint.getSignature().getName().startsWith("save")
                 ? "Сохранение сегментации по регионам" : "";
         String logId = (String) proceedingJoinPoint.getArgs()[0];
-        return handleSegmentationReturn(proceedingJoinPoint, message, logId);
+        boolean scheduled = (Boolean) proceedingJoinPoint.getArgs()[1];
+        return handleSegmentationReturn(proceedingJoinPoint, message, logId, scheduled);
     }
 
 
@@ -197,20 +198,24 @@ public class FlightApiOperationsLogging {
         FileUtils.writeActionLog(message);
     }
 
-    private Object handleSegmentationReturn(ProceedingJoinPoint proceedingJoinPoint, String message, String logId) throws Throwable {
+    private Object handleSegmentationReturn(ProceedingJoinPoint proceedingJoinPoint, String message,
+                                            String logId, boolean scheduled) throws Throwable {
         Object methodResult;
         try {
             methodResult = proceedingJoinPoint.proceed();
         }
         catch (Throwable e) {
-            logSegmentationController(false, message, logId);
+            logSegmentationController(false, message, logId, scheduled);
             throw e;
         }
-        logSegmentationController(true, message, logId);
+        logSegmentationController(true, message, logId, scheduled);
         return methodResult;
     }
 
-    private void logSegmentationController(boolean isSuccess, String message, String logId) {
+    private void logSegmentationController(boolean isSuccess, String message, String logId, boolean isScheduled) {
+        if(isScheduled){
+            return;
+        }
         String actionTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         message = logId + FileUtils.DELIMITER +  message + FileUtils.DELIMITER + actionTime + FileUtils.DELIMITER + isSuccess;
         log.info("{}", message);

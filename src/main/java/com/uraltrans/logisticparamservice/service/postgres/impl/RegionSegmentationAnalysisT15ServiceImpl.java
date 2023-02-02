@@ -2,9 +2,9 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.regionsegmentation.RegionFlightGroupKey;
 import com.uraltrans.logisticparamservice.entity.postgres.RegionFlight;
-import com.uraltrans.logisticparamservice.entity.postgres.RegionFlightSegmentationAnalysisT15;
-import com.uraltrans.logisticparamservice.repository.postgres.RegionFlightSegmentationAnalysisT15Repository;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionFlightSegmentationAnalysisT15Service;
+import com.uraltrans.logisticparamservice.entity.postgres.RegionSegmentationAnalysisT15;
+import com.uraltrans.logisticparamservice.repository.postgres.RegionSegmentationAnalysisT15Repository;
+import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationAnalysisT15Service;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionFlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationLogService;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +18,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RegionFlightSegmentationAnalysisServiceImpl implements RegionFlightSegmentationAnalysisT15Service {
+public class RegionSegmentationAnalysisT15ServiceImpl implements RegionSegmentationAnalysisT15Service {
     private final RegionFlightService regionFlightService;
     private final RegionSegmentationLogService regionSegmentationLogService;
-    private final RegionFlightSegmentationAnalysisT15Repository regionFlightSegmentationAnalysisT15Repository;
+    private final RegionSegmentationAnalysisT15Repository regionSegmentationAnalysisT15Repository;
 
     @Override
-    public List<RegionFlightSegmentationAnalysisT15> getAllT15Analyses() {
-        return regionFlightSegmentationAnalysisT15Repository.findAll();
+    public List<RegionSegmentationAnalysisT15> getAllT15Analyses() {
+        return regionSegmentationAnalysisT15Repository.findAll();
     }
 
     @Override
@@ -35,12 +35,12 @@ public class RegionFlightSegmentationAnalysisServiceImpl implements RegionFlight
         List<RegionFlight> regionFlights = regionFlightService.getAllRegionFlights();
         regionFlights = filterRegionFlightsByTravelDays(regionFlights, logId);
 
-        List<RegionFlightSegmentationAnalysisT15> groupedRegionFlights = groupRegionFlightsByRegion(regionFlights, logId);
-        regionFlightSegmentationAnalysisT15Repository.saveAll(groupedRegionFlights);
+        List<RegionSegmentationAnalysisT15> groupedRegionFlights = groupRegionFlightsByRegion(regionFlights, logId);
+        regionSegmentationAnalysisT15Repository.saveAll(groupedRegionFlights);
     }
 
     private void prepareNextSave(){
-        regionFlightSegmentationAnalysisT15Repository.truncate();
+        regionSegmentationAnalysisT15Repository.truncate();
     }
 
     private List<RegionFlight> filterRegionFlightsByTravelDays(List<RegionFlight> regionFlights, String logId){
@@ -58,8 +58,8 @@ public class RegionFlightSegmentationAnalysisServiceImpl implements RegionFlight
         return filteredFlights;
     }
 
-    private List<RegionFlightSegmentationAnalysisT15> groupRegionFlightsByRegion(List<RegionFlight> regionFlights, String logId){
-        List<RegionFlightSegmentationAnalysisT15> groupedFlights = regionFlights
+    private List<RegionSegmentationAnalysisT15> groupRegionFlightsByRegion(List<RegionFlight> regionFlights, String logId){
+        List<RegionSegmentationAnalysisT15> groupedFlights = regionFlights
                 .stream()
                 .collect(Collectors.groupingBy(
                         f -> new RegionFlightGroupKey(f.getVolume(), f.getSourceRegion(), f.getDestRegion(), f.getType()),
@@ -67,7 +67,7 @@ public class RegionFlightSegmentationAnalysisServiceImpl implements RegionFlight
                 .entrySet()
                 .stream()
                 .collect(ArrayList::new,
-                        (resultList, entry) -> resultList.add(RegionFlightSegmentationAnalysisT15.builder()
+                        (resultList, entry) -> resultList.add(RegionSegmentationAnalysisT15.builder()
                                 .volume(entry.getKey().getVolume())
                                 .sourceRegion(entry.getKey().getSourceRegion())
                                 .destRegion(entry.getKey().getDestRegion())

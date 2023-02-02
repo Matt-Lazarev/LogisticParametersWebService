@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -59,12 +58,16 @@ public class RegionFlightServiceImpl implements RegionFlightService {
     }
 
     @Override
-    public void saveAllRegionFlights(String logId) {
+    public void saveAllRegionFlights(String logId, boolean scheduled) {
         prepareNextSave();
-        RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
 
-        List<Flight> loadedFlights = loadFlightsFromFile("t2.csv", "Груженый", logId);
-        List<Flight> emptyFlights = loadFlightsFromFile("t3.csv", "Порожний", logId);
+        RegionSegmentationParameters parameters = regionSegmentationParametersService.getParameters();
+        String sourceDataT15 = parameters.getSourceDataT15();
+        String loadedFlightsFilename = sourceDataT15 + parameters.getLoadedFlightsFilename();
+        String emptyFlightsFilename = sourceDataT15 + parameters.getEmptyFlightsFilename();
+
+        List<Flight> loadedFlights = loadFlightsFromFile(loadedFlightsFilename, "Груженый", logId);
+        List<Flight> emptyFlights = loadFlightsFromFile(emptyFlightsFilename, "Порожний", logId);
 
         loadedFlights = filterFlightsByDate(loadedFlights, parameters, logId);
         emptyFlights = filterFlightsByDate(emptyFlights, parameters, logId);
@@ -247,7 +250,7 @@ public class RegionFlightServiceImpl implements RegionFlightService {
 
         String token = regionSegmentationParametersService.getParameters().getToken();
         Map<String, String> tariffHeaders = getHeaders(logId, token);
-        sendTariffRequest(notFoundFlightTimeDistances, tariffHeaders, logId);
+        //sendTariffRequest(notFoundFlightTimeDistances, tariffHeaders, logId);
     }
 
     private Map<String, String>  getHeaders(String uid, String token) {

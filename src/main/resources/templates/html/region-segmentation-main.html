@@ -123,8 +123,30 @@
                 <label> Максимальная длина сегмента: </label>
                 <input type="text" class="form-control" th:field="*{maxSegments}">
             </div>
+            <div class="col-md-6 mb-1 mt-3">
+                <label> Источник данных [t15]: </label>
+                <input type="text" class="form-control" th:field="*{sourceDataT15}" >
+            </div>
+        </div>
 
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+        <div class="row">
+            <div class="col-md-6 mb-1 mt-3">
+                <label> Имя файла - груженые рейсы: </label>
+                <input type="text" class="form-control" th:field="*{loadedFlightsFilename}">
+            </div>
+            <div class="col-md-6 mb-1 mt-3">
+                <label> Имя файла - порожние рейсы: </label>
+                <input type="text" class="form-control" th:field="*{emptyFlightsFilename}" >
+            </div>
+        </div>
 
+        <hr style="height:3px;border-width:0;color:black;background-color:black">
+        <div class="row">
+            <div class="col-md-6 mb-1 mt-3">
+                <label> Время выгрузки: </label>
+                <input type="text" class="form-control" th:field="*{loadTime}" placeholder="hh:mm:ss">
+            </div>
         </div>
 
         <hr style="height:3px;border-width:0;color:black;background-color:black">
@@ -161,10 +183,10 @@
 <h3>История работы с сегментацией по регионам</h3>
 <div class="container border border-3 border-secondary rounded table-container">
     <table class="table table-striped">
-        <col style="width:30%">
+        <col style="width:50%">
         <col style="width:20%">
+        <col style="width:10%">
         <col style="width:20%">
-        <col style="width:30%">
         <thead>
         <tr>
             <th scope="col">Действие</th>

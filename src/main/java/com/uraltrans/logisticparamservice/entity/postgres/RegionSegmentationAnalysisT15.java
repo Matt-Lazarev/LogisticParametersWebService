@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.br.CPF;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +21,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Entity
 @Table(name="t15_analyzed")
-public class RegionFlightSegmentationAnalysisT15 {
+public class RegionSegmentationAnalysisT15 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

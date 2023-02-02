@@ -6,6 +6,7 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentat
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -35,6 +36,8 @@ public class RegionSegmentationParametersServiceImpl implements RegionSegmentati
     private RegionSegmentationParameters getDefaultParameters() {
         return new RegionSegmentationParameters(null, "", "УРАЛЬСКАЯ ТРАНСПОРТНАЯ КОМПАНИЯ",
                 1, 1, 45,
-                60, 8, 5, 3);
+                60, 8, 5, 3,
+                "", "t2.csv", "t3.csv",
+                "05:00:00");
     }
 }

@@ -29,8 +29,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RegionSegmentationController {
     private final RegionSegmentationParametersService regionSegmentationParametersService;
-    private final RegionFlightSegmentationAnalysisT15Service regionFlightSegmentationAnalysisT15Service;
-    private final RegionSegmentationT15Service regionSegmentationT15Service;
+    private final RegionSegmentationAnalysisT15Service regionSegmentationAnalysisT15Service;
+    private final SegmentationResultT15Service segmentationResultT15Service;
     private final RegionFlightService regionFlightService;
     private final RegionSegmentationLogService regionSegmentationLogService;
 
@@ -59,12 +59,12 @@ public class RegionSegmentationController {
 
         if(action.equals("save")){
             String logId = regionSegmentationLogService.saveLog();
-            regionFlightService.saveAllRegionFlights(logId);
+            regionFlightService.saveAllRegionFlights(logId, false);
 
-//            //TODO remove
-//            regionFlightSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
-//            //TODO remove
-//            regionSegmentationT15Service.saveAllSegments(logId);
+            //TODO remove
+            regionSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+            //TODO remove
+            segmentationResultT15Service.saveAllSegments(logId);
         }
 
         regionSegmentationParametersService.updateParameters(dto);
@@ -84,7 +84,7 @@ public class RegionSegmentationController {
         regionSegmentationLogService.updateLogMessageById(logId, message);
 
         regionFlightService.updateTravelTime(response);
-        regionFlightSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
-        regionSegmentationT15Service.saveAllSegments(logId);
+        regionSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+        segmentationResultT15Service.saveAllSegments(logId);
     }
 }

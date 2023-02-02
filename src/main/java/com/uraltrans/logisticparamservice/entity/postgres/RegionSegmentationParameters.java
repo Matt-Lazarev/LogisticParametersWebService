@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
-@Entity
-@Table(name = "region_segmentation_parameters")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "region_segmentation_parameters")
 public class RegionSegmentationParameters {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +44,16 @@ public class RegionSegmentationParameters {
 
     @Column(name="max_segments")
     private Integer maxSegments;
+
+    @Column(name="source_data_t15")
+    private String sourceDataT15;
+
+    @Column(name="loaded_flights_filename")
+    private String loadedFlightsFilename;
+
+    @Column(name="empty_flights_filename")
+    private String emptyFlightsFilename;
+
+    @Column(name="load_time")
+    private String loadTime;
 }
