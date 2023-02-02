@@ -250,7 +250,7 @@ public class RegionFlightServiceImpl implements RegionFlightService {
 
         String token = regionSegmentationParametersService.getParameters().getToken();
         Map<String, String> tariffHeaders = getHeaders(logId, token);
-        //sendTariffRequest(notFoundFlightTimeDistances, tariffHeaders, logId);
+        sendTariffRequest(notFoundFlightTimeDistances, tariffHeaders, logId);
     }
 
     private Map<String, String>  getHeaders(String uid, String token) {

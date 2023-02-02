@@ -61,10 +61,10 @@ public class RegionSegmentationController {
             String logId = regionSegmentationLogService.saveLog();
             regionFlightService.saveAllRegionFlights(logId, false);
 
-            //TODO remove
-            regionSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
-            //TODO remove
-            segmentationResultT15Service.saveAllSegments(logId);
+//            //TODO remove
+//            regionSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+//            //TODO remove
+//            segmentationResultT15Service.saveAllSegments(logId);
         }
 
         regionSegmentationParametersService.updateParameters(dto);
