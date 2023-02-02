@@ -61,4 +61,16 @@ public class SegmentationResultT15 {
 
     @Column(name = "total_unload_days")
     private Integer totalUnloadDays;
+
+    @Column(name = "first_market")
+    private Integer firstMarket;
+
+    @Column(name = "first_utk")
+    private Integer firstUtk;
+
+    @Column(name = "first_empty_market")
+    private Integer firstEmptyMarket;
+
+    @Column(name = "first_empty_utk")
+    private Integer firstEmptyUtk;
 }

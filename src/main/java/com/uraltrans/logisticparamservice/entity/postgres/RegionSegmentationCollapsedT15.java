@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="t15_analyzed")
-public class RegionSegmentationAnalysisT15 {
+@Table(name="t15_collapsed")
+public class RegionSegmentationCollapsedT15 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

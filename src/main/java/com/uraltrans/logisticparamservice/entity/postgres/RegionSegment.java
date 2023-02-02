@@ -29,6 +29,16 @@ public class RegionSegment {
 
     private String path;
 
+    private BigDecimal rate;
+
+    private BigDecimal tariff;
+
+    @Column(name="loaded_flights_amount")
+    private Integer loadedFlightsAmount;
+
+    @Column(name="empty_flights_amount")
+    private Integer emptyFlightsAmount;
+
     private BigDecimal profit;
 
     @Column(name="segment_travel_days")
@@ -43,7 +53,9 @@ public class RegionSegment {
     public RegionSegment(String loadedSourceRegion, String loadedDestRegion,
                          String emptySourceRegion, String emptyDestRegion,
                          BigDecimal profit, Integer segmentTravelDays,
-                         Integer loadIdleDays, Integer unloadIdleDays) {
+                         Integer loadIdleDays, Integer unloadIdleDays,
+                         BigDecimal rate, BigDecimal tariff,
+                         Integer loadedFlightsAmount, Integer emptyFlightsAmount) {
         this.loadedSourceRegion = loadedSourceRegion;
         this.loadedDestRegion = loadedDestRegion;
         this.emptySourceRegion = emptySourceRegion;
@@ -53,6 +65,10 @@ public class RegionSegment {
         this.segmentTravelDays = segmentTravelDays;
         this.loadIdleDays = loadIdleDays;
         this.unloadIdleDays = unloadIdleDays;
+        this.rate = rate;
+        this.tariff = tariff;
+        this.loadedFlightsAmount = loadedFlightsAmount;
+        this.emptyFlightsAmount = emptyFlightsAmount;
     }
 
     @Override

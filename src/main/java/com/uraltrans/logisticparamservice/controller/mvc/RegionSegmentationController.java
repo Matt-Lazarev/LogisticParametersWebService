@@ -29,7 +29,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RegionSegmentationController {
     private final RegionSegmentationParametersService regionSegmentationParametersService;
-    private final RegionSegmentationAnalysisT15Service regionSegmentationAnalysisT15Service;
+    private final RegionSegmentationCollapsedT15Service regionSegmentationCollapsedT15Service;
     private final SegmentationResultT15Service segmentationResultT15Service;
     private final RegionFlightService regionFlightService;
     private final RegionSegmentationLogService regionSegmentationLogService;
@@ -62,7 +62,7 @@ public class RegionSegmentationController {
             regionFlightService.saveAllRegionFlights(logId, false);
 
 //            //TODO remove
-//            regionSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+//            regionSegmentationCollapsedT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
 //            //TODO remove
 //            segmentationResultT15Service.saveAllSegments(logId);
         }
@@ -84,7 +84,7 @@ public class RegionSegmentationController {
         regionSegmentationLogService.updateLogMessageById(logId, message);
 
         regionFlightService.updateTravelTime(response);
-        regionSegmentationAnalysisT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+        regionSegmentationCollapsedT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
         segmentationResultT15Service.saveAllSegments(logId);
     }
 }
