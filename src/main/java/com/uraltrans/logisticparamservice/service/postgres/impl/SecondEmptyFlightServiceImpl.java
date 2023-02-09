@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private static final List<String> FILTER_CARGO_CODES = Arrays.asList(
-            "421195", "421208", "421195", "421227", "421208", "391089", "421212", "421231", "421246");
+            "421195", "421208", "421195", "421227", "421208", "391089", "421212", "421231", "421246");//421034
 
     private final FlightService flightService;
     private final StationHandbookService stationHandbookService;

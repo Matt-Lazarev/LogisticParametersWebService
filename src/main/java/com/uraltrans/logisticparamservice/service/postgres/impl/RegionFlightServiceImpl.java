@@ -69,21 +69,21 @@ public class RegionFlightServiceImpl implements RegionFlightService {
         List<Flight> loadedFlights = loadFlightsFromFile(loadedFlightsFilename, "Груженый", logId);
         List<Flight> emptyFlights = loadFlightsFromFile(emptyFlightsFilename, "Порожний", logId);
 
-        loadedFlights = filterFlightsByDate(loadedFlights, parameters, logId);
-        emptyFlights = filterFlightsByDate(emptyFlights, parameters, logId);
+        loadedFlights = filterFlightsByDate(loadedFlights, parameters, "Груженый", logId);
+        emptyFlights = filterFlightsByDate(emptyFlights, parameters, "Порожний", logId);
 
-        List<Flight> loadedFlightsGrouped = groupFlightsByStations(loadedFlights, logId);
-        List<Flight> emptyFlightsGrouped = groupFlightsByStations(emptyFlights, logId);
+        List<Flight> loadedFlightsGrouped = groupFlightsByStations(loadedFlights, "Груженый", logId);
+        List<Flight> emptyFlightsGrouped = groupFlightsByStations(emptyFlights, "Порожний", logId);
 
-        List<Flight> filteredLoadedFlights = filterFlightsByFlightsAmount(loadedFlightsGrouped, parameters, logId);
-        List<Flight>  filteredEmptyFlights = filterFlightsByFlightsAmount(emptyFlightsGrouped, parameters, logId);
+        List<Flight> filteredLoadedFlights = filterFlightsByFlightsAmount(loadedFlightsGrouped, parameters,"Груженый", logId);
+        List<Flight>  filteredEmptyFlights = filterFlightsByFlightsAmount(emptyFlightsGrouped, parameters,"Порожний", logId);
 
         Set<String> notFoundStations = new HashSet<>();
         loadRegionByStations(filteredLoadedFlights, logId, notFoundStations);
         loadRegionByStations(filteredEmptyFlights, logId, notFoundStations);
 
-        filteredLoadedFlights = filterFlightsByRegion(filteredLoadedFlights,  logId);
-        filteredEmptyFlights = filterFlightsByRegion(filteredEmptyFlights,  logId);
+        filteredLoadedFlights = filterFlightsByRegion(filteredLoadedFlights, "Груженый", logId);
+        filteredEmptyFlights = filterFlightsByRegion(filteredEmptyFlights, "Порожний", logId);
 
         loadIdleDays(filteredLoadedFlights, parameters);
         loadIdleDays(filteredEmptyFlights, parameters);
@@ -121,19 +121,19 @@ public class RegionFlightServiceImpl implements RegionFlightService {
         return flights;
     }
 
-    private List<Flight> filterFlightsByDate(List<Flight> flights, RegionSegmentationParameters parameters, String logId){
+    private List<Flight> filterFlightsByDate(List<Flight> flights, RegionSegmentationParameters parameters, String flightType, String logId){
         List<Flight> filteredFlights = flights
                 .stream()
                 .filter(f -> f.getDepartureDate() != null && f.getDepartureDate().isAfter(LocalDate.now().minusDays(parameters.getDaysToRetrieveLoadedFlights())))
                 .collect(Collectors.toList());
 
-        String message = String.format("[Фильтр по дате]: %s рейсов = %d", filteredFlights.get(0).getType().equals("Груженый") ? "Груженых" : "Порожних", filteredFlights.size());
+        String message = String.format("[Фильтр по дате]: %s рейсов = %d", flightType.equals("Груженый") ? "Груженых" : "Порожних", filteredFlights.size());
         regionSegmentationLogService.updateLogMessageById(logId, message);
         return filteredFlights;
     }
 
 
-    private List<Flight> groupFlightsByStations(List<Flight> flights, String logId){
+    private List<Flight> groupFlightsByStations(List<Flight> flights, String flightType, String logId){
         List<Flight> groupedFlights = flights
                 .stream()
                 .collect(Collectors.groupingBy(f -> new FlightGroupKey(f.getVolume(), f.getSourceStation(), f.getDestStation(), f.getType())))
@@ -146,18 +146,18 @@ public class RegionFlightServiceImpl implements RegionFlightService {
                                         e.getValue().stream().mapToInt(Flight::getFlightsAmount).sum())),
                         ArrayList::addAll);
 
-        String message = String.format("[Группировка по станциям и объему]: %s рейсов = %d", groupedFlights.get(0).getType().equals("Груженый") ? "Груженых" : "Порожних", groupedFlights.size());
+        String message = String.format("[Группировка по станциям и объему]: %s рейсов = %d", flightType.equals("Груженый") ? "Груженых" : "Порожних", groupedFlights.size());
         regionSegmentationLogService.updateLogMessageById(logId, message);
         return groupedFlights;
     }
 
-    private List<Flight> filterFlightsByFlightsAmount(List<Flight> flights, RegionSegmentationParameters parameters, String logId){
+    private List<Flight> filterFlightsByFlightsAmount(List<Flight> flights, RegionSegmentationParameters parameters, String flightType, String logId){
         List<Flight> filteredFlights = flights
                 .stream()
                 .filter(f -> f.getFlightsAmount() >= parameters.getMinLoadedFlightsAmount())
                 .collect(Collectors.toList());
 
-        String message = String.format("[Фильтр по количеству рейсов]: %s рейсов = %d", filteredFlights.get(0).getType().equals("Груженый") ? "Груженых" : "Порожних", filteredFlights.size());
+        String message = String.format("[Фильтр по количеству рейсов]: %s рейсов = %d", flightType.equals("Груженый") ? "Груженых" : "Порожних", filteredFlights.size());
         regionSegmentationLogService.updateLogMessageById(logId, message);
 
         return filteredFlights;
@@ -219,13 +219,13 @@ public class RegionFlightServiceImpl implements RegionFlightService {
         }
     }
 
-    private List<Flight> filterFlightsByRegion(List<Flight> flights, String logId){
+    private List<Flight> filterFlightsByRegion(List<Flight> flights, String flightType, String logId){
         List<Flight> filteredFlights = flights
                 .stream()
                 .filter(f -> f.getSourceRegion() != null && f.getDestRegion() != null)
                 .collect(Collectors.toList());
 
-        String message = String.format("[Фильтр по регионам]: %s рейсов = %d", filteredFlights.get(0).getType().equals("Груженый") ? "Груженых" : "Порожних", filteredFlights.size());
+        String message = String.format("[Фильтр по регионам]: %s рейсов = %d", flightType.equals("Груженый") ? "Груженых" : "Порожних", filteredFlights.size());
         regionSegmentationLogService.updateLogMessageById(logId, message);
 
         return filteredFlights;

@@ -21,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 
 @Slf4j
 @Configuration
@@ -58,11 +59,11 @@ public class SchedulingConfig implements SchedulingConfigurer {
             registerTask(taskRegistrar, task, 0);
         }
 
-        String loadTimeT14 = loadParameterService.getLoadParameters().getLoadTimeT14();
-        registerTaskAt(taskRegistrar, scheduleSegmentationT14::loadSegmentsT14, LocalTime.parse(loadTimeT14));
+        Supplier<LocalTime> loadSegmentsT14TimeSupplier = ()-> LocalTime.parse(loadParameterService.getLoadParameters().getLoadTimeT14());
+        registerTaskAt(taskRegistrar, scheduleSegmentationT14::loadSegmentsT14, loadSegmentsT14TimeSupplier);
 
-        String loadTimeT15 = regionSegmentationParametersService.getParameters().getLoadTime();
-        registerTaskAt(taskRegistrar, scheduleRegionSegmentationT15::loadRegionSegmentationT15, LocalTime.parse(loadTimeT15));
+        Supplier<LocalTime> loadRegionSegmentsT15TimeSupplier = ()-> LocalTime.parse(regionSegmentationParametersService.getParameters().getLoadTime());
+        registerTaskAt(taskRegistrar, scheduleRegionSegmentationT15::loadRegionSegmentationT15, loadRegionSegmentsT15TimeSupplier);
 
         registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 20);
         registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 25);
@@ -83,10 +84,11 @@ public class SchedulingConfig implements SchedulingConfigurer {
         );
     }
 
-    private void registerTaskAt(ScheduledTaskRegistrar taskRegistrar, Runnable task, LocalTime time){
+    private void registerTaskAt(ScheduledTaskRegistrar taskRegistrar, Runnable task, Supplier<LocalTime> timeSupplier){
         taskRegistrar.addTriggerTask(
                 task,
                 triggerContext -> {
+                    LocalTime time = timeSupplier.get();
                     LocalDateTime nextLoadTime = LocalDateTime.of(LocalDate.now(), time);
                     LocalTime now = LocalTime.now();
                     if(now.isAfter(time)){

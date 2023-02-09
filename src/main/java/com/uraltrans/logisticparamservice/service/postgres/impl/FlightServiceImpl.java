@@ -47,7 +47,7 @@ public class FlightServiceImpl implements FlightService {
     public void saveAllFlights(LoadParameters dto) {
         prepareNextSave();
         List<Flight> allFlights = getAllFlights(dto.getDaysToRetrieveData());
-        allFlights = filterFlights(allFlights);
+        logFlightErrors(allFlights);
         flightRepository.saveAll(allFlights);
     }
 
@@ -67,7 +67,7 @@ public class FlightServiceImpl implements FlightService {
         flightRepository.truncate();
     }
 
-    private List<Flight> filterFlights(List<Flight> allFlights) {
+    private void logFlightErrors(List<Flight> allFlights) {
         List<String> errorFlights = new ArrayList<>();
         allFlights
                 .forEach(f -> {
@@ -92,12 +92,5 @@ public class FlightServiceImpl implements FlightService {
                 });
 
         FileUtils.writeDiscardedFlights(errorFlights, false);
-
-        LoadParameters loadParameters = loadParameterService.getLoadParameters();
-        return allFlights
-                .stream()
-                .filter(f -> f.getCargo() != null)
-                //.filter(f -> f.getSourceContragent().equalsIgnoreCase(loadParameters.getSourceContragent()))
-                .collect(Collectors.toList());
     }
 }
