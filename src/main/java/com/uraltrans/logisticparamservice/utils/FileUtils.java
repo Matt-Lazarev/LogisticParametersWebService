@@ -34,6 +34,8 @@ public class FileUtils {
 
     private static final Path CLIENT_ORDERS_SQL_SCRIPT_PATH = Paths.get("sql/client_orders_script.sql");
 
+    private static final Path TARIFFICATION_DIRECTORY_PATH = Paths.get("tariffication_data");
+
     static {
         try {
             if (!Files.exists(DEFAULT_ACTION_LOGS_FILE_PATH)) {
@@ -48,7 +50,8 @@ public class FileUtils {
             if (!Files.exists(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH)) {
                 Files.createFile(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH);
             }
-        } catch (IOException ex) {
+        }
+        catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -58,7 +61,8 @@ public class FileUtils {
             synchronized (FileUtils.class) {
                 Files.write(DEFAULT_ACTION_LOGS_FILE_PATH, Collections.singletonList(message), CREATE, APPEND);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());
         }
     }
@@ -68,7 +72,8 @@ public class FileUtils {
             synchronized (FileUtils.class) {
                 Files.write(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH, Collections.singletonList(message), CREATE, APPEND);
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());
         }
     }
@@ -81,7 +86,8 @@ public class FileUtils {
                     .map(str -> str.split(DELIMITER))
                     .map(arr -> new ActionLog(null, arr[0], arr[1], arr[2]))
                     .forEach(logs::add);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
         }
         Collections.reverse(logs);
@@ -96,7 +102,8 @@ public class FileUtils {
                     .map(str -> str.split(DELIMITER))
                     .map(arr -> new ActionLog(arr[0], arr[1], arr[2], arr[3]))
                     .forEach(logs::add);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
         }
         Collections.reverse(logs);
@@ -124,7 +131,8 @@ public class FileUtils {
                     Files.write(path, data, CREATE, APPEND);
                 }
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());
         }
     }
@@ -132,7 +140,8 @@ public class FileUtils {
     public static List<String> readDiscardedFlights() {
         try {
             return Files.readAllLines(DEFAULT_DISCARDED_FLIGHTS_FILE_PATH);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
         }
         return new ArrayList<>();
@@ -141,7 +150,8 @@ public class FileUtils {
     public static List<String> readDiscardedSecondEmptyFlights() {
         try {
             return Files.readAllLines(DEFAULT_DISCARDED_SECOND_EMPTY_FLIGHTS_FILE_PATH);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
         }
         return new ArrayList<>();
@@ -150,7 +160,8 @@ public class FileUtils {
     public static List<String> readTariffRateErrors() {
         try {
             return Files.readAllLines(DEFAULT_TARIFF_RATE_ERRORS_FILE_PATH);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             log.error("FileUtils read error: {}, {}", e.getMessage(), e.getStackTrace());
         }
         return new ArrayList<>();
@@ -159,7 +170,8 @@ public class FileUtils {
     public static String getClientOrdersSqlScript() {
         try {
             return String.join("\n", Files.readAllLines(CLIENT_ORDERS_SQL_SCRIPT_PATH));
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -169,13 +181,14 @@ public class FileUtils {
             return Files.readAllLines(DEFAULT_BACK_BUTTON_FILE_PATH).get(0);
         } catch (RuntimeException ex) {
             throw new RuntimeException("Необходимо указать URL кнопки в файле " + DEFAULT_BACK_BUTTON_FILE_PATH, ex);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static byte[] getZippedLogsFolder() {
-        try{
+        try {
             Path p = Paths.get(DEFAULT_LOGS_FILE_PATH + ".zip");
             Files.deleteIfExists(p);
             Path zipPath = Files.createFile(p);
@@ -188,7 +201,36 @@ public class FileUtils {
                                     zs.putNextEntry(zipEntry);
                                     Files.copy(path, zs);
                                     zs.closeEntry();
-                                } catch (IOException e) {
+                                }
+                                catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            });
+                }
+            }
+            return Files.readAllBytes(zipPath);
+        }
+        catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static byte[] getZippedTarifficationFolder() {
+        try {
+            Path p = Paths.get(TARIFFICATION_DIRECTORY_PATH + ".zip");
+            Files.deleteIfExists(p);
+            Path zipPath = Files.createFile(p);
+            try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
+                try (Stream<Path> s = Files.walk(TARIFFICATION_DIRECTORY_PATH)) {
+                    s.filter(path -> !Files.isDirectory(path))
+                            .forEach(path -> {
+                                ZipEntry zipEntry = new ZipEntry(TARIFFICATION_DIRECTORY_PATH.relativize(path).toString());
+                                try {
+                                    zs.putNextEntry(zipEntry);
+                                    Files.copy(path, zs);
+                                    zs.closeEntry();
+                                }
+                                catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
                             });

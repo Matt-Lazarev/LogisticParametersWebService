@@ -41,6 +41,19 @@ public class JdbcUtils {
         }
     }
 
+    public static List<Map<String, Object>> getAllDataWithIntParam(DataSource dataSource, String SQL, Integer param){
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
+                preparedStatement.setInt(1, param);
+                try (ResultSet rs = preparedStatement.executeQuery()) {
+                    return JdbcUtils.parseResultSet(rs);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static List<Map<String, Object>> getAllDataWithParams(DataSource dataSource, String SQL, String date, Integer carNumber){
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
