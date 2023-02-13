@@ -328,6 +328,15 @@
                 </div>
             </form>
         </div>
+        <div class="col-sm">
+            <form th:action="@{/api/contragents}" method="post">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Выгрузить контрагентов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -479,6 +488,18 @@
                     <label style="text-align: center"> Просмотреть вагоны без реквизитов </label>
                     <br>
                     <button type="submit" class="btn btn-primary">Показать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm">
+            <form th:action="@{/api/contragents}" method="get">
+                <div class="box-footer mb-1 mt-3">
+                    <label style="text-align: center"> Получить контрагентов </label>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Получить</button>
                 </div>
             </form>
         </div>

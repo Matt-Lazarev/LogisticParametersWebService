@@ -1,6 +1,6 @@
 package com.uraltrans.logisticparamservice.service.itr;
 
-import com.uraltrans.logisticparamservice.repository.itr.TarifficationRepositoryImpl;
+import com.uraltrans.logisticparamservice.repository.itr.TarifficationRepository;
 import com.uraltrans.logisticparamservice.utils.CsvUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class TarifficationServiceImpl implements TarifficationService {
     private static final List<String> TARIFFICATION_FILENAMES = Arrays.asList(
             "тарификация.txt", "таблица_расстояний.txt", "станции_отправления.txt", "станции_назначения.txt", "заграничные_станции.txt", "исключая_станции.txt", "включая_станции.txt");
 
-    private final TarifficationRepositoryImpl tarifficationRepository;
+    private final TarifficationRepository tarifficationRepository;
 
     @Override
     public void writeAllTarifficationFiles(){
