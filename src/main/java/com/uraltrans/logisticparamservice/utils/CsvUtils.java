@@ -48,7 +48,7 @@ public class CsvUtils {
             List<String> rows = data
                     .stream()
                     .map(Map::values)
-                    .map(row -> row.stream().map(String::valueOf).collect(Collectors.joining(",")))
+                    .map(row -> row.stream().map(String::valueOf).collect(Collectors.joining(";")))
                     .map(row -> row.replaceAll("[\n\r]+", ""))
                     .collect(Collectors.toList());
 
