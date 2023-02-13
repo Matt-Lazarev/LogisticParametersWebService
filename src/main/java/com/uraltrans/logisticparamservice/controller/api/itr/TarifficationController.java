@@ -1,6 +1,6 @@
 package com.uraltrans.logisticparamservice.controller.api.itr;
 
-import com.uraltrans.logisticparamservice.service.itr.TarifficationService;
+import com.uraltrans.logisticparamservice.service.itr.TarifficationServiceImpl;
 
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/tariffications")
 public class TarifficationController {
-    private final TarifficationService tarifficationService;
+    private final TarifficationServiceImpl tarifficationService;
 
     @GetMapping
     public ResponseEntity<?> downloadTarifficationFiles(){
