@@ -94,13 +94,21 @@ public class TarifficationRepositoryImpl implements TarifficationRepository {
                     "where k.ID_KL_PRED in (%s)";
 
     //Дополнительные поля
-    private static final String ADDITIONAL_COLUMNS_SQL =
+    private static final String ADDITIONAL_COLUMNS1_SQL =
             "select " +
                     "ID_KL_PRED, " +
                     "KL_PRED_TRANSKIND.ID_TRANSKIND as KL_PRED_TRANSKIND_ID_TRANSKIND " +
                     "from " +
                     "KL_PRED_TRANSKIND " +
                     "where ID_KL_PRED = %d";
+
+    private static final String ADDITIONAL_COLUMNS2_SQL =
+            "select Aid, Id_Doc " +
+                    "from DO_Document " +
+                    "where Aid = %d";
+
+    private static final String ADDITIONAL_COLUMNS3_SQL =
+            "exec Deal.Agreement_AnnexList @filterByAgrID=%d, @docTypeID=%d";
 
     @Resource(name = "itrDataSource")
     private final DataSource itrDataSource;
@@ -145,7 +153,17 @@ public class TarifficationRepositoryImpl implements TarifficationRepository {
     }
 
     @Override
-    public List<Map<String, Object>> getAllAdditionalColumns(Integer tarifficationId){
-        return JdbcUtils.getAllData(itrDataSource, String.format(ADDITIONAL_COLUMNS_SQL, tarifficationId));
+    public List<Map<String, Object>> getAllAdditionalColumns1(Integer tarifficationId){
+        return JdbcUtils.getAllData(itrDataSource, String.format(ADDITIONAL_COLUMNS1_SQL, tarifficationId));
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllAdditionalColumns2(Integer parentDocumentId){
+        return JdbcUtils.getAllData(itrDataSource, String.format(ADDITIONAL_COLUMNS2_SQL, parentDocumentId));
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllAdditionalColumns3(Integer argId, Integer docId) {
+        return JdbcUtils.getAllData(itrDataSource, String.format(ADDITIONAL_COLUMNS3_SQL, argId, docId));
     }
 }

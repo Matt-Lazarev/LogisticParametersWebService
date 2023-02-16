@@ -19,5 +19,9 @@ public interface TarifficationRepository {
 
     List<Map<String, Object>> getAllIncludedStations(String tarifficationIds);
 
-    List<Map<String, Object>> getAllAdditionalColumns(Integer tarifficationIds);
+    List<Map<String, Object>> getAllAdditionalColumns1(Integer tarifficationIds);
+
+    List<Map<String, Object>> getAllAdditionalColumns2(Integer parentDocumentId);
+
+    List<Map<String, Object>> getAllAdditionalColumns3(Integer argId, Integer docId);
 }

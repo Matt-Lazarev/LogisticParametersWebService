@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +20,7 @@ public class TarifficationServiceImpl implements TarifficationService {
     private final TarifficationRepository tarifficationRepository;
 
     @Override
-    public void writeAllTarifficationFiles(){
+    public void writeAllTarifficationFiles() {
         List<Map<String, Object>> tariffications = getAllTarifficationsInCurrentMonth();
         loadAdditionalColumns(tariffications);
 
@@ -41,20 +38,47 @@ public class TarifficationServiceImpl implements TarifficationService {
 
     private List<Map<String, Object>> getAllTarifficationsInCurrentMonth() {
         LocalDate dateFrom = YearMonth.now().atDay(1);
-        LocalDate dateTo   = YearMonth.now().atEndOfMonth();
+        LocalDate dateTo = YearMonth.now().atEndOfMonth();
         return tarifficationRepository.getAllTariffications(dateFrom.toString(), dateTo.toString());
     }
 
-    private void loadAdditionalColumns(List<Map<String, Object>> tariffications){
-        for(Map<String, Object> row : tariffications){
+    private void loadAdditionalColumns(List<Map<String, Object>> tariffications) {
+        for (Map<String, Object> row : tariffications) {
             Integer id = (Integer) row.get("ID");
-            List<Map<String, Object>> additionalColumns = tarifficationRepository.getAllAdditionalColumns(id);
-            if(additionalColumns.size() == 0){
+            List<Map<String, Object>> additionalColumns1 = tarifficationRepository.getAllAdditionalColumns1(id);
+            if (additionalColumns1.size() == 0) {
                 row.put("KL_PRED_TRANSKIND_ID_TRANSKIND", null);
             }
             else {
-                Map<String, Object> firstAdditionalRow = additionalColumns.get(0);
+                Map<String, Object> firstAdditionalRow = additionalColumns1.get(0);
                 row.put("KL_PRED_TRANSKIND_ID_TRANSKIND", firstAdditionalRow.get("KL_PRED_TRANSKIND_ID_TRANSKIND"));
+            }
+
+            Integer parentDocumentId = (Integer) row.get("IDParentDocument");
+            List<Map<String, Object>> additionalColumns2 = tarifficationRepository.getAllAdditionalColumns2(parentDocumentId);
+            if (additionalColumns2 == null || additionalColumns2.size() == 0) {
+                row.put("Id_Doc", null);
+            }
+            else {
+                Map<String, Object> firstAdditionalRow = additionalColumns2.get(0);
+                Integer docId = (Integer) firstAdditionalRow.get("Id_Doc");
+                Integer argId = (Integer) row.get("ID_AGR");
+                String foreignKeyToAgreement = (String) row.get("Приложение");
+
+                String kind = null;
+                Set<Integer> requiredDocIds = new HashSet<>(Arrays.asList(50, 51, 500));
+                if(docId != null && requiredDocIds.contains(docId)){
+                    List<Map<String, Object>> data = tarifficationRepository.getAllAdditionalColumns3(argId, docId);
+                    kind = data
+                            .stream()
+                            .filter(map -> map.get("Number").equals(foreignKeyToAgreement))
+                            .map(map -> (String) map.get("Kind"))
+                            .findFirst()
+                            .orElse(null);
+                }
+
+                row.put("Id_Doc", docId);
+                row.put("Kind", kind);
             }
         }
     }
@@ -73,7 +97,7 @@ public class TarifficationServiceImpl implements TarifficationService {
 
     private List<Map<String, Object>> getAllForeignStations(List<Integer> tarifficationIds) {
         List<Map<String, Object>> data = new ArrayList<>();
-        for(Integer id : tarifficationIds){
+        for (Integer id : tarifficationIds) {
             data.addAll(tarifficationRepository.getAllForeignStations(id));
         }
         return data;
@@ -87,7 +111,7 @@ public class TarifficationServiceImpl implements TarifficationService {
         return tarifficationRepository.getAllIncludedStations(tarifficationIds);
     }
 
-    private List<Integer> getTarifficationIds(List<Map<String, Object>> tariffications){
+    private List<Integer> getTarifficationIds(List<Map<String, Object>> tariffications) {
         return tariffications
                 .stream()
                 .map(map -> map.get("ID"))
@@ -95,7 +119,7 @@ public class TarifficationServiceImpl implements TarifficationService {
                 .collect(Collectors.toList());
     }
 
-    private String getTarifficationIdsJoined(List<Integer> ids){
+    private String getTarifficationIdsJoined(List<Integer> ids) {
         return ids
                 .stream()
                 .map(String::valueOf)
