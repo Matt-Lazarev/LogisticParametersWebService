@@ -21,7 +21,9 @@ public class StationHandbookMapper {
     private StationHandbook mapToStationHandbook(Map<String, Object> stationData) {
         return new StationHandbook()
                 .setCode6((String) stationData.get("_Code"))
-                .setCode5(((String) stationData.get("_Code")).substring(0, 5))
+                .setCode5(((String)stationData.get("_Code")).length() == 6
+                        ? ((String) stationData.get("_Code")).substring(0, 5)
+                        : ((String) stationData.get("_Code")))
                 .setStation((String) stationData.get("_Description"))
                 .setRegion((String) stationData.get("_Region"))
                 .setRoad((String) stationData.get("_Road"))

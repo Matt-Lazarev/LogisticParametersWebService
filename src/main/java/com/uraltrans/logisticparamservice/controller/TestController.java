@@ -19,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/test")
@@ -63,9 +64,16 @@ public class TestController {
 
     private final SegmentationAnalysisT14Service segmentationAnalysisT14Service;
 
+    private final RawStationHandbookRepository rawStationHandbookRepository;
+
     @GetMapping
     public Object getAll() {
-        return carRepairInfoRepository.getCarRepairByDate("", 28838043);
+        return rawStationHandbookRepository.getAllStations()
+                        .stream()
+                        .map(map -> map.get("_Code"))
+                        .filter(code -> ((String) code).length() != 6)
+                        .collect(Collectors.toList());
+
     }
 
     @GetMapping("/1")
