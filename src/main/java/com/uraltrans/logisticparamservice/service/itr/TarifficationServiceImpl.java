@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TarifficationServiceImpl implements TarifficationService {
     private static final String TARIFFICATION_DIRECTORY = "tariffication_data";
-    private static final List<String> TARIFFICATION_FILENAMES = Arrays.asList(
+    private static final List<String> TARIFFICATION_FILENAMES = List.of(
             "тарификация.txt", "таблица_расстояний.txt", "станции_отправления.txt", "станции_назначения.txt", "заграничные_станции.txt", "исключая_вагоны.txt", "включая_вагоны.txt");
 
     private final TarifficationRepository tarifficationRepository;

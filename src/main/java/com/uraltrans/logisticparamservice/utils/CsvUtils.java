@@ -50,7 +50,7 @@ public class CsvUtils {
                     .map(Map::values)
                     .map(row -> row.stream().map(String::valueOf).collect(Collectors.joining(";")))
                     .map(row -> row.replaceAll("[\n\r]+", ""))
-                    .collect(Collectors.toList());
+                    .toList();
 
             List<String> allRows = new ArrayList<>();
             allRows.add(headers);

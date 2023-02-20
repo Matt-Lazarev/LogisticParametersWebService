@@ -53,22 +53,12 @@ public class ExcelUtils {
                     if(!indexes.contains(cellIndex++)){
                         continue;
                     }
-                    String value = "";
+                    String value;
                     switch (cell.getCellType()) {
-                        case BOOLEAN:
-                            value = "" + cell.getBooleanCellValue();
-                            break;
-                        case NUMERIC:
-                            value = "" + cell.getNumericCellValue();
-                            break;
-                        case STRING:
-                            value = "" + cell.getStringCellValue();
-                            break;
-                        case BLANK:
-                            value = "";
-                            break;
-                        default:
-                            break;
+                        case BOOLEAN -> value = "" + cell.getBooleanCellValue();
+                        case NUMERIC -> value = "" + cell.getNumericCellValue();
+                        case STRING -> value = "" + cell.getStringCellValue();
+                        default -> value = "";
                     }
                     rowData.add(value);
                 }

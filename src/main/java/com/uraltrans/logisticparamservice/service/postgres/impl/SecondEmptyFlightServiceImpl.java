@@ -25,17 +25,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
-    private static final List<String> FILTER_CARGO_CODES = Arrays.asList(
-            "421195", "421208", "421195", "421227", "421208", "391089", "421212", "421231", "421246");//421034
+    private static final Set<String> FILTER_CARGO_CODES = Set.of(
+            "421195", "421208", "421227", "391089", "421212", "421231", "421246");
 
     private final FlightService flightService;
     private final StationHandbookService stationHandbookService;

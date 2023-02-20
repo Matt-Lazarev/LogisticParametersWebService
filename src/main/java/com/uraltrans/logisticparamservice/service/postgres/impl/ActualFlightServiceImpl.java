@@ -35,8 +35,8 @@ import static com.uraltrans.logisticparamservice.utils.Mapper.SHIFT_1C_YEARS;
 public class ActualFlightServiceImpl implements ActualFlightService {
     private static final Set<String> DISLOCATION_RESPONSES_CACHE = new HashSet<>();
 
-    private static final Set<String> FILTER_VALUES = new HashSet<>(
-            Arrays.asList("вывод", "аренда", "тр", "др", "ремонт", "отстой", "вывод", "в тр", "промывка"));
+    private static final Set<String> FILTER_VALUES = Set.of(
+            "вывод", "аренда", "тр", "др", "ремонт", "отстой", "в тр", "промывка");
     private static final String FILTER_VALUE = "ремонт";
 
     private final FlightRequirementService flightRequirementService;

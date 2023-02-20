@@ -8,7 +8,6 @@ import com.uraltrans.logisticparamservice.repository.itr.RawFlightRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightMapper;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +17,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class FlightServiceImpl implements FlightService {
-    private final LoadParameterService loadParameterService;
     private final FlightRepository flightRepository;
     private final RawFlightRepository rawFlightRepository;
     private final FlightMapper flightMapper;
