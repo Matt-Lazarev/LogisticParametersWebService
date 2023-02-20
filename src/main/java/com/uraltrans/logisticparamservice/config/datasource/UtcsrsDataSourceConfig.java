@@ -39,8 +39,7 @@ public class UtcsrsDataSourceConfig {
     @Bean(name = "utcsrsEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             EntityManagerFactoryBuilder builder, @Qualifier("utcsrsDataSource") DataSource dataSource) {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
+        Map<String, String> properties = Map.of("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
         return builder
                 .dataSource(dataSource)
                 .packages("com.uraltrans.logisticparamservice.entity.utcsrs")

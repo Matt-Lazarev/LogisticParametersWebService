@@ -32,10 +32,10 @@ public class PostgresDataSourceConfig {
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             EntityManagerFactoryBuilder builder, @Qualifier("postgresDataSource") DataSource dataSource) {
+        Map<String, String> properties = Map.of(
+                Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect",
+                Environment.HBM2DDL_AUTO, "update");
 
-        Map<String, String> properties = new HashMap<>();
-        properties.put(Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect");
-        properties.put(Environment.HBM2DDL_AUTO, "update");
         return builder
                 .dataSource(dataSource)
                 .properties(properties)

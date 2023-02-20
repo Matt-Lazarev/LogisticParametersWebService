@@ -36,8 +36,7 @@ public class IntegrationDataDataSourceConfig {
     @Bean(name = "integrationEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             EntityManagerFactoryBuilder builder, @Qualifier("integrationDataDataSource") DataSource dataSource) {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
+        Map<String, String> properties = Map.of("hibernate.dialect", "org.hibernate.dialect.SQLServerDialect");
         return builder
                 .dataSource(dataSource)
                 .packages("com.uraltrans.logisticparamservice.entity.integration")

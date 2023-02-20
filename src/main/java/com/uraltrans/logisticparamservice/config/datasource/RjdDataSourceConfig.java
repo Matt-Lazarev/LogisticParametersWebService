@@ -35,10 +35,10 @@ public class RjdDataSourceConfig {
     @Bean(name = "rjdEntityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             EntityManagerFactoryBuilder builder, @Qualifier("rjdDataSource") DataSource dataSource) {
+        Map<String, String> properties = Map.of(
+                Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect",
+                Environment.HBM2DDL_AUTO, "none");
 
-        Map<String, String> properties = new HashMap<>();
-        properties.put(Environment.DIALECT, "org.hibernate.dialect.PostgreSQLDialect");
-        properties.put(Environment.HBM2DDL_AUTO, "none");
         return builder
                 .dataSource(dataSource)
                 .properties(properties)
