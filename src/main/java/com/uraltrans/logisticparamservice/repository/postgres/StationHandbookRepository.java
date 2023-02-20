@@ -10,21 +10,21 @@ import java.util.List;
 
 public interface StationHandbookRepository extends JpaRepository<StationHandbook, String> {
 
-    @Query("select s.region from StationHandbook s where s.code6 = :code")
+    @Query("SELECT s.region FROM StationHandbook s WHERE s.code6 = :code")
     String findRegionByCode6(String code);
 
-    @Query("select s from StationHandbook s where s.code6 = :code")
+    @Query("SELECT s FROM StationHandbook s WHERE s.code6 = :code")
     StationHandbook findStationByCode6(String code);
 
-    @Query("select s.region from StationHandbook  s where s.station = :station")
+    @Query("SELECT s.region FROM StationHandbook  s WHERE s.station = :station")
     String findRegionByStation(String station);
 
-    @Query("select s from StationHandbook s where s.station = :station")
+    @Query("SELECT s FROM StationHandbook s WHERE s.station = :station")
     List<StationHandbook> findStationByName(String station);
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table station_handbook restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE station_handbook RESTART IDENTITY", nativeQuery = true)
     void truncate();
 
 

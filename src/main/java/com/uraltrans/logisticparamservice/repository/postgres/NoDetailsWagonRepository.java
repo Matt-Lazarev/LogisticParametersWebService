@@ -10,6 +10,6 @@ import javax.transaction.Transactional;
 public interface NoDetailsWagonRepository extends JpaRepository<NoDetailsWagon, Integer> {
     @Modifying
     @Transactional
-    @Query(value = "truncate table no_details_wagons restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE no_details_wagons RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

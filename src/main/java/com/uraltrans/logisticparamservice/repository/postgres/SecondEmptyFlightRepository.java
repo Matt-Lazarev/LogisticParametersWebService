@@ -9,11 +9,11 @@ import javax.transaction.Transactional;
 
 public interface SecondEmptyFlightRepository extends JpaRepository<SecondEmptyFlight, Long> {
 
-    @Query("select count(s) from SecondEmptyFlight s where s.carNumber = :carNumber")
+    @Query("SELECT COUNT(s) FROM SecondEmptyFlight s WHERE s.carNumber = :carNumber")
     Integer countSecondEmptyFlightByCarNumber(Integer carNumber);
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table second_empty_flights restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE second_empty_flights RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

@@ -10,14 +10,16 @@ import java.util.Optional;
 
 public interface FlightTimeDistanceRepository extends JpaRepository<FlightTimeDistance, Long> {
 
-    @Query("select f from FlightTimeDistance f " +
-           "where f.departureStationCode = :departureStation " +
-           "and f.destinationStationCode = :destinationStation " +
-           "and f.typeFlight = :flightType")
+    @Query("""
+           SELECT f FROM FlightTimeDistance f
+           WHERE f.departureStationCode = :departureStation AND
+                 f.destinationStationCode = :destinationStation AND
+                 f.typeFlight = :flightType
+           """)
     Optional<FlightTimeDistance> findByStationCodesAndFlightType(String departureStation, String destinationStation, String flightType);
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table flight_times_distances restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE flight_times_distances RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

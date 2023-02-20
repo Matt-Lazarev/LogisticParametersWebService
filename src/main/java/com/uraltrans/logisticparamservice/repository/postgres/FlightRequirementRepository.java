@@ -14,50 +14,55 @@ import java.util.Map;
 public interface FlightRequirementRepository extends JpaRepository<FlightRequirement, Long> {
 
     @Query(value =
-            "select sub_co.volume_from, sub_co.volume_to,sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id, " +
-                    "       sum(sub_co.cars_amount) as cars_amount, " +
-                    "       sum(sub_co.completed_orders) as completed_orders, " +
-                    "       sum(sub_co.in_progress_orders) as in_progress_orders, " +
-                    "       avg(sub_co.ut_rate) as ut_rate " +
-                    "from " +
-                    "(select co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, " +
-                    "       co.cars_amount as cars_amount, co.ut_rate as ut_rate, co.id, " +
-                    "       sum(af_sub.completed_orders) as completed_orders, " +
-                    "       sum(af_sub.in_progress_orders) as in_progress_orders " +
-                    "                    from client_orders co " +
-                    "                    left join " +
-                    "                    (select af.volume, af.source_station_code, af.destination_station_code, " +
-                    "                            sum(af.completed_orders) as completed_orders, sum(af.in_progress_orders) as in_progress_orders " +
-                    "                            from actual_flights af " +
-                    "                            where af.source_station_code != af.destination_station_code " +
-                    "                            group by af.volume, af.source_station_code, af.destination_station_code) af_sub " +
-                    "                    on co.source_station_code6 = af_sub.source_station_code and " +
-                    "                       af_sub.volume between co.volume_from and co.volume_to " +
-                    "                    group by co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, co.cars_amount, co.id, co.ut_rate) as sub_co " +
-                    "group by sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id;", nativeQuery = true)
+            """
+            SELECT sub_co.volume_from, sub_co.volume_to,sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id,
+                sum(sub_co.cars_amount) AS cars_amount,
+                sum(sub_co.completed_orders) AS completed_orders,
+                sum(sub_co.in_progress_orders) AS in_progress_orders,
+                avg(sub_co.ut_rate) AS ut_rate
+            FROM
+                (SELECT co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6,
+                co.cars_amount AS cars_amount, co.ut_rate AS ut_rate, co.id,
+                sum(af_sub.completed_orders) AS completed_orders,
+                sum(af_sub.in_progress_orders) AS in_progress_orders
+                FROM client_orders co
+                LEFT JOIN
+                    (SELECT af.volume, af.source_station_code, af.destination_station_code,
+                    sum(af.completed_orders) AS completed_orders, sum(af.in_progress_orders) AS in_progress_orders
+                    FROM actual_flights af
+                    WHERE af.source_station_code != af.destination_station_code
+                    GROUP BY af.volume, af.source_station_code, af.destination_station_code) af_sub
+                ON co.source_station_code6 = af_sub.source_station_code AND af_sub.volume BETWEEN co.volume_from AND co.volume_to
+                GROUP BY co.volume_from, co.volume_to,co.source_station_code6, co.destination_station_code6, co.cars_amount, co.id, co.ut_rate) AS sub_co
+            GROUP BY sub_co.volume_from, sub_co.volume_to, sub_co.source_station_code6, sub_co.destination_station_code6, sub_co.id
+            """,
+            nativeQuery = true)
     List<Map<String, Object>> groupActualFlightsAndClientOrders();
+
+    @Query("""
+           SELECT new com.uraltrans.logisticparamservice.dto.planfact.OrdersDto
+           (fr.requirementOrders, fr.utRate)
+           FROM FlightRequirement fr
+           WHERE :volume BETWEEN fr.volumeFrom AND fr.volumeTo
+               AND fr.sourceStationCode = :sourceStationCode
+               AND fr.destinationStationCode = :destinationStationCode
+           """)
+    OrdersDto findRequirementByVolumeAndStationCodes(BigDecimal volume, String sourceStationCode, String destinationStationCode);
+
+    @Query("""
+           SELECT new com.uraltrans.logisticparamservice.dto.planfact.OrdersDto(SUM(fr.requirementOrders), AVG(fr.utRate))
+           FROM FlightRequirement fr
+           WHERE :volume BETWEEN fr.volumeFrom AND fr.volumeTo
+                 AND fr.sourceStationCode = :sourceStationCode
+           GROUP BY fr.sourceStationCode
+           """)
+    OrdersDto findAllRequirementByVolumeAndSourceStationCode(BigDecimal volume, String sourceStationCode);
+
+    @Query("SELECT fr.sourceStationCode FROM FlightRequirement fr ")
+    List<String> findAllSourceStationCodes();
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table flight_requirements restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE flight_requirements RESTART IDENTITY", nativeQuery = true)
     void truncate();
-
-    @Query("select new com.uraltrans.logisticparamservice.dto.planfact.OrdersDto" +
-            "(fr.requirementOrders, fr.utRate) " +
-            "from FlightRequirement fr " +
-            "where :volume between fr.volumeFrom and fr.volumeTo " +
-            "and fr.sourceStationCode = :sourceStationCode " +
-            "and fr.destinationStationCode = :destinationStationCode")
-    OrdersDto findRequirementByVolumeAndStationCodes(BigDecimal volume, String sourceStationCode, String destinationStationCode);
-
-    @Query("select new com.uraltrans.logisticparamservice.dto.planfact.OrdersDto " +
-            "(sum(fr.requirementOrders), avg(fr.utRate)) " +
-            "from FlightRequirement fr " +
-            "where :volume between fr.volumeFrom and fr.volumeTo " +
-            "and fr.sourceStationCode = :sourceStationCode " +
-            "group by fr.sourceStationCode")
-    OrdersDto findAllRequirementByVolumeAndSourceStationCode(BigDecimal volume, String sourceStationCode);
-
-    @Query("select fr.sourceStationCode from FlightRequirement fr ")
-    List<String> findAllSourceStationCodes();
 }

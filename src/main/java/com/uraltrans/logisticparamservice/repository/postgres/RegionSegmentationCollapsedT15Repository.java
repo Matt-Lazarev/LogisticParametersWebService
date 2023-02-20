@@ -9,6 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface RegionSegmentationCollapsedT15Repository extends JpaRepository<RegionSegmentationCollapsedT15, Integer> {
     @Modifying
     @Transactional
-    @Query(value = "truncate table t15_collapsed restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE t15_collapsed RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

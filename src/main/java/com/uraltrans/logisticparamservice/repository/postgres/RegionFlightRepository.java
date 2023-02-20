@@ -10,6 +10,6 @@ public interface RegionFlightRepository extends JpaRepository<RegionFlight, Inte
 
     @Modifying
     @Transactional
-    @Query("update RegionFlight rf set rf.travelDays = :travelDays where rf.id = :id")
+    @Query("UPDATE RegionFlight rf SET rf.travelDays = :travelDays WHERE rf.id = :id")
     void updateTravelTimeById(Integer travelDays, Integer id);
 }

@@ -11,32 +11,37 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface ClientOrderRepository extends JpaRepository<ClientOrder, Long> {
-    @Query("select new com.uraltrans.logisticparamservice.dto.cargo.CargoDto(co.cargoCode, co.utRate) " +
-           "from ClientOrder co " +
-           "where co.sourceStationCode6 = :sourceStation and " +
-           "      :volume between co.volumeFrom and co.volumeTo " +
-           "group by co.sourceStationCode6, co.cargoCode, co.utRate")
+    @Query("""
+           SELECT new com.uraltrans.logisticparamservice.dto.cargo.CargoDto(co.cargoCode, co.utRate)
+           FROM ClientOrder co
+           WHERE co.sourceStationCode6 = :sourceStation AND :volume BETWEEN co.volumeFrom AND co.volumeTo
+           GROUP BY co.sourceStationCode6, co.cargoCode, co.utRate
+           """)
     List<CargoDto> findBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume);
 
-    @Query("select avg(co.utRate) " +
-            "from ClientOrder co " +
-            "where co.sourceStationCode6 = :sourceStation and " +
-            "      co.destinationStationCode6 = :destStation and " +
-            "      :volume between co.volumeFrom and co.volumeTo " +
-            "group by co.sourceStationCode6, co.destinationStationCode6")
+    @Query("""
+            SELECT AVG(co.utRate)
+            FROM ClientOrder co
+            WHERE co.sourceStationCode6 = :sourceStation
+                AND co.destinationStationCode6 = :destStation
+                AND :volume BETWEEN co.volumeFrom AND co.volumeTo
+            GROUP BY co.sourceStationCode6, co.destinationStationCode6
+           """)
     BigDecimal findUtRateByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
 
-    @Query("select avg(co.utRate) " +
-            "from ClientOrder co " +
-            "where co.sourceStationCode6 = :sourceStation and " +
-            "      co.destinationStationCode6 is null and " +
-            "      :volume between co.volumeFrom and co.volumeTo " +
-            "group by co.sourceStationCode6, co.destinationStationCode6")
+    @Query("""
+            SELECT AVG(co.utRate)
+            FROM ClientOrder co
+            WHERE co.sourceStationCode6 = :sourceStation
+                AND co.destinationStationCode6 IS NULL
+                AND :volume BETWEEN co.volumeFrom AND co.volumeTo
+            GROUP BY co.sourceStationCode6, co.destinationStationCode6
+           """)
     BigDecimal findUtRateBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume);
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table client_orders restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE client_orders RESTART IDENTITY", nativeQuery = true)
     void truncate();
 
 

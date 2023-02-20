@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 
 public interface GeocodeRepository extends JpaRepository<Geocode, Long> {
 
-    @Query("select g.id from Geocode g where g.stationCode = :stationCode")
+    @Query("SELECT g.id FROM Geocode g WHERE g.stationCode = :stationCode")
     Long findGeocodeIdByStationCode(String stationCode);
 
     @Modifying
     @Transactional
-    @Query("delete from Geocode g where g.expiredAt <= :now")
+    @Query("DELETE FROM Geocode g WHERE g.expiredAt <= :now")
     void deleteWhereExpired(LocalDateTime now);
 }

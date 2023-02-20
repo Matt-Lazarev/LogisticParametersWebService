@@ -10,15 +10,17 @@ import java.math.BigDecimal;
 
 public interface ActualFlightRepository extends JpaRepository<ActualFlight, Long> {
 
-    @Query("select co " +
-            "from ActualFlight co " +
-            "where co.sourceStationCode = :sourceStation and " +
-            "      co.destinationStationCode = :destStation and " +
-            "      co.volume = :volume")
+    @Query("""
+           SELECT co
+           FROM ActualFlight co
+           WHERE co.sourceStationCode = :sourceStation AND
+           co.destinationStationCode = :destStation AND
+           co.volume = :volume
+           """)
     ActualFlight findByStationCodesAndVolume(String sourceStation, String destStation, BigDecimal volume);
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table actual_flights restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE actual_flights RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

@@ -11,6 +11,6 @@ public interface PotentialFlightRepository extends JpaRepository<PotentialFlight
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table potential_flights restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE potential_flights RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

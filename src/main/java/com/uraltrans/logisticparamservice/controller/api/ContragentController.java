@@ -24,7 +24,7 @@ public class ContragentController {
     }
 
     @PostMapping
-    public ResponseEntity<LoadDataResponse> saveAllFlightProfits(){
+    public ResponseEntity<LoadDataResponse> saveAllContragents(){
         contragentService.saveAllContragents();
         return ResponseEntity.ok(LoadDataResponse.builder().success("true").message("Данные выгружены").build());
     }

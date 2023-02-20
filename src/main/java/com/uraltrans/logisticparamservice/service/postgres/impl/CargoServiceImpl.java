@@ -37,7 +37,7 @@ public class CargoServiceImpl implements CargoService {
     @Override
     public void saveAll() {
         prepareNextSave();
-        List<Cargo> cargos = cargoMapper.mapRawDataToCargoList(rawCargoRepository.getAllFlightProfits());
+        List<Cargo> cargos = cargoMapper.mapRawDataToCargoList(rawCargoRepository.getAllCargos());
         cargos = filterCargos(cargos);
         cargoRepository.saveAll(cargos);
     }

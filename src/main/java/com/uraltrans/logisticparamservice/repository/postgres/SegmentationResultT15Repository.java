@@ -9,6 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 public interface SegmentationResultT15Repository extends JpaRepository<SegmentationResultT15, Integer> {
     @Modifying
     @Transactional
-    @Query(value = "truncate table t15_result restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE t15_result RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

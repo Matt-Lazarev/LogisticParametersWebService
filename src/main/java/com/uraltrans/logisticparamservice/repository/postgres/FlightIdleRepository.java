@@ -9,19 +9,23 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 public interface FlightIdleRepository extends JpaRepository<FlightIdle, String> {
-    @Query("select avg(f.loading) from FlightIdle f " +
-           "where f.departureStationCode = :stationCode " +
-           "group by f.departureStationCode")
+    @Query("""
+           SELECT AVG(f.loading) FROM FlightIdle f
+           WHERE f.departureStationCode = :stationCode
+           GROUP BY f.departureStationCode
+           """)
     Optional<String> findLoadIdleByStationCode(String stationCode);
 
-    @Query("select avg(f.unloading) from FlightIdle f " +
-           "where f.departureStationCode = :stationCode " +
-           "group by f.departureStationCode")
+    @Query("""
+           SELECT AVG(f.unloading) FROM FlightIdle f
+           WHERE f.departureStationCode = :stationCode
+           GROUP BY  f.departureStationCode
+           """)
     Optional<String> findUnloadIdleByStationCode(String stationCode);
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table flight_idles", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE flight_idles", nativeQuery = true)
     void truncate();
 
 }

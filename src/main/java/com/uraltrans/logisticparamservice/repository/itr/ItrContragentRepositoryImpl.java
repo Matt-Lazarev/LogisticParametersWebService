@@ -11,16 +11,19 @@ import java.util.Map;
 @Repository
 public class ItrContragentRepositoryImpl implements ItrContragentRepository {
     private static final String SQL =
-            "select " +
-            "k.NAME as Company, " +
-            "kc.EMAIL as Email, " +
-            "kc.NAME as Name, " +
-            "kc.AgentINN as INN, " +
-            "t.name as Type " +
-            "from  kontragent_contakt kc " +
-            "inner join CRM.TypeOfContact t on kc.typ=t.AID " +
-            "inner join KONTRAGENT k on k.AID = kc.ID_KONTRAGENT " +
-            "where t.name = ?";
+            """
+            select
+            k.NAME as Company,
+            kc.EMAIL as Email,
+            kc.NAME as Name,
+            kc.AgentINN as INN,
+            t.name as Type
+            from  kontragent_contakt kc
+            inner join CRM.TypeOfContact t on kc.typ=t.AID
+            inner join KONTRAGENT k on k.AID = kc.ID_KONTRAGENT
+            where t.name = ?
+            """;
+
 
     @Resource(name = "itrDataSource")
     private final DataSource itrDataSource;

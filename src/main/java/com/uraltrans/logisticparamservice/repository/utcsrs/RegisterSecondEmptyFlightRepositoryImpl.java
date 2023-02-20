@@ -11,11 +11,13 @@ import java.util.Map;
 @Repository
 public class RegisterSecondEmptyFlightRepositoryImpl implements RegisterSecondEmptyFlightRepository {
     private static final String SQL =
-            "SELECT r45_1._Code as SourceStation, r45_2._Code as DestStation " +
-            "FROM _InfoRg6810 inf " +
-            "LEFT OUTER JOIN _Reference45 r45_1 on inf._Fld6811RRef = r45_1._IDRRef " +
-            "LEFT OUTER JOIN _Reference45 r45_2 on inf._Fld6812RRef = r45_2._IDRRef " +
-            "WHERE r45_1._Code = ? AND r45_2._Code = ?";
+            """
+            SELECT r45_1._Code as SourceStation, r45_2._Code as DestStation
+            FROM _InfoRg6810 inf
+            LEFT OUTER JOIN _Reference45 r45_1 on inf._Fld6811RRef = r45_1._IDRRef
+            LEFT OUTER JOIN _Reference45 r45_2 on inf._Fld6812RRef = r45_2._IDRRef
+            WHERE r45_1._Code = ? AND r45_2._Code = ?
+            """;
 
     @Resource(name = "utcsrsDataSource")
     private final DataSource utcsrsDataSource;

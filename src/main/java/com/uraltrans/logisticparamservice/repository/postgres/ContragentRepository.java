@@ -10,6 +10,6 @@ public interface ContragentRepository extends JpaRepository<Contragent, Integer>
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table contragents restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE contragents RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

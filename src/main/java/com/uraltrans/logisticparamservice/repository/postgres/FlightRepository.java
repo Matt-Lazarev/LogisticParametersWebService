@@ -13,29 +13,35 @@ import java.util.List;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
-    @Query("select new com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto " +
-           "(f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType, AVG(f.carLoadIdleDays)) " +
-           "from Flight f " +
-           "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
-           "group by f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType")
+    @Query("""
+           SELECT new com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto
+               (f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType, AVG(f.carLoadIdleDays))
+           FROM Flight f
+           WHERE upper(f.loaded) = 'ГРУЖ' AND upper(f.carType) = 'КР'
+           GROUP BY  f.volume, f.cargo, f.cargoCode6, f.sourceStation, f.sourceStationCode, f.carType
+           """)
     List<LoadIdleDto> groupCarLoadIdle();
 
-    @Query("select new com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto " +
-            "(f.volume, f.cargo, f.cargoCode6, f.destStation, f.destStationCode, f.carType, AVG(f.carUnloadIdleDays)) " +
-            "from Flight f " +
-            "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
-            "group by f.volume, f.cargo, f.cargoCode6, f.destStation, f.destStationCode, f.carType")
+    @Query("""
+           SELECT new com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto
+               (f.volume, f.cargo, f.cargoCode6, f.destStation, f.destStationCode, f.carType, AVG(f.carUnloadIdleDays))
+           FROM Flight f
+           WHERE upper(f.loaded) = 'ГРУЖ' AND upper(f.carType) = 'КР'
+           GROUP BY f.volume, f.cargo, f.cargoCode6, f.destStation, f.destStationCode, f.carType
+           """)
     List<UnloadIdleDto> groupCarUnloadIdle();
 
-    @Query("select new com.uraltrans.logisticparamservice.dto.idle.LoadUnloadIdleDto " +
-            "('', '', f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode, AVG(f.carLoadIdleDays), AVG(f.carUnloadIdleDays)) " +
-            "from Flight f " +
-            "where upper(f.loaded) = 'ГРУЖ' and upper(f.carType) = 'КР' " +
-            "group by f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode")
+    @Query("""
+           SELECT new com.uraltrans.logisticparamservice.dto.idle.LoadUnloadIdleDto
+               ('', '', f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode, AVG(f.carLoadIdleDays), AVG(f.carUnloadIdleDays))
+           FROM Flight f
+           WHERE upper(f.loaded) = 'ГРУЖ' AND upper(f.carType) = 'КР'
+           GROUP BY f.sourceStation, f.sourceStationCode, f.destStation, f.destStationCode
+           """)
     List<LoadUnloadIdleDto> groupCarLoadUnloadIdle();
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table flights restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE flights RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }

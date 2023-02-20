@@ -10,12 +10,11 @@ import java.util.List;
 
 public interface RegionSegmentationT15Repository extends JpaRepository<RegionSegmentationT15, Integer> {
 
-    @Query("select distinct rs from RegionSegmentationT15 rs inner join fetch rs.segments")
+    @Query("SELECT DISTINCT rs FROM RegionSegmentationT15 rs INNER JOIN FETCH rs.segments")
     List<RegionSegmentationT15> findAllDistinct();
 
     @Modifying
     @Transactional
-    @Query(value = "truncate table t15 restart identity cascade", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE t15 RESTART IDENTITY CASCADE", nativeQuery = true)
     void truncateT15Table();
-
 }

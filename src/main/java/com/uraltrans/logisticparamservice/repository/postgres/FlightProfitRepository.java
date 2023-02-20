@@ -10,6 +10,6 @@ import javax.transaction.Transactional;
 public interface FlightProfitRepository extends JpaRepository<FlightProfit, Long> {
     @Modifying
     @Transactional
-    @Query(value = "truncate table flight_profits restart identity", nativeQuery = true)
+    @Query(value = "TRUNCATE TABLE flight_profits RESTART IDENTITY", nativeQuery = true)
     void truncate();
 }
