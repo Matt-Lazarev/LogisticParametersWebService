@@ -6,6 +6,10 @@ cache:
     - ./.m2/repository
   key: "$CI_BUILD_REF_NAME"
 
+.docker-login-script:
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 stages:
   - prepare
   - test
@@ -14,8 +18,6 @@ stages:
 
 prepare_job:
   stage: prepare
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - java --version
     - mvn --version
@@ -28,14 +30,14 @@ test-job:
 build-job:
   stage: build
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - !reference [.docker-login-script, script]
   script: 
     - mvn clean compile jib:build
 
 deploy-job:
   stage: deploy
   before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - !reference [.docker-login-script, script]
   script:
     - docker-compose pull
     - docker-compose up -d
