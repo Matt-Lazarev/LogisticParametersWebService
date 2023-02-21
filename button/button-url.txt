@@ -1,1 +1,1 @@
-http://10.168.1.6:8080/home
+http://10.168.1.6:9090/rjd/main/index
