@@ -14,7 +14,8 @@ stages:
   - prepare
   - test
   - build
-  - deploy
+  - stage-deploy
+  - prod-deploy
 
 prepare_job:
   stage: prepare
@@ -34,10 +35,21 @@ build-job:
   script: 
     - mvn clean compile jib:build
 
-deploy-job:
-  stage: deploy
+stage-deploy-job:
+  stage: stage-deploy
   before_script:
     - !reference [.docker-login-script, script]
   script:
     - docker-compose pull
     - docker-compose up -d
+
+prod-deploy-job:
+  stage: prod-deploy
+  before_script:
+    - !reference [.docker-login-script, script]
+  script:
+    - ssh lazarev@10.168.1.5
+  #   - docker-compose pull
+  #   - docker-compose up -d
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH == 'master'
