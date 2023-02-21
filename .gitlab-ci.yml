@@ -14,11 +14,11 @@ stages:
 
 prepare_job:
   stage: prepare
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
     - java --version
     - mvn --version
-    - pwd
-    - ls -a
 
 test-job:
   stage: test
