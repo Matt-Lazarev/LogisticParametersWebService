@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - =sql:/sql
+      - ./sql:/sql
       - ./button:/button
       - ./logging:/logging
     environment:
