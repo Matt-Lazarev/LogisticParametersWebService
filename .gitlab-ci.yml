@@ -49,7 +49,7 @@ prod-deploy-job:
     - !reference [.docker-login-script, script]
   script:
     - ssh -o StrictHostKeyChecking=no lazarev@10.168.1.5
-  #   - docker-compose -f docker-compose-prod.yaml pull
-  #   - docker-compose -f docker-compose-prod.yaml up -d
+    - docker-compose -f docker-compose-prod.yaml pull
+    - docker-compose -f docker-compose-prod.yaml up -d
   rules:
     - if: $CI_COMMIT_BRANCH == 'master'
