@@ -48,7 +48,7 @@ prod-deploy-job:
   before_script:
     - !reference [.docker-login-script, script]
   script:
-    - ssh lazarev@10.168.1.5
+    - ssh -o StrictHostKeyChecking=no lazarev@10.168.1.5
   #   - docker-compose pull
   #   - docker-compose up -d
   # rules:
