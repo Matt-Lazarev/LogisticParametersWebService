@@ -43,9 +43,8 @@ mvnw.*
 src/main/resources/application.yaml
 src/test
 
-### docker
+#docker
 dockerfile
-docker-compose.yaml
 
 #confidential
 application.yaml
