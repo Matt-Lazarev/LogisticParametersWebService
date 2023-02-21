@@ -10,6 +10,7 @@ stages:
   - prepare
   - test
   - build
+  - deploy
 
 prepare_job:
   stage: prepare
@@ -23,9 +24,16 @@ test-job:
   script:
     - mvn test
 
-build-image-job:
+build-job:
   stage: build
   before_script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script: 
     - mvn clean compile jib:build
+
+deploy-job:
+  stage: deploy
+  before_script:
+    - docker logout
+  script:
+    - docker-compose up -d
