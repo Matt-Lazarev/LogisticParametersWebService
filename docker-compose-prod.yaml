@@ -11,4 +11,5 @@ services:
       - /home/m.lazarev/workdir/logging:/logging
       - /data:/data
     environment:
+      SPRING_PROFILES_ACTIVE: "prod"
       TZ: "Europe/Moscow"

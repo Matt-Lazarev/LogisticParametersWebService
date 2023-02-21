@@ -28,7 +28,7 @@
 
     </appender>
 
-    <springProfile name="dev,prod">
+    <springProfile name="stage,prod">
         <root level="info">
             <appender-ref ref="RollingFile"/>
             <appender-ref ref="Console"/>
