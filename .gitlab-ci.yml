@@ -19,7 +19,6 @@ prepare_job:
   script:
     - java --version
     - mvn --version
-    - docker-compose stop
 
 test-job:
   stage: test
