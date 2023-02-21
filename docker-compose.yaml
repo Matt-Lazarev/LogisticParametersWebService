@@ -8,7 +8,7 @@ services:
     volumes:
       - ./sql:/sql
       - ./button:/button
-      - ./logging:/logging
-      -  /data:/data
+      - /home/m.lazarev/workdir/logging:/logging
+      - /data:/data
     environment:
       TZ: "Europe/Moscow"
