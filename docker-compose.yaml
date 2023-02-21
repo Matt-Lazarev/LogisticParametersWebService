@@ -9,5 +9,6 @@ services:
       - ./sql:/sql
       - ./button:/button
       - ./logging:/logging
+      -  /data:/data
     environment:
       TZ: "Europe/Moscow"
