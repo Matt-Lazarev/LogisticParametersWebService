@@ -18,6 +18,8 @@
         <apache.poi.version>5.2.2</apache.poi.version>
         <mapstruct.version>1.5.3.Final</mapstruct.version>
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
+        <jib.maven.plugin.version>3.2.1</jib.maven.plugin.version>
+        <eclipse.temurin.image.version>17.0.4.1_1-jre</eclipse.temurin.image.version>
     </properties>
     <dependencies>
         <dependency>
@@ -97,6 +99,19 @@
                         </exclude>
                     </excludes>
                     <executable>true</executable>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>${jib.maven.plugin.version}</version>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:${eclipse.temurin.image.version}</image>
+                    </from>
+                    <to>
+                        <image>registry.gitlab.com/learn252307/${project.artifactId}:${project.version}</image>
+                    </to>
                 </configuration>
             </plugin>
         </plugins>
