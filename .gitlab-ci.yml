@@ -51,5 +51,5 @@ prod-deploy-job:
     - ssh -o StrictHostKeyChecking=no lazarev@10.168.1.5
   #   - docker-compose pull
   #   - docker-compose up -d
-  # rules:
-  #   - if: $CI_COMMIT_BRANCH == 'master'
+  rules:
+    - if: $CI_COMMIT_BRANCH == 'main'
