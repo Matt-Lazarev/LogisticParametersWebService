@@ -17,6 +17,8 @@ prepare_job:
   script:
     - java --version
     - mvn --version
+    - pwd
+    - ls -a
 
 test-job:
   stage: test

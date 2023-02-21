@@ -6,8 +6,8 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - sql:/app/sql
-      - button:/app/button
-      - logging:/app/logging
+      - /sql:/app/sql
+      - /button:/app/button
+      - /logging:/app/logging
     environment:
       TZ: "Europe/Moscow"
