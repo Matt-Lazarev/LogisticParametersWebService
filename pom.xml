@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.intertrastcargo</groupId>
-    <artifactId>log-param-service</artifactId>
+    <artifactId>logistic-param-service</artifactId>
     <version>1.3</version>
     <name>LogisticParametersWebService</name>
     <description>LogisticParametersWebService</description>
@@ -20,6 +20,7 @@
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
         <jib.maven.plugin.version>3.2.1</jib.maven.plugin.version>
         <eclipse.temurin.image.version>17.0.4.1_1-jre</eclipse.temurin.image.version>
+        <gitlab.project.group>utc873508</gitlab.project.group>
     </properties>
     <dependencies>
         <dependency>
@@ -110,7 +111,7 @@
                         <image>eclipse-temurin:${eclipse.temurin.image.version}</image>
                     </from>
                     <to>
-                        <image>registry.gitlab.com/learn252307/${project.artifactId}:${project.version}</image>
+                        <image>registry.gitlab.com/${gitlab.project.group}/${project.artifactId}:${project.version}</image>
                     </to>
                 </configuration>
             </plugin>
