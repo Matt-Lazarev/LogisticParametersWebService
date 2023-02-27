@@ -17,7 +17,7 @@ stages:
   - stage-deploy
   - prod-deploy
 
-prepare_job:
+prepare-job:
   stage: prepare
   script:
     - java --version
