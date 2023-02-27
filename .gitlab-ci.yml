@@ -45,8 +45,6 @@ stage-deploy-job:
 
 prod-deploy-job:
   stage: prod-deploy
-  before_script:
-    - !reference [.docker-login-script, script]
   script:
     - scp -o StrictHostKeyChecking=no docker-compose-prod.yaml lazarev@10.168.1.5:/home/lazarev/docker-compose-prod.yaml
     - ssh -o StrictHostKeyChecking=no lazarev@10.168.1.5 "
