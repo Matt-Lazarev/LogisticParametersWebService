@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/logs/download")
+@RequestMapping("/api/utils/logs")
 public class FileController {
 
     @GetMapping
     public ResponseEntity<?> downloadApplicationLogs(){
-        byte[] data = FileUtils.getZippedLogsFolder();
+        byte[] data = FileUtils.getZippedLogsDirectory();
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment; filename=logs.zip")
