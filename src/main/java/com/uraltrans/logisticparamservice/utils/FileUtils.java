@@ -19,7 +19,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 
 @Slf4j
 public class FileUtils {
-    public static final String DELIMITER = "   ";
+    public static final String DELIMITER = " {3}";
     private static final int MAX_ACTION_LOGS_AMOUNT = 50;
     private static final Path DEFAULT_ACTION_LOGS_FILE_PATH = Paths.get("logging/action_logs.log");
     private static final Path DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH = Paths.get("logging/region_segmentation_action_logs.log");
@@ -58,9 +58,7 @@ public class FileUtils {
 
     public static void writeActionLog(String message) {
         try {
-            synchronized (FileUtils.class) {
-                Files.write(DEFAULT_ACTION_LOGS_FILE_PATH, Collections.singletonList(message), CREATE, APPEND);
-            }
+            Files.write(DEFAULT_ACTION_LOGS_FILE_PATH, Collections.singletonList(message), CREATE, APPEND);
         }
         catch (IOException e) {
             log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());
@@ -69,9 +67,7 @@ public class FileUtils {
 
     public static void writeRegionSegmentationActionLog(String message) {
         try {
-            synchronized (FileUtils.class) {
-                Files.write(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH, Collections.singletonList(message), CREATE, APPEND);
-            }
+            Files.write(DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH, Collections.singletonList(message), CREATE, APPEND);
         }
         catch (IOException e) {
             log.error("FileUtils write error: {}, {}", e.getMessage(), e.getStackTrace());
@@ -124,12 +120,11 @@ public class FileUtils {
 
     private static void writeList(List<String> data, boolean append, Path path) {
         try {
-            synchronized (FileUtils.class) {
-                if (!append) {
-                    Files.write(path, data);
-                } else {
-                    Files.write(path, data, CREATE, APPEND);
-                }
+            if (!append) {
+                Files.write(path, data);
+            }
+            else {
+                Files.write(path, data, CREATE, APPEND);
             }
         }
         catch (IOException e) {
@@ -187,9 +182,19 @@ public class FileUtils {
         }
     }
 
-    public static byte[] getZippedLogsFolder() {
+    public static byte[] getZippedLogsDirectory() {
+        Path logsPath = Paths.get(DEFAULT_LOGS_FILE_PATH + ".zip");
+        return getZippedDirectory(logsPath);
+    }
+
+    public static byte[] getZippedTarifficationDirectory() {
+        Path tarifficationPath = Paths.get(TARIFFICATION_DIRECTORY_PATH + ".zip");
+        return getZippedDirectory(tarifficationPath);
+
+    }
+
+    private static byte[] getZippedDirectory(Path p){
         try {
-            Path p = Paths.get(DEFAULT_LOGS_FILE_PATH + ".zip");
             Files.deleteIfExists(p);
             Path zipPath = Files.createFile(p);
             try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
@@ -197,34 +202,6 @@ public class FileUtils {
                     s.filter(path -> !Files.isDirectory(path))
                             .forEach(path -> {
                                 ZipEntry zipEntry = new ZipEntry(DEFAULT_LOGS_FILE_PATH.relativize(path).toString());
-                                try {
-                                    zs.putNextEntry(zipEntry);
-                                    Files.copy(path, zs);
-                                    zs.closeEntry();
-                                }
-                                catch (IOException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
-                }
-            }
-            return Files.readAllBytes(zipPath);
-        }
-        catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    public static byte[] getZippedTarifficationFolder() {
-        try {
-            Path p = Paths.get(TARIFFICATION_DIRECTORY_PATH + ".zip");
-            Files.deleteIfExists(p);
-            Path zipPath = Files.createFile(p);
-            try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
-                try (Stream<Path> s = Files.walk(TARIFFICATION_DIRECTORY_PATH)) {
-                    s.filter(path -> !Files.isDirectory(path))
-                            .forEach(path -> {
-                                ZipEntry zipEntry = new ZipEntry(TARIFFICATION_DIRECTORY_PATH.relativize(path).toString());
                                 try {
                                     zs.putNextEntry(zipEntry);
                                     Files.copy(path, zs);

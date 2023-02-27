@@ -18,7 +18,7 @@ public class TarifficationController {
     @GetMapping
     public ResponseEntity<?> downloadTarifficationFiles(){
         tarifficationService.writeAllTarifficationFiles();
-        byte[] data = FileUtils.getZippedTarifficationFolder();
+        byte[] data = FileUtils.getZippedTarifficationDirectory();
         return ResponseEntity
                 .ok()
                 .header("Content-Disposition", "attachment; filename=tariffication-data.zip")

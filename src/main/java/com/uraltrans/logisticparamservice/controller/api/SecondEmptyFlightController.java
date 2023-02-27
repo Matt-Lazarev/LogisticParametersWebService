@@ -16,7 +16,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class SecondEmptyFlightController {
-
     private final SecondEmptyFlightService secondEmptyFlightService;
 
     @GetMapping("/api/secondemptyflights")

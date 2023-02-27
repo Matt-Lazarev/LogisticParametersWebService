@@ -1,14 +1,13 @@
 package com.uraltrans.logisticparamservice.utils;
 
-import org.apache.commons.io.Charsets;
-
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CsvUtils {
@@ -59,16 +58,6 @@ public class CsvUtils {
             Files.write(fullFilenamePath, allRows);
         }
         catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static byte[] getFileData(String directory, String filename){
-        try{
-            Path fullFilenamePath = Paths.get(directory + "/" + filename);
-
-            return Files.readAllBytes(fullFilenamePath);
-        }catch (IOException e){
             throw new RuntimeException(e);
         }
     }
