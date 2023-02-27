@@ -40,7 +40,7 @@ file.*
 mvnw
 mvnw.*
 .mvn
-src/main/resources/application.yaml
+src/main/resources/application-stage.yaml
 src/test
 
 #docker

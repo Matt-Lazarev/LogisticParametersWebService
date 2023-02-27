@@ -19,7 +19,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 
 @Slf4j
 public class FileUtils {
-    public static final String DELIMITER = " {3}";
+    public static final String DELIMITER = " ".repeat(3);
     private static final int MAX_ACTION_LOGS_AMOUNT = 50;
     private static final Path DEFAULT_ACTION_LOGS_FILE_PATH = Paths.get("logging/action_logs.log");
     private static final Path DEFAULT_REGION_SEGMENTATION_ACTION_LOGS_FILE_PATH = Paths.get("logging/region_segmentation_action_logs.log");

@@ -1,13 +1,4 @@
 spring:
-  profiles:
-    active: 'stage'
-
----
-spring:
-  config:
-    activate:
-      on-profile: 'stage'
-
   datasource:
     itr:
       jdbc-url: jdbc:sqlserver://10.168.0.8:1433;database=ITR;trustServerCertificate=true
