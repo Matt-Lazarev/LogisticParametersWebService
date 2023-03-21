@@ -28,6 +28,7 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+    open-in-view: false
 
 application:
   address: 'http://10.168.1.5:8080'

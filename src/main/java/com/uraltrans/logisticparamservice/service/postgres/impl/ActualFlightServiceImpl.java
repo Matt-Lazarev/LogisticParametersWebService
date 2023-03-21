@@ -6,14 +6,13 @@ import com.uraltrans.logisticparamservice.dto.planfact.OrdersDto;
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.exception.RepeatedRequestException;
-import com.uraltrans.logisticparamservice.repository.integration.RawDislocationRepository;
+import com.uraltrans.logisticparamservice.repository.integration.IntegrationDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.ActualFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.PotentialFlightRepository;
-import com.uraltrans.logisticparamservice.service.mapper.ActualFlightMapper;
+import com.uraltrans.logisticparamservice.service.mapper.mapstruct.IntegrationDislocationMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.ActualFlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
-import com.uraltrans.logisticparamservice.utils.Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +20,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.uraltrans.logisticparamservice.utils.Mapper.SHIFT_1C_YEARS;
+import static com.uraltrans.logisticparamservice.utils.MappingUtils.SHIFT_1C_YEARS;
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +39,10 @@ public class ActualFlightServiceImpl implements ActualFlightService {
     private final FlightRequirementService flightRequirementService;
     private final StationHandbookService stationHandbookService;
 
-    private final RawDislocationRepository rawDislocationRepository;
+    private final IntegrationDislocationRepository integrationDislocationRepository;
     private final ActualFlightRepository actualFlightRepository;
     private final PotentialFlightRepository potentialFlightRepository;
-    private final ActualFlightMapper actualFlightMapper;
+    private final IntegrationDislocationMapper integrationDislocationMapper;
 
 
     @Override
@@ -57,8 +54,8 @@ public class ActualFlightServiceImpl implements ActualFlightService {
     public void saveAllActualFlights() {
         prepareNextActualFlightsSave();
         String dislocationDate = LocalDate.now().plusYears(SHIFT_1C_YEARS).toString();
-        List<ActualFlight> actualFlights =
-                actualFlightMapper.mapRawDataToActualFlightsList(rawDislocationRepository.getAllDislocations(dislocationDate));
+        List<ActualFlight> actualFlights = integrationDislocationMapper.toActualFlightList(
+                integrationDislocationRepository.getAllIntegrationDislocations(dislocationDate));
         actualFlights = filterActualFlights(actualFlights);
         calculateCompletedAndInProgressOrders(actualFlights);
         actualFlightRepository.saveAll(actualFlights);
@@ -74,8 +71,8 @@ public class ActualFlightServiceImpl implements ActualFlightService {
         prepareNextPotentialFlightsSave();
 
         String dislocationDate = LocalDate.now().plusYears(SHIFT_1C_YEARS).toString();
-        List<PotentialFlight> potentialFlights =
-                actualFlightMapper.mapRawDataToPotentialFlightsList(rawDislocationRepository.getAllDislocations(dislocationDate));
+        List<PotentialFlight> potentialFlights = integrationDislocationMapper.toPotentialFlightList(
+                integrationDislocationRepository.getAllIntegrationDislocations(dislocationDate));
         potentialFlights = filterPotentialFlights(potentialFlights);
         potentialFlightRepository.saveAllAndFlush(potentialFlights);
     }
@@ -88,7 +85,7 @@ public class ActualFlightServiceImpl implements ActualFlightService {
     @Override
     public List<DislocationResponse> getAllByRequest(DislocationRequest request) {
         if(request == null){
-            return actualFlightMapper.mapToResponses(actualFlightRepository.findAll(), null);
+            return integrationDislocationMapper.toDislocationResponseList(actualFlightRepository.findAll(), null);
         }
 
         if(DISLOCATION_RESPONSES_CACHE.contains(request.getId())){
@@ -101,7 +98,7 @@ public class ActualFlightServiceImpl implements ActualFlightService {
 
         String region = stationHandbookService.getRegionByCode6(request.getDestinationStationCurrentFlight());
 
-        List<DislocationResponse> responses = actualFlightMapper.mapToResponses(
+        List<DislocationResponse> responses = integrationDislocationMapper.toDislocationResponseList(
                 actualFlightRepository.findAll()
                         .stream()
                         .filter(f -> {

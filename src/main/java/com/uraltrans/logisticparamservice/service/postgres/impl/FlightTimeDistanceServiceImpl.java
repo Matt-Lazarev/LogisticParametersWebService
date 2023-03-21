@@ -11,7 +11,7 @@ import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightTimeDistanceRepository;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
-import com.uraltrans.logisticparamservice.utils.Mapper;
+import com.uraltrans.logisticparamservice.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -135,7 +135,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                 .stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        v -> Mapper.round(v.getValue(), 2)
+                        v -> MappingUtils.round(v.getValue(), 2)
                 ));
     }
 
@@ -153,7 +153,7 @@ public class FlightTimeDistanceServiceImpl implements FlightTimeDistanceService 
                 .stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
-                        v -> Mapper.round(v.getValue(), 2)
+                        v -> MappingUtils.round(v.getValue(), 2)
                 ));
     }
     private BigDecimal daysBetween(Timestamp fromDate, Timestamp toDate){

@@ -1,11 +1,12 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.cargo.CargoDto;
+import com.uraltrans.logisticparamservice.entity.itr.projection.ItrClientOrderProjection;
 import com.uraltrans.logisticparamservice.entity.postgres.ClientOrder;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
-import com.uraltrans.logisticparamservice.repository.itr.RawClientOrderRepository;
+import com.uraltrans.logisticparamservice.repository.itr.ItrClientOrderRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.ClientOrderRepository;
-import com.uraltrans.logisticparamservice.service.mapper.ClientOrderMapper;
+import com.uraltrans.logisticparamservice.service.mapper.mapstruct.ItrClientOrderMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.ClientOrderService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import lombok.RequiredArgsConstructor;
@@ -13,16 +14,16 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ClientOrderServiceImpl implements ClientOrderService {
-    private final RawClientOrderRepository rawClientOrderRepository;
+    private final ItrClientOrderRepository itrClientOrderRepository;
     private final ClientOrderRepository clientOrderRepository;
-    private final ClientOrderMapper clientOrderMapper;
+    private final ItrClientOrderMapper itrClientOrderMapper;
     private final LoadParameterService loadParameterService;
 
     @Override
@@ -34,9 +35,9 @@ public class ClientOrderServiceImpl implements ClientOrderService {
     public void saveAllClientOrders() {
         prepareNextSave();
         LoadParameters params = loadParameterService.getLoadParameters();
-        List<Map<String, Object>> clientOrders =
-                rawClientOrderRepository.getAllOrders(params.getStatus(), params.getCarType(), getFirstDayOfMonthDate());
-        List<ClientOrder> orders = clientOrderMapper.mapRawDataToClientOrderList(clientOrders);
+        List<ItrClientOrderProjection> clientOrders =
+                itrClientOrderRepository.getAllOrders(params.getStatus(), params.getCarType(), getFirstDayOfMonthDate());
+        List<ClientOrder> orders = itrClientOrderMapper.toClientOrderList(clientOrders);
         orders = filterEmployeesAndCarsAmount(orders);
         clientOrderRepository.saveAll(orders);
     }
@@ -44,7 +45,6 @@ public class ClientOrderServiceImpl implements ClientOrderService {
     @Override
     public List<CargoDto> findBySourceStationCodeAndVolume(String sourceStation, BigDecimal volume) {
         return clientOrderRepository.findBySourceStationCodeAndVolume(sourceStation, volume);
-
     }
 
     @Override
@@ -62,8 +62,7 @@ public class ClientOrderServiceImpl implements ClientOrderService {
     }
 
     private String getFirstDayOfMonthDate(){
-        LocalDate now = LocalDate.now();
-        return LocalDate.of(now.getYear(), now.getMonth(), 1).toString();
+        return LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).toString();
     }
 
     private List<ClientOrder> filterEmployeesAndCarsAmount(List<ClientOrder> clientOrders){

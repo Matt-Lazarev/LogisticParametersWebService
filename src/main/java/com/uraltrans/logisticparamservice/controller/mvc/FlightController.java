@@ -6,12 +6,14 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightTimeDistanceService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@Hidden
 @Controller
 @RequestMapping("/flights")
 @RequiredArgsConstructor

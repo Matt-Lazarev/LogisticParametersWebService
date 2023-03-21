@@ -9,7 +9,6 @@ import java.util.Optional;
 public interface StationHandbookService {
     void saveAll();
 
-    void updateCoordinates();
     List<StationHandbook> getAll();
 
     List<StationResponse> getAllResponses();

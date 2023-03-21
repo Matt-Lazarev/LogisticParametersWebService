@@ -1,19 +1,18 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.entity.postgres.NoDetailsWagon;
-import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
-import com.uraltrans.logisticparamservice.repository.itr.RawItrDislocationRepository;
+import com.uraltrans.logisticparamservice.repository.integration.IntegrationCarRepairRepository;
+import com.uraltrans.logisticparamservice.repository.itr.ItrDislocationRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.NoDetailsWagonRepository;
-import com.uraltrans.logisticparamservice.service.mapper.NoDetailsWagonMapper;
+import com.uraltrans.logisticparamservice.service.mapper.mapstruct.ItrDislocationMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.NoDetailsWagonService;
-import com.uraltrans.logisticparamservice.utils.Mapper;
+import com.uraltrans.logisticparamservice.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -23,9 +22,9 @@ public class NoDetailsWagonServiceImpl implements NoDetailsWagonService {
     private static final String FEATURE2_FILTER_VALUE = "не оформлен";
 
     private final NoDetailsWagonRepository noDetailsWagonRepository;
-    private final RawItrDislocationRepository dislocationRepository;
-    private final CarRepairInfoRepository carRepairInfoRepository;
-    private final NoDetailsWagonMapper noDetailsWagonMapper;
+    private final ItrDislocationRepository itrDislocationRepository;
+    private final IntegrationCarRepairRepository integrationCarRepairRepository;
+    private final ItrDislocationMapper itrDislocationMapper;
 
     @Override
     public List<NoDetailsWagon> getAllNoDetailsWagon() {
@@ -36,7 +35,7 @@ public class NoDetailsWagonServiceImpl implements NoDetailsWagonService {
     public void saveAllNoDetailsWagon() {
         prepareNextSave();
 
-        List<NoDetailsWagon> noDetailsWagons = noDetailsWagonMapper.mapToNoDetailsWagons(dislocationRepository.getAllDislocations());
+        List<NoDetailsWagon> noDetailsWagons = itrDislocationMapper.toDislocationList(itrDislocationRepository.getAllItrDislocations());
         noDetailsWagons = filterNoDetailsWagons(noDetailsWagons);
         loadRepairInfo(noDetailsWagons);
         noDetailsWagonRepository.saveAll(noDetailsWagons);
@@ -49,10 +48,12 @@ public class NoDetailsWagonServiceImpl implements NoDetailsWagonService {
     private void loadRepairInfo(List<NoDetailsWagon> noDetailsWagons){
         noDetailsWagons
                 .forEach(wagon -> {
-                    LocalDate current = Mapper.fix1cDate(LocalDate.now());
-                    Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
-                            current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), Integer.parseInt(wagon.getCarNumber()));
-                    wagon.setRefurbished(!repairInfo.isEmpty() && ((byte[]) repairInfo.get("Refurbished"))[0] == 1);
+                    LocalDate current = MappingUtils.fix1cDate(LocalDate.now());
+                    integrationCarRepairRepository.getCarRepairByCarNumber(
+                            current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), wagon.getCarNumber())
+                                    .ifPresentOrElse(
+                                            repairInfo -> wagon.setRefurbished(repairInfo.getRefurbished().equals("1")),
+                                            ()->wagon.setRefurbished(false));
                 });
     }
 
@@ -60,7 +61,7 @@ public class NoDetailsWagonServiceImpl implements NoDetailsWagonService {
         return noDetailsWagons
                 .stream()
                 .filter(w -> w.getDistanceFromCurrentStation().equals("0.0"))
-                .filter(w ->w.getP02().isEmpty() || w.getP02().toLowerCase().contains(FEATURE2_FILTER_VALUE))
+                .filter(w -> w.getP02().isEmpty() || w.getP02().toLowerCase().contains(FEATURE2_FILTER_VALUE))
                 .collect(Collectors.toList());
     }
 }

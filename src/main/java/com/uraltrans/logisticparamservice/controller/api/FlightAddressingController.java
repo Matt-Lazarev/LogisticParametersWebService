@@ -9,6 +9,8 @@ import com.uraltrans.logisticparamservice.service.postgres.abstr.ClientOrderServ
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightAddressingService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightRequirementService;
 import com.uraltrans.logisticparamservice.utils.ControllerUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Адресация вагонов", description = "Расчет и получение адресации вагонов")
 public class FlightAddressingController {
     private final ClientOrderService clientOrderService;
     private final ActualFlightService actualFlightService;
@@ -28,6 +31,7 @@ public class FlightAddressingController {
     private final FlightAddressingService flightAddressingService;
 
     @PostMapping("/result/address")
+    @Operation(summary = "Получение адресации вагонов по запросу")
     public ResponseEntity<?> getAddressingsByRequest(@Valid @RequestBody(required = false) AddressingRequest request){
         List<AddressingResponse> responses = flightAddressingService.getAllByAddressRequest(request);
         if(responses.size() == 0){
@@ -38,11 +42,13 @@ public class FlightAddressingController {
     }
 
     @GetMapping("/api/address")
+    @Operation(summary = "Получение всей адресации вагонов")
     public ResponseEntity<List<FlightAddressing>> getAllFlightAddressings(){
         return ResponseEntity.ok(flightAddressingService.getAll());
     }
 
     @PostMapping("/api/address")
+    @Operation(summary = "Расчет (сохранение) адресации вагонов")
     public ResponseEntity<LoadDataResponse> saveAllFlightAddressings(){
         clientOrderService.saveAllClientOrders();
         actualFlightService.saveAllActualFlights();

@@ -12,8 +12,4 @@ public class ScheduleStationHandbookService {
     public void loadStationHandbook(){
         stationHandbookService.saveAll();
     }
-
-    public void updateCoordinates() {
-        stationHandbookService.updateCoordinates();
-    }
 }

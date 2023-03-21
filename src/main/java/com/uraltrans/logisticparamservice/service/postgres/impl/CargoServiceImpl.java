@@ -3,8 +3,8 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 import com.uraltrans.logisticparamservice.dto.station.CargoResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.Cargo;
 import com.uraltrans.logisticparamservice.repository.postgres.CargoRepository;
-import com.uraltrans.logisticparamservice.repository.utcsrs.RawCargoRepository;
-import com.uraltrans.logisticparamservice.service.mapper.CargoMapper;
+import com.uraltrans.logisticparamservice.repository.utcsrs.UtcsrsCargoRepository;
+import com.uraltrans.logisticparamservice.service.mapper.mapstruct.UtcsrsCargoMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.CargoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CargoServiceImpl implements CargoService {
     private final CargoRepository cargoRepository;
-    private final RawCargoRepository rawCargoRepository;
-    private final CargoMapper cargoMapper;
+    private final UtcsrsCargoRepository utcsrsCargoRepository;
+    private final UtcsrsCargoMapper utcsrsCargoMapper;
 
     @Override
     public List<Cargo> getAllCargos() {
@@ -26,18 +26,18 @@ public class CargoServiceImpl implements CargoService {
 
     @Override
     public List<CargoResponse> getAllCargoResponses() {
-        return cargoMapper.mapToCargoResponseList(cargoRepository.findAll());
+        return utcsrsCargoMapper.toCargoResponseList(cargoRepository.findAll());
     }
 
     @Override
-    public String findCargoNameByCode(String code) {
+    public String getCargoNameByCode(String code) {
         return cargoRepository.findCargoNameByCode(code);
     }
 
     @Override
     public void saveAll() {
         prepareNextSave();
-        List<Cargo> cargos = cargoMapper.mapRawDataToCargoList(rawCargoRepository.getAllCargos());
+        List<Cargo> cargos = utcsrsCargoMapper.toCargoList(utcsrsCargoRepository.getAllCargos());
         cargos = filterCargos(cargos);
         cargoRepository.saveAll(cargos);
     }

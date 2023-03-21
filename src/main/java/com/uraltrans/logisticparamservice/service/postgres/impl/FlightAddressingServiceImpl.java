@@ -3,23 +3,22 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingRequest;
 import com.uraltrans.logisticparamservice.dto.addressing.AddressingResponse;
 import com.uraltrans.logisticparamservice.dto.cargo.CargoDto;
-import com.uraltrans.logisticparamservice.dto.carinfo.CarRepairDto;
-import com.uraltrans.logisticparamservice.dto.carinfo.CarThicknessDto;
 import com.uraltrans.logisticparamservice.dto.freewagon.FreeWagonRequest;
 import com.uraltrans.logisticparamservice.dto.freewagon.FreeWagonResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateRequest;
 import com.uraltrans.logisticparamservice.dto.ratetariff.RateTariffConfirmResponse;
 import com.uraltrans.logisticparamservice.dto.ratetariff.TariffRequest;
+import com.uraltrans.logisticparamservice.entity.integration.projection.IntegrationCarRepairProjection;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightAddressing;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
 import com.uraltrans.logisticparamservice.exception.RepeatedRequestException;
-import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
+import com.uraltrans.logisticparamservice.repository.integration.IntegrationCarRepairRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightAddressingRepository;
 import com.uraltrans.logisticparamservice.service.mapper.FlightAddressingMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
-import com.uraltrans.logisticparamservice.utils.Mapper;
+import com.uraltrans.logisticparamservice.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +32,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -52,7 +52,7 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     private String rateCallbackUrl;
 
     private final FlightAddressingRepository flightAddressingRepository;
-    private final CarRepairInfoRepository carRepairInfoRepository;
+    private final IntegrationCarRepairRepository integrationCarRepairRepository;
     private final FlightAddressingMapper flightAddressingMapper;
     private final StationHandbookService stationHandbookService;
     private final CargoService cargoService;
@@ -326,13 +326,13 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
         addressings.forEach(addressing -> {
             String cargoCode = addressing.getCargoCode();
             if (cargoCode != null) {
-                String cargoName = cargoService.findCargoNameByCode(cargoCode);
+                String cargoName = cargoService.getCargoNameByCode(cargoCode);
                 addressing.setCargo(cargoName);
             }
 
             String clientCargoCode = addressing.getClientOrderCargoCode();
             if (clientCargoCode != null) {
-                String cargoName = cargoService.findCargoNameByCode(clientCargoCode);
+                String cargoName = cargoService.getCargoNameByCode(clientCargoCode);
                 addressing.setClientOrderCargo(cargoName);
             }
         });
@@ -382,25 +382,27 @@ public class FlightAddressingServiceImpl implements FlightAddressingService {
     }
 
     private void loadCarInfo(List<FlightAddressing> addressings) {
-        Map<String, CarRepairDto> repairs = flightAddressingMapper.mapRawDataToCarRepairMap(
-                carRepairInfoRepository.getAllCarRepairs(
-                        Mapper.to1cDate(LocalDate.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+        Map<String, IntegrationCarRepairProjection> repairs = integrationCarRepairRepository.getAllCarRepairs(
+                        MappingUtils.to1cDate(LocalDate.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .stream()
+                .collect(Collectors.toMap(IntegrationCarRepairProjection::getCarNumber, Function.identity()));
 
-        Map<String, CarThicknessDto> thicknesses = flightAddressingMapper.mapRawDataToCarThicknessMap(
-                carRepairInfoRepository.getAllCarWheelThicknesses(
-                        Mapper.to1cDate(LocalDate.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))));
+        Map<String, IntegrationCarRepairProjection> thicknesses = integrationCarRepairRepository.getAllCarWheelThicknesses(
+                        MappingUtils.to1cDate(LocalDate.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .stream()
+                .collect(Collectors.toMap(IntegrationCarRepairProjection::getCarNumber, Function.identity()));
 
         addressings
                 .forEach(addressing -> {
                     if (repairs.containsKey(addressing.getCarNumber())) {
-                        CarRepairDto repair = repairs.get(addressing.getCarNumber());
-                        addressing.setNonworkingPark(repair.getNonworkingPark());
-                        addressing.setRefurbished(repair.getRefurbished());
-                        addressing.setRejected(repair.getRejected());
+                        IntegrationCarRepairProjection repair = repairs.get(addressing.getCarNumber());
+                        addressing.setNonworkingPark(repair.getNonworkingPark().equals("1"));
+                        addressing.setRefurbished(repair.getRefurbished().equals("1"));
+                        addressing.setRejected(repair.getRejected().equals("1"));
                     }
 
                     if (thicknesses.containsKey(addressing.getCarNumber())) {
-                        CarThicknessDto thickness = thicknesses.get(addressing.getCarNumber());
+                        IntegrationCarRepairProjection thickness = thicknesses.get(addressing.getCarNumber());
                         addressing.setThicknessWheel(thickness.getThicknessWheel());
                         addressing.setThicknessComb(thickness.getThicknessComb());
                     }

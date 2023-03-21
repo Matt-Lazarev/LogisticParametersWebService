@@ -1,19 +1,20 @@
 package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.secondempty.SecondEmptyFlightResponse;
+import com.uraltrans.logisticparamservice.entity.integration.projection.IntegrationCarRepairProjection;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
 import com.uraltrans.logisticparamservice.entity.postgres.SecondEmptyFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
-import com.uraltrans.logisticparamservice.repository.integration.CarRepairInfoRepository;
+import com.uraltrans.logisticparamservice.repository.integration.IntegrationCarRepairRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.SecondEmptyFlightRepository;
-import com.uraltrans.logisticparamservice.repository.utcsrs.RegisterSecondEmptyFlightRepository;
-import com.uraltrans.logisticparamservice.service.mapper.SecondEmptyFlightMapper;
+import com.uraltrans.logisticparamservice.repository.utcsrs.UtcsrsSecondEmptyFlightRegisterRepository;
+import com.uraltrans.logisticparamservice.service.mapper.mapstruct.SecondEmptyFlightMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.SecondEmptyFlightService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
-import com.uraltrans.logisticparamservice.utils.Mapper;
+import com.uraltrans.logisticparamservice.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,9 +38,9 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
     private final FlightService flightService;
     private final StationHandbookService stationHandbookService;
     private final SecondEmptyFlightRepository secondEmptyFlightRepository;
-    private final RegisterSecondEmptyFlightRepository registerSecondEmptyFlightRepository;
+    private final UtcsrsSecondEmptyFlightRegisterRepository utcsrsSecondEmptyFlightRegisterRepository;
     private final SecondEmptyFlightMapper secondEmptyFlightMapper;
-    private final CarRepairInfoRepository carRepairInfoRepository;
+    private final IntegrationCarRepairRepository integrationCarRepairRepository;
     private final LoadParameterService loadParameterService;
 
     @Override
@@ -49,7 +50,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
 
     @Override
     public List<SecondEmptyFlightResponse> getAllSecondEmptyFlightResponses() {
-        return secondEmptyFlightMapper.mapToSecondEmptyFlightResponses(secondEmptyFlightRepository.findAll());
+        return secondEmptyFlightMapper.toSecondEmptyFlightResponseList(secondEmptyFlightRepository.findAll());
     }
 
     @Override
@@ -57,7 +58,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         prepareNextSave();
 
         List<Flight> flights = flightService.getAllFlights();
-        List<SecondEmptyFlight> secondEmptyFlights = secondEmptyFlightMapper.mapToSecondEmptyFlight(flights);
+        List<SecondEmptyFlight> secondEmptyFlights = secondEmptyFlightMapper.toSecondEmptyFlightList(flights);
 
         calculatePrevEmptyFlightDates(secondEmptyFlights);
         secondEmptyFlights = filterFlights(secondEmptyFlights);
@@ -117,7 +118,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                     return result;
                 })
                 .filter(f -> {
-                    boolean result = !FILTER_CARGO_CODES.contains(f.getCargoCode());
+                    boolean result = f.getCargoCode() == null || !FILTER_CARGO_CODES.contains(f.getCargoCode());
                     if(!result){
                         discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - недопустимый код груза " + f.getCargoCode());
                     }
@@ -159,7 +160,7 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
                     return result;
                 })
                 .filter(f -> {
-                    boolean result = !registerSecondEmptyFlightRepository.containsFlightsByCodes(f.getSourceStationCode(), f.getDestStationCode());
+                    boolean result = utcsrsSecondEmptyFlightRegisterRepository.getAllRegisterRowsByStations(f.getSourceStationCode(), f.getDestStationCode()).size() == 0;
                     if(!result){
                         discardedFlights.add("AID: " + f.getAID() + ", CarNumber: " + f.getCarNumber() + ", From: " + f.getSourceStation() + ", To: " + f.getDestStation() + " - маршрут исключен (реестр)");
                     }
@@ -228,17 +229,17 @@ public class SecondEmptyFlightServiceImpl implements SecondEmptyFlightService {
         if(date == null){
             return false;
         }
-        LocalDate initialDate = Mapper.to1cDate(date);
+        LocalDate initialDate = MappingUtils.to1cDate(date);
         LocalDate startDate = initialDate.minusDays(repairDaysCheck);
         LocalDate endDate = initialDate.plusDays(repairDaysCheck);
 
         LocalDate current = startDate;
         while(!current.isEqual(endDate)){
-            Map<String, Object> repairInfo = carRepairInfoRepository.getCarRepairByDate(
-                    current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), carNumber);
-            if (!repairInfo.isEmpty() &&
-                    (((byte[]) repairInfo.get("NonworkingPark"))[0] == 1 || ((byte[]) repairInfo.get("RequiresRepair"))[0] == 1)){
-                return false;
+            Optional<IntegrationCarRepairProjection> carRepairOptional = integrationCarRepairRepository.getCarRepairByCarNumber(
+                    current.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), String.valueOf(carNumber));
+            if (carRepairOptional.isPresent()){
+                IntegrationCarRepairProjection carRepair = carRepairOptional.get();
+                return carRepair.getNonworkingPark().equals("1") || carRepair.getRequiresRepair().equals("1");
             }
             current = current.plusDays(1);
         }

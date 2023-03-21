@@ -5,6 +5,7 @@ import com.uraltrans.logisticparamservice.entity.postgres.RegionSegmentationLog;
 import com.uraltrans.logisticparamservice.entity.postgres.RegionSegmentationParameters;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.*;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -23,13 +24,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Optional;
 
 
+@Hidden
 @Slf4j
 @Controller
 @RequestMapping("/segmentation")
 @RequiredArgsConstructor
 public class RegionSegmentationController {
     private final RegionSegmentationParametersService regionSegmentationParametersService;
-    private final RegionSegmentationCollapsedT15Service regionSegmentationCollapsedT15Service;
+    private final RegionFlightCollapsedService regionFlightCollapsedService;
     private final SegmentationResultT15Service segmentationResultT15Service;
     private final RegionFlightService regionFlightService;
     private final RegionSegmentationLogService regionSegmentationLogService;
@@ -79,7 +81,7 @@ public class RegionSegmentationController {
         regionSegmentationLogService.updateLogMessageById(logId, message);
 
         regionFlightService.updateTravelTime(response);
-        regionSegmentationCollapsedT15Service.saveAllRegionSegmentationsAnalysisT15(logId);
+        regionFlightCollapsedService.saveAllRegionFlightsCollapsed(logId);
         segmentationResultT15Service.saveAllSegments(logId);
     }
 }

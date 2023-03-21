@@ -9,6 +9,6 @@ public interface CargoService {
     List<Cargo> getAllCargos();
     List<CargoResponse> getAllCargoResponses();
 
-    String findCargoNameByCode(String code);
+    String getCargoNameByCode(String code);
     void saveAll();
 }

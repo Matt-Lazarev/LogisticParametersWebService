@@ -2,7 +2,7 @@ package com.uraltrans.logisticparamservice.service.mapper;
 
 import com.uraltrans.logisticparamservice.dto.planfact.PlanFactResponse;
 import com.uraltrans.logisticparamservice.entity.postgres.FlightRequirement;
-import com.uraltrans.logisticparamservice.utils.Mapper;
+import com.uraltrans.logisticparamservice.utils.MappingUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -34,9 +34,9 @@ public class FlightRequirementMapper {
                 .volumeFrom((BigDecimal) data.get("volume_from"))
                 .sourceStationCode((String) data.get("source_station_code6"))
                 .destinationStationCode((String) data.get("destination_station_code6"))
-                .inPlanOrders(Mapper.toInteger((BigInteger) data.get("cars_amount")))
-                .completedOrders(Mapper.toInteger((BigDecimal) data.get("completed_orders")))
-                .inProgressOrders(Mapper.toInteger((BigDecimal) data.get("in_progress_orders")))
+                .inPlanOrders(MappingUtils.toInteger((BigInteger) data.get("cars_amount")))
+                .completedOrders(MappingUtils.toInteger((BigDecimal) data.get("completed_orders")))
+                .inProgressOrders(MappingUtils.toInteger((BigDecimal) data.get("in_progress_orders")))
                 .utRate((BigDecimal) data.get("ut_rate"))
                 .build();
 

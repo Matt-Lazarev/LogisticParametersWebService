@@ -54,20 +54,6 @@ public class JdbcUtils {
         }
     }
 
-    public static List<Map<String, Object>> getAllDataWithParams(DataSource dataSource, String SQL, String date, Integer carNumber){
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement preparedStatement = connection.prepareStatement(SQL)) {
-                preparedStatement.setString(1, date);
-                preparedStatement.setInt(2, carNumber);
-                try (ResultSet rs = preparedStatement.executeQuery()) {
-                    return JdbcUtils.parseResultSet(rs);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static List<Map<String, Object>> parseResultSet(ResultSet rs) throws SQLException {
         List<Map<String, Object>> data = new ArrayList<>();
         return getDataFromResultSet(rs, data);

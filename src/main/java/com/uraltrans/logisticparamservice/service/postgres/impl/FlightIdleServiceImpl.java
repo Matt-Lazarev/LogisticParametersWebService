@@ -9,7 +9,7 @@ import com.uraltrans.logisticparamservice.repository.postgres.FlightIdleReposito
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightIdleService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
-import com.uraltrans.logisticparamservice.utils.Mapper;
+import com.uraltrans.logisticparamservice.utils.MappingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -100,7 +100,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
         }
 
         if (sendDate != null && arriveToSourceStation != null) {
-            long loadDays = ChronoUnit.DAYS.between(Mapper.toLocalDate(arriveToSourceStation), Mapper.toLocalDate(sendDate));
+            long loadDays = ChronoUnit.DAYS.between(MappingUtils.toLocalDate(arriveToSourceStation), MappingUtils.toLocalDate(sendDate));
             currFlight.setCarLoadIdleDays((int) loadDays);
         }
     }
@@ -126,7 +126,7 @@ public class FlightIdleServiceImpl implements FlightIdleService {
         }
 
         if (nextFlightStart != null && arriveToDestStation != null) {
-            long unloadDays = ChronoUnit.DAYS.between(Mapper.toLocalDate(arriveToDestStation), Mapper.toLocalDate(nextFlightStart));
+            long unloadDays = ChronoUnit.DAYS.between(MappingUtils.toLocalDate(arriveToDestStation), MappingUtils.toLocalDate(nextFlightStart));
             currFlight.setCarUnloadIdleDays((int) unloadDays);
         }
     }

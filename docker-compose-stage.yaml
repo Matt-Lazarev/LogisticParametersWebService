@@ -6,8 +6,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./sql:/sql
-      - ./button:/button
+      - /home/m.lazarev/workdir/button:/button
       - /home/m.lazarev/workdir/logging:/logging
       - /data:/data
     environment:

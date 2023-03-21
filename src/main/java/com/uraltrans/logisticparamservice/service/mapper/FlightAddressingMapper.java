@@ -141,16 +141,6 @@ public class FlightAddressingMapper {
                 .build();
     }
 
-    public Map<String, CarRepairDto> mapRawDataToCarRepairMap(List<Map<String, Object>> data){
-        return data.stream()
-                .map(this::mapToCarRepairDto)
-                .collect(Collectors.toMap(
-                        CarRepairDto::getCarNumber,
-                        x -> x,
-                        (cr1, cr2) -> cr1
-                ));
-    }
-
     private CarRepairDto mapToCarRepairDto(Map<String, Object> data){
         return CarRepairDto.builder()
                 .carNumber((String) data.get("CarNumber"))
@@ -158,15 +148,6 @@ public class FlightAddressingMapper {
                 .refurbished(((byte[]) data.get("Refurbished"))[0] == 0)
                 .rejected(((byte[]) data.get("Rejected"))[0] == 0)
                 .build();
-    }
-
-    public Map<String, CarThicknessDto> mapRawDataToCarThicknessMap(List<Map<String, Object>> data){
-        return data.stream()
-                .map(this::mapToCarThicknessDto)
-                .collect(Collectors.toMap(
-                        CarThicknessDto::getCarNumber,
-                        x -> x
-                ));
     }
 
     private CarThicknessDto mapToCarThicknessDto(Map<String, Object> data) {

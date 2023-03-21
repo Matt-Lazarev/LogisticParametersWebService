@@ -3,11 +3,13 @@ package com.uraltrans.logisticparamservice.controller.mvc;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Hidden
 @Controller
 @RequiredArgsConstructor
 public class MainController {

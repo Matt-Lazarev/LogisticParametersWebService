@@ -2,7 +2,14 @@ package com.uraltrans.logisticparamservice.config.schedule;
 
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.RegionSegmentationParametersService;
-import com.uraltrans.logisticparamservice.service.schedule.*;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleCargoService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightAddressingService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightProfitService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleFlightsService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleNoDetailsWagonService;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleRegionSegmentationT15;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleSegmentationT14;
+import com.uraltrans.logisticparamservice.service.schedule.ScheduleStationHandbookService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -36,7 +43,6 @@ public class SchedulingConfig implements SchedulingConfigurer {
     private final ScheduleFlightProfitService scheduleFlightProfitService;
     private final ScheduleStationHandbookService scheduleStationHandbookService;
     private final ScheduleFlightAddressingService scheduleFlightAddressingService;
-    private final ScheduleGeocodeService scheduleGeocodeService;
     private final ScheduleNoDetailsWagonService scheduleNoDetailsWagonService;
     private final ScheduleSegmentationT14 scheduleSegmentationT14;
     private final ScheduleRegionSegmentationT15 scheduleRegionSegmentationT15;
@@ -65,8 +71,6 @@ public class SchedulingConfig implements SchedulingConfigurer {
         Supplier<LocalTime> loadRegionSegmentsT15TimeSupplier = ()-> LocalTime.parse(regionSegmentationParametersService.getParameters().getLoadTime());
         registerTaskAt(taskRegistrar, scheduleRegionSegmentationT15::loadRegionSegmentationT15, loadRegionSegmentsT15TimeSupplier);
 
-        registerTask(taskRegistrar, scheduleGeocodeService::loadGeocodes, 20);
-        registerTask(taskRegistrar, scheduleStationHandbookService::updateCoordinates, 25);
         registerTask(taskRegistrar, scheduleFlightProfitService::loadFlightProfits, 30);
         registerTask(taskRegistrar, scheduleFlightAddressingService::loadFlightAddressings, 60);
 

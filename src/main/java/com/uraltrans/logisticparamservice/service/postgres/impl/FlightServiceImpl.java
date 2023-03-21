@@ -2,11 +2,12 @@ package com.uraltrans.logisticparamservice.service.postgres.impl;
 
 import com.uraltrans.logisticparamservice.dto.idle.LoadIdleDto;
 import com.uraltrans.logisticparamservice.dto.idle.UnloadIdleDto;
+import com.uraltrans.logisticparamservice.entity.itr.ItrFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.Flight;
-import com.uraltrans.logisticparamservice.repository.itr.RawFlightRepository;
-import com.uraltrans.logisticparamservice.service.mapper.FlightMapper;
+import com.uraltrans.logisticparamservice.repository.itr.ItrFlightRepository;
 import com.uraltrans.logisticparamservice.repository.postgres.FlightRepository;
+import com.uraltrans.logisticparamservice.service.mapper.mapstruct.ItrFlightMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.FlightService;
 import com.uraltrans.logisticparamservice.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +17,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class FlightServiceImpl implements FlightService {
     private final FlightRepository flightRepository;
-    private final RawFlightRepository rawFlightRepository;
-    private final FlightMapper flightMapper;
+    private final ItrFlightRepository itrFlightRepository;
+    private final ItrFlightMapper itrFlightMapper;
 
     @Override
     public List<Flight> getAllFlights() {
@@ -56,8 +56,8 @@ public class FlightServiceImpl implements FlightService {
     private List<Flight> getAllFlights(int days) {
         String from = LocalDate.now().minusDays(days).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String to = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        List<Map<String, Object>> rawData = rawFlightRepository.getAllFlightsBetween(new String[]{from, to});
-        return flightMapper.mapRawFlightsDataToFlightsList(rawData);
+        List<ItrFlight> itrFlights = itrFlightRepository.getAllFlightsFromItr(from, to);
+        return itrFlightMapper.toFlightList(itrFlights);
     }
 
     private void prepareNextSave() {

@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uraltrans.logisticparamservice.dto.geocode.Countries;
 import com.uraltrans.logisticparamservice.dto.geocode.Station;
 import com.uraltrans.logisticparamservice.dto.station.StationResponse;
-import com.uraltrans.logisticparamservice.entity.postgres.Geocode;
 import com.uraltrans.logisticparamservice.entity.postgres.LoadParameters;
 import com.uraltrans.logisticparamservice.entity.postgres.StationHandbook;
+import com.uraltrans.logisticparamservice.entity.utcsrs.projection.UtcsrsStationHandbookProjection;
 import com.uraltrans.logisticparamservice.exception.StationsNotFoundException;
 import com.uraltrans.logisticparamservice.repository.postgres.StationHandbookRepository;
-import com.uraltrans.logisticparamservice.repository.utcsrs.RawStationHandbookRepository;
-import com.uraltrans.logisticparamservice.service.mapper.StationHandbookMapper;
-import com.uraltrans.logisticparamservice.service.postgres.abstr.GeocodeService;
+import com.uraltrans.logisticparamservice.repository.utcsrs.UtcsrsStationHandbookRepository;
+import com.uraltrans.logisticparamservice.service.mapper.mapstruct.UtcsrsStationHandbookMapper;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.LoadParameterService;
 import com.uraltrans.logisticparamservice.service.postgres.abstr.StationHandbookService;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +18,9 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,28 +28,20 @@ import java.util.stream.Collectors;
 public class StationHandbookServiceImpl implements StationHandbookService {
     private static final String API_YANDEX_STATION_LIST_URL = "https://api.rasp.yandex.net/v3.0/stations_list/?apikey=%s";
 
-    private final GeocodeService geocodeService;
     private final StationHandbookRepository stationHandbookRepository;
-    private final RawStationHandbookRepository rawStationHandbookRepository;
+    private final UtcsrsStationHandbookRepository utcsrsStationHandbookRepository;
     private final LoadParameterService loadParameterService;
-    private final StationHandbookMapper stationHandbookMapper;
+    private final UtcsrsStationHandbookMapper utcsrsStationHandbookMapper;
 
     private RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public void saveAll() {
         prepareNextSave();
-        List<Map<String, Object>> rawData = rawStationHandbookRepository.getAllStations();
-        List<StationHandbook> stationHandbook = stationHandbookMapper.mapRawStationHandbookData(rawData);
+        List<UtcsrsStationHandbookProjection> stations = utcsrsStationHandbookRepository.getAllStations();
+        List<StationHandbook> stationHandbook = utcsrsStationHandbookMapper.toStationHandbookList(stations);
         removeDuplicates(stationHandbook);
         updateCoordinatesFromYandexStationList(stationHandbook);
-        stationHandbookRepository.saveAll(stationHandbook);
-    }
-
-    @Override
-    public void updateCoordinates() {
-        List<StationHandbook> stationHandbook = stationHandbookRepository.findAll();
-        updateCoordinates(stationHandbook);
         stationHandbookRepository.saveAll(stationHandbook);
     }
 
@@ -63,7 +52,7 @@ public class StationHandbookServiceImpl implements StationHandbookService {
 
     @Override
     public List<StationResponse> getAllResponses() {
-        List<StationResponse> responses = stationHandbookMapper.mapToListResponses(stationHandbookRepository.findAll());
+        List<StationResponse> responses = utcsrsStationHandbookMapper.toStationResponseList(stationHandbookRepository.findAll());
         if (responses.size() == 0) {
             throw new StationsNotFoundException("Станции не были найдены. Повторите запрос позже");
         }
@@ -106,20 +95,6 @@ public class StationHandbookServiceImpl implements StationHandbookService {
                     if (yandexStation != null) {
                         s.setLongitude(yandexStation.getLongitude());
                         s.setLatitude(yandexStation.getLatitude());
-                    }
-                });
-    }
-
-    private void updateCoordinates(List<StationHandbook> stationHandbook) {
-        Map<String, Geocode> cache = geocodeService.getGeocodesCache();
-        stationHandbook
-                .stream()
-                .filter(s -> s.getLongitude().isEmpty() || s.getLatitude().isEmpty())
-                .forEach(s -> {
-                    Geocode geocode = cache.get(s.getCode6());
-                    if (geocode != null && LocalDateTime.now().isBefore(geocode.getExpiredAt())) {
-                        s.setLatitude(geocode.getLatitude());
-                        s.setLongitude(geocode.getLongitude());
                     }
                 });
     }

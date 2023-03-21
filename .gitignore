@@ -40,11 +40,6 @@ file.*
 mvnw
 mvnw.*
 .mvn
-src/main/resources/application-stage.yaml
-src/test
 
 #docker
 dockerfile
-
-#confidential
-application.yaml
