@@ -16,6 +16,6 @@ public class TestController {
     @GetMapping
     @Operation(summary = "Операция для тестирования приложения при его запуске")
     public String healthCheck() {
-        return "Hello";
+        return "Hello\n";
     }
 }
