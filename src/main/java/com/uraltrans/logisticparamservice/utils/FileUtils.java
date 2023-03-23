@@ -198,10 +198,10 @@ public class FileUtils {
             Files.deleteIfExists(p);
             Path zipPath = Files.createFile(p);
             try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
-                try (Stream<Path> s = Files.walk(DEFAULT_LOGS_FILE_PATH)) {
+                try (Stream<Path> s = Files.walk(p)) {
                     s.filter(path -> !Files.isDirectory(path))
                             .forEach(path -> {
-                                ZipEntry zipEntry = new ZipEntry(DEFAULT_LOGS_FILE_PATH.relativize(path).toString());
+                                ZipEntry zipEntry = new ZipEntry(p.relativize(path).toString());
                                 try {
                                     zs.putNextEntry(zipEntry);
                                     Files.copy(path, zs);
