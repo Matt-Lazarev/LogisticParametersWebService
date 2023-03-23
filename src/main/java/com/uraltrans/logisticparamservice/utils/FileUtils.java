@@ -183,25 +183,23 @@ public class FileUtils {
     }
 
     public static byte[] getZippedLogsDirectory() {
-        Path logsPath = Paths.get(DEFAULT_LOGS_FILE_PATH + ".zip");
-        return getZippedDirectory(logsPath);
+        return getZippedDirectory(DEFAULT_LOGS_FILE_PATH);
     }
 
     public static byte[] getZippedTarifficationDirectory() {
-        Path tarifficationPath = Paths.get(TARIFFICATION_DIRECTORY_PATH + ".zip");
-        return getZippedDirectory(tarifficationPath);
-
+        return getZippedDirectory(TARIFFICATION_DIRECTORY_PATH);
     }
 
-    private static byte[] getZippedDirectory(Path p){
+    private static byte[] getZippedDirectory(Path pathDir){
         try {
-            Files.deleteIfExists(p);
-            Path zipPath = Files.createFile(p);
-            try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(p))) {
-                try (Stream<Path> s = Files.walk(p)) {
+            Path pathZip = Path.of(pathDir.toString() + ".zip");
+            Files.deleteIfExists(pathZip);
+            Path zipPath = Files.createFile(pathZip);
+            try (ZipOutputStream zs = new ZipOutputStream(Files.newOutputStream(pathZip))) {
+                try (Stream<Path> s = Files.walk(pathDir)) {
                     s.filter(path -> !Files.isDirectory(path))
                             .forEach(path -> {
-                                ZipEntry zipEntry = new ZipEntry(p.relativize(path).toString());
+                                ZipEntry zipEntry = new ZipEntry(pathDir.relativize(path).toString());
                                 try {
                                     zs.putNextEntry(zipEntry);
                                     Files.copy(path, zs);
