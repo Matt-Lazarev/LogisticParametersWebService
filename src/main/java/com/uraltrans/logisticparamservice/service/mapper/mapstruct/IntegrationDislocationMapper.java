@@ -5,6 +5,7 @@ import com.uraltrans.logisticparamservice.entity.integration.projection.Integrat
 import com.uraltrans.logisticparamservice.entity.postgres.ActualFlight;
 import com.uraltrans.logisticparamservice.entity.postgres.PotentialFlight;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +18,17 @@ public interface IntegrationDislocationMapper {
 
     PotentialFlight toPotentialFlight(IntegrationDislocationProjection dislocationProjection);
 
+    @Mapping(target = "cargoId", source = "actualFlight.cargoCode")
+    @Mapping(target = "departureStation", source = "actualFlight.sourceStationCode")
+    @Mapping(target = "destinationStation", source = "actualFlight.destinationStationCode")
+    @Mapping(target = "dislocationStation", source = "actualFlight.dislocationStationCode")
+    @Mapping(target = "flightType", source = "actualFlight.loaded")
+    @Mapping(target = "featureWagon", source = "actualFlight.carState")
+    @Mapping(target = "p02", source = "actualFlight.feature2")
+    @Mapping(target = "p06", source = "actualFlight.feature6")
+    @Mapping(target = "p09", source = "actualFlight.feature9")
+    @Mapping(target = "p12", source = "actualFlight.feature12")
+    @Mapping(target = "p20", source = "actualFlight.feature20")
     DislocationResponse toDislocationResponse(ActualFlight actualFlight);
 
     default List<ActualFlight> toActualFlightList(List<IntegrationDislocationProjection> dislocations){
